@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * LRU内存缓存，拷贝Android源码
+ * LRU内存缓存，拷贝Android源码（bitmap模块中的缓存更好用，扩展了缓存过期时间设置）
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-8-1 下午4:51:58 $

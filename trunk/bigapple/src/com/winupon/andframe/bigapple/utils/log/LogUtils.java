@@ -168,4 +168,5 @@ public abstract class LogUtils {
         tag = String.format(tag, callerClazzName, caller.getMethodName(), caller.getLineNumber());
         return tag;
     }
+
 }

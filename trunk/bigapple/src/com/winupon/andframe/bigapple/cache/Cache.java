@@ -31,6 +31,15 @@ public interface Cache<K, V> {
     public V put(K key, V value);
 
     /**
+     * 放入缓存，含过期时间
+     * 
+     * @param key
+     * @param value
+     * @return
+     */
+    public V put(K key, V value, long expiryTimestamp);
+
+    /**
      * 删除缓存key
      * 
      * @param key

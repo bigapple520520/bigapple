@@ -5,6 +5,8 @@
  */
 package com.example.bigapple_demo.cache;
 
+import java.util.Date;
+
 import android.content.Context;
 import android.os.Handler;
 
@@ -66,6 +68,7 @@ public abstract class CacheDemoTest {
             ToastUtils.displayTextShort(context, cacheObject.getValue());
         }
 
+        // 等缓存过期
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -84,6 +87,44 @@ public abstract class CacheDemoTest {
                             else {
                                 ToastUtils.displayTextShort(context, temp.getValue());
                             }
+                        }
+                    });
+                }
+                catch (Exception e) {
+                }
+            }
+        }).start();
+    }
+
+    /**
+     * 设置缓存过期时间测试
+     * 
+     * @param context
+     * @param handler
+     */
+    public static void getObjectCacheTest3(final Context context, final Handler handler) {
+        final Cache<String, Object> cache = AnCacheUtils.getObjectMemoryCache();// 取到的是单例模式
+
+        // 存
+        Date currentTime = new Date();
+        cache.put("xuan", "你好", currentTime.getTime() + 2000);// 过期2S
+
+        // 马上再取，就有了
+        showObject(context, cache.get("xuan"));
+
+        // 等缓存过期
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // 暂停5S，是缓存过期去吧
+                try {
+                    Thread.sleep(5000);
+
+                    // 再取，就过期啦
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            showObject(context, cache.get("xuan"));
                         }
                     });
                 }

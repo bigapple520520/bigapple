@@ -5,25 +5,30 @@
  */
 package com.winupon.andframe.bigapple.cache.impl;
 
+import com.winupon.andframe.bigapple.bitmap.cache.LruMemoryCache;
 import com.winupon.andframe.bigapple.cache.Cache;
-import com.winupon.andframe.bigapple.cache.core.LruCache;
 
 /**
- * 对象缓存
+ * 对象缓存，使用了bitmap中的缓存，可设置缓存的过期值
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-9-17 下午8:42:45 $
  */
 public class ObjectMemoryCache implements Cache<String, Object> {
-    private static LruCache<String, Object> objectMemoryCache;
+    private static LruMemoryCache<String, Object> objectMemoryCache;
 
     public ObjectMemoryCache(int size) {
-        objectMemoryCache = new LruCache<String, Object>(size);
+        objectMemoryCache = new LruMemoryCache<String, Object>(size);
     }
 
     @Override
     public Object put(String key, Object value) {
-        return objectMemoryCache.put(key, value);
+        return put(key, value, Long.MAX_VALUE);
+    }
+
+    @Override
+    public Object put(String key, Object value, long expiryTimestamp) {
+        return objectMemoryCache.put(key, value, expiryTimestamp);
     }
 
     @Override

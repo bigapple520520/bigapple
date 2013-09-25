@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 import org.apache.http.protocol.HTTP;
 
 /**
- * Android 4.1.1中的本地缓存
+ * Android 4.1.1中的本地缓存（bitmap模块中的缓存更好用，扩展了缓存过期时间设置）
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-8-1 下午5:20:21 $

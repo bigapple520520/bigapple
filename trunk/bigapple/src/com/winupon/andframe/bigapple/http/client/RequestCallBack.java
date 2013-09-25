@@ -39,7 +39,7 @@ public abstract class RequestCallBack<T> {
     };
 
     /**
-     * 正在加载中的回调，只有设置了progress=true，这个方法才会被调用
+     * 正在加载中的回调，只有设置了progress=true，这个方法才会被调用，默认开启每隔1秒回调
      * 
      * @param count
      * @param current

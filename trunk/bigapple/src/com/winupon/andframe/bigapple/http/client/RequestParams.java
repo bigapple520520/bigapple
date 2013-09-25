@@ -108,7 +108,7 @@ public class RequestParams {
         if (!fileParamMap.isEmpty()) {
             MultipartEntity multipartEntity = new MultipartEntity();
 
-            // 添加字符串参数
+            // 添加普通参数
             for (ConcurrentHashMap.Entry<String, String> entry : paramMap.entrySet()) {
                 multipartEntity.addPart(entry.getKey(), entry.getValue());
             }

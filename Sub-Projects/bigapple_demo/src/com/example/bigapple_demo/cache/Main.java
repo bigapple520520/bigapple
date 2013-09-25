@@ -19,7 +19,7 @@ public class Main extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        CacheDemoTest.getObjectCacheTest2(this, handler);
+        CacheDemoTest.getObjectCacheTest3(this, handler);
     }
 
 }

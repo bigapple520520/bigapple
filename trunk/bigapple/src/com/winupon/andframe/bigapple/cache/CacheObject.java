@@ -6,7 +6,7 @@
 package com.winupon.andframe.bigapple.cache;
 
 /**
- * 可以使用这个对象来包装缓存对象，就可以判断缓存是否过期了
+ * 用这个封装缓存对象的唯一好处就是可以设置缓存过期，取到对象后可以根据是否过期做相应的操作
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-8-19 下午8:09:55 $
