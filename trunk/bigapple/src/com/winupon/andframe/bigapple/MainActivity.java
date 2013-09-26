@@ -12,7 +12,9 @@ public class MainActivity extends AnActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        LogUtils.d("fffffffff");
+        LogUtils.d("1111111111111111");
+        LogUtils.allowD = false;
+        LogUtils.d("dug test");
     }
 
 }

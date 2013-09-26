@@ -24,7 +24,7 @@ import com.winupon.andframe.bigapple.asynctask.helper.Result;
 public abstract class AbstractTask<T> extends AsyncTask<Object, Integer, Result<T>> {
     protected final Context context;
     private boolean isShowProgressDialog = true;// 默认显示
-    private boolean isCancel = false;// 默认可以取消
+    private boolean isCancel = true;// 默认可以取消
 
     private String progressTitle = "请稍后...";// 默认提示信息
 
