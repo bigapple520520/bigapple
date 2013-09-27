@@ -49,7 +49,7 @@ public class ProgressDialogUtils {
      */
     public void show(String title, boolean cancelable) {
         progressDialog.setTitle(title);
-        progressDialog.setCancelable(true);
+        progressDialog.setCancelable(cancelable);
         progressDialog.show();
     }
 
