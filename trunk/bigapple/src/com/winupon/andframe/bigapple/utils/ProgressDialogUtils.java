@@ -33,7 +33,7 @@ public class ProgressDialogUtils {
     }
 
     /**
-     * 单例的progressDialog显示
+     * 显示
      * 
      * @param title
      */
@@ -42,32 +42,44 @@ public class ProgressDialogUtils {
     }
 
     /**
-     * 单例的progressDialog隐藏
+     * 显示
+     * 
+     * @param title
+     * @param cancelable
+     */
+    public void show(String title, boolean cancelable) {
+        progressDialog.setTitle(title);
+        progressDialog.setCancelable(true);
+        progressDialog.show();
+    }
+
+    /**
+     * 显示
+     * 
+     * @param title
+     */
+    public static void show(String title, ProgressDialog progressDialog) {
+        progressDialog.setTitle(title);
+        progressDialog.setCancelable(true);
+        progressDialog.show();
+    }
+
+    /**
+     * 隐藏
      */
     public void dismiss() {
         ProgressDialogUtils.dismiss(progressDialog);
     }
 
     /**
-     * 单例的progressDialog影藏，在线程中使用
+     * 隐藏
      */
     public void dismiss(Handler handler) {
         ProgressDialogUtils.dismiss(handler, progressDialog);
     }
 
     /**
-     * 显示（在UI线程中使用）
-     * 
-     * @param title
-     */
-    public static void show(String title, ProgressDialog progressDialog) {
-        progressDialog.setTitle(title);
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-    }
-
-    /**
-     * 隐藏（在线程中使用）
+     * 隐藏
      * 
      * @param handler
      */
@@ -81,7 +93,7 @@ public class ProgressDialogUtils {
     }
 
     /**
-     * 隐藏（在UI线程中使用）
+     * 隐藏
      */
     public static void dismiss(ProgressDialog progressDialog) {
         progressDialog.dismiss();

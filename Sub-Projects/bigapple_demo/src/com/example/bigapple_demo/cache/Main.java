@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import com.example.bigapple_demo.R;
+import com.winupon.andframe.bigapple.cache.AnCacheUtils;
+import com.winupon.andframe.bigapple.utils.ToastUtils;
 
 /**
  * 缓存模块测试
@@ -19,7 +21,13 @@ public class Main extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        CacheDemoTest.getObjectCacheTest3(this, handler);
+        // CacheDemoTest.getObjectCacheTest3(this, handler);
+
+        String dddd = (String) AnCacheUtils.getObjectMemoryCache().get("xa");
+        if (null == dddd) {
+            ToastUtils.displayTextShort(this, "ffff");
+        }
+
     }
 
 }
