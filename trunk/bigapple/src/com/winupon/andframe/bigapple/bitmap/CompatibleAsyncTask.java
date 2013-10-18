@@ -22,7 +22,7 @@ import android.os.Process;
 import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
- * 为android2.3提供兼容executeOnExecutor的AsyncTask
+ * 为android2.3之前的版本提供一个兼容executeOnExecutor的AsyncTask
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-9-22 下午6:28:18 $
@@ -40,14 +40,20 @@ public abstract class CompatibleAsyncTask<Params, Progress, Result> {
         }
     };
 
-    // 阻塞队列
+    /**
+     * 默认线程池使用的阻塞队列
+     */
     private static final BlockingQueue<Runnable> sPoolWorkQueue = new LinkedBlockingQueue<Runnable>(10);
 
-    // 线程池
+    /**
+     * 默认线程池
+     */
     public static final Executor THREAD_POOL_EXECUTOR = new ThreadPoolExecutor(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE,
             KEEP_ALIVE, TimeUnit.SECONDS, sPoolWorkQueue, sThreadFactory);
 
-    // 按顺序执行的线程池
+    /**
+     * 顺序单个执行线程池
+     */
     public static final Executor SERIAL_EXECUTOR = new SerialExecutor();
 
     private static final int MESSAGE_POST_RESULT = 0x1;
@@ -56,72 +62,14 @@ public abstract class CompatibleAsyncTask<Params, Progress, Result> {
     private static final InternalHandler sHandler = new InternalHandler();
 
     private static volatile Executor sDefaultExecutor = SERIAL_EXECUTOR;
+
     private final WorkerRunnable<Params, Result> mWorker;
     private final FutureTask<Result> mFuture;
 
     private volatile Status mStatus = Status.PENDING;// 标识此任务是否被执行过
 
     private final AtomicBoolean mCancelled = new AtomicBoolean();// 标识着是否是用户手动cancel还是自动执行完的
-    private final AtomicBoolean mTaskInvoked = new AtomicBoolean();// 任务是否被调用完成
-
-    /**
-     * 按顺序执行的线程池
-     * 
-     * @author xuan
-     * @version $Revision: 1.0 $, $Date: 2013-9-22 下午6:59:45 $
-     */
-    private static class SerialExecutor implements Executor {
-        // 双向队列
-        final ArrayDeque<Runnable> mTasks = new ArrayDeque<Runnable>();
-        Runnable mActive;
-
-        public synchronized void execute(final Runnable r) {
-            mTasks.offer(new Runnable() {
-                public void run() {
-                    try {
-                        r.run();
-                    }
-                    finally {
-                        scheduleNext();
-                    }
-                }
-            });
-            if (mActive == null) {
-                scheduleNext();
-            }
-        }
-
-        protected synchronized void scheduleNext() {
-            if ((mActive = mTasks.poll()) != null) {
-                THREAD_POOL_EXECUTOR.execute(mActive);
-            }
-        }
-    }
-
-    /**
-     * 任务的执行状态
-     * 
-     * @author xuan
-     * @version $Revision: 1.0 $, $Date: 2013-9-22 下午7:10:47 $
-     */
-    public enum Status {
-        // 分别为：还没被执行、正在执行、执行完毕
-        PENDING, RUNNING, FINISHED,
-    }
-
-    /**
-     * @hide Used to force static handler to be created.
-     */
-    public static void init() {
-        sHandler.getLooper();
-    }
-
-    /**
-     * @hide
-     */
-    public static void setDefaultExecutor(Executor exec) {
-        sDefaultExecutor = exec;
-    }
+    private final AtomicBoolean mTaskInvoked = new AtomicBoolean();// 任务是否被调用执行
 
     /**
      * 构造，创建一个耗时任务，必须在UI线程中使用
@@ -133,15 +81,13 @@ public abstract class CompatibleAsyncTask<Params, Progress, Result> {
 
                 // 设置线程为后台线程
                 android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-                // noinspection unchecked
                 return postResult(doInBackground(mParams));
             }
         };
 
         mFuture = new FutureTask<Result>(mWorker) {
             @Override
-            protected void done() {
-                // 无论是取消获取正常计算完成都会被调用
+            protected void done() {// done无论是取消获取正常计算完成都会被调用
                 try {
                     postResultIfNotInvoked(get());
                 }
@@ -158,124 +104,9 @@ public abstract class CompatibleAsyncTask<Params, Progress, Result> {
         };
     }
 
-    // 如果没有被执行完成，也会调用postResult方法
-    private void postResultIfNotInvoked(Result result) {
-        final boolean wasTaskInvoked = mTaskInvoked.get();
-        if (!wasTaskInvoked) {
-            postResult(result);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private Result postResult(Result result) {
-        Message message = sHandler.obtainMessage(MESSAGE_POST_RESULT, new AsyncTaskResult<Result>(this, result));
-        message.sendToTarget();
-        return result;
-    }
-
+    // /////////////////////////////////////////////外部使用方法//////////////////////////////////////////////////////
     /**
-     * 获取当前任务的执行情况
-     * 
-     * @return
-     */
-    public final Status getStatus() {
-        return mStatus;
-    }
-
-    /**
-     * 子类继承，耗时操作
-     * 
-     * @param params
-     * @return
-     */
-    protected abstract Result doInBackground(Params... params);
-
-    /**
-     * 子类继承，耗时操作之前UI调用
-     */
-    protected void onPreExecute() {
-    }
-
-    /**
-     * 子类继承，耗时操作之后UI调用
-     * 
-     * @param result
-     */
-    protected void onPostExecute(Result result) {
-    }
-
-    /**
-     * 子类继承，在耗时操作内调用publishProgress方法，就会让UI调用该方法
-     * 
-     * @param values
-     */
-    protected void onProgressUpdate(Progress... values) {
-    }
-
-    /**
-     * 子类继承，调用cancel之后会被调用，UI线程执行
-     * 
-     * @param result
-     */
-    protected void onCancelled(Result result) {
-        onCancelled();
-    }
-
-    /**
-     * 子类继承，调用cancel之后会被调用，UI线程执行
-     */
-    protected void onCancelled() {
-    }
-
-    /**
-     * 判断任务在结束前是否被取消了，这个方法只保证cancel方法被调用了，而不保证任务是否正真的被取消了
-     * 
-     * @return
-     */
-    public final boolean isCancelled() {
-        return mCancelled.get();
-    }
-
-    /**
-     * 取消提交的任务
-     * 
-     * @param mayInterruptIfRunning
-     *            如果任务已经在被执行，设置true就表示允许打断
-     * @return
-     */
-    public final boolean cancel(boolean mayInterruptIfRunning) {
-        mCancelled.set(true);
-        return mFuture.cancel(mayInterruptIfRunning);
-    }
-
-    /**
-     * 等待结果的返回
-     * 
-     * @return
-     * @throws InterruptedException
-     * @throws ExecutionException
-     */
-    public final Result get() throws InterruptedException, ExecutionException {
-        return mFuture.get();
-    }
-
-    /**
-     * 等待结果的返回，有过期时间
-     * 
-     * @param timeout
-     * @param unit
-     * @return
-     * @throws InterruptedException
-     * @throws ExecutionException
-     * @throws TimeoutException
-     */
-    public final Result get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException,
-            TimeoutException {
-        return mFuture.get(timeout, unit);
-    }
-
-    /**
-     * 执行任务，会根据手机不同系统的版本，可能会单线程顺序执行，获取时一个线程池执行
+     * 按默认线程池，任务按顺序一个一个执行
      * 
      * @param params
      * @return
@@ -314,20 +145,87 @@ public abstract class CompatibleAsyncTask<Params, Progress, Result> {
         return this;
     }
 
-    /**
-     * 使用默认线程池执行一个任务
-     * 
-     * @param runnable
-     */
     public static void execute(Runnable runnable) {
         sDefaultExecutor.execute(runnable);
     }
 
+    public final boolean isCancelled() {
+        return mCancelled.get();
+    }
+
+    public final boolean cancel(boolean mayInterruptIfRunning) {
+        mCancelled.set(true);
+        return mFuture.cancel(mayInterruptIfRunning);
+    }
+
+    public final Result get() throws InterruptedException, ExecutionException {
+        return mFuture.get();
+    }
+
+    public final Result get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException,
+            TimeoutException {
+        return mFuture.get(timeout, unit);
+    }
+
+    public final Status getStatus() {
+        return mStatus;
+    }
+
+    public static void init() {
+        sHandler.getLooper();
+    }
+
+    public static void setDefaultExecutor(Executor exec) {
+        sDefaultExecutor = exec;
+    }
+
+    // /////////////////////////////////////////////需要被继承方法//////////////////////////////////////////////////////
     /**
-     * 更新UI方法
+     * 耗时操作
+     * 
+     * @param params
+     * @return
+     */
+    protected abstract Result doInBackground(Params... params);
+
+    /**
+     * 耗时操作前UI调用
+     */
+    protected void onPreExecute() {
+    }
+
+    /**
+     * 耗时操作后UI调用
+     * 
+     * @param result
+     */
+    protected void onPostExecute(Result result) {
+    }
+
+    /**
+     * 耗时操作中UI更新
      * 
      * @param values
      */
+    protected void onProgressUpdate(Progress... values) {
+    }
+
+    /**
+     * 取消UI调用，手动取消才会调用
+     * 
+     * @param result
+     */
+    protected void onCancelled(Result result) {
+        onCancelled();
+    }
+
+    /**
+     * 取消UI调用，手动取消才会调用
+     */
+    protected void onCancelled() {
+    }
+
+    // /////////////////////////////////////////////内部方法///////////////////////////////////////////////////////////
     protected final void publishProgress(Progress... values) {
         if (!isCancelled()) {
             sHandler.obtainMessage(MESSAGE_POST_PROGRESS, new AsyncTaskResult<Progress>(this, values)).sendToTarget();
@@ -344,28 +242,20 @@ public abstract class CompatibleAsyncTask<Params, Progress, Result> {
         mStatus = Status.FINISHED;
     }
 
-    /**
-     * handler实现
-     * 
-     * @author xuan
-     * @version $Revision: 1.0 $, $Date: 2013-9-22 下午7:48:24 $
-     */
-    private static class InternalHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-            AsyncTaskResult result = (AsyncTaskResult) msg.obj;
-            switch (msg.what) {
-            case MESSAGE_POST_RESULT:
-                // 这里只有一个结果
-                result.mTask.finish(result.mData[0]);
-                break;
-            case MESSAGE_POST_PROGRESS:
-                result.mTask.onProgressUpdate(result.mData);
-                break;
-            }
+    private void postResultIfNotInvoked(Result result) {
+        final boolean wasTaskInvoked = mTaskInvoked.get();
+        if (!wasTaskInvoked) {
+            postResult(result);
         }
     }
 
+    private Result postResult(Result result) {
+        Message message = sHandler.obtainMessage(MESSAGE_POST_RESULT, new AsyncTaskResult<Result>(this, result));
+        message.sendToTarget();
+        return result;
+    }
+
+    // /////////////////////////////////////////////内部类//////////////////////////////////////////////////////////////
     /**
      * Callable表示任务可有返回值
      * 
@@ -390,6 +280,73 @@ public abstract class CompatibleAsyncTask<Params, Progress, Result> {
             mTask = task;
             mData = data;
         }
+    }
+
+    /**
+     * handler实现，与UI交互
+     * 
+     * @author xuan
+     * @version $Revision: 1.0 $, $Date: 2013-9-22 下午7:48:24 $
+     */
+    private static class InternalHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            AsyncTaskResult result = (AsyncTaskResult) msg.obj;
+            switch (msg.what) {
+            case MESSAGE_POST_RESULT:
+                result.mTask.finish(result.mData[0]);
+                break;
+            case MESSAGE_POST_PROGRESS:
+                result.mTask.onProgressUpdate(result.mData);
+                break;
+            }
+        }
+    }
+
+    /**
+     * 按顺序执行的线程池，但本质还是提交给THREAD_POOL_EXECUTOR执行
+     * 
+     * @author xuan
+     * @version $Revision: 1.0 $, $Date: 2013-9-22 下午6:59:45 $
+     */
+    private static class SerialExecutor implements Executor {
+        // 双向队列
+        final ArrayDeque<Runnable> mTasks = new ArrayDeque<Runnable>();
+        Runnable mActive;
+
+        public synchronized void execute(final Runnable r) {
+            mTasks.offer(new Runnable() {
+                public void run() {
+                    try {
+                        r.run();
+                    }
+                    finally {
+                        scheduleNext();
+                    }
+                }
+            });
+
+            if (mActive == null) {
+                scheduleNext();
+            }
+        }
+
+        protected synchronized void scheduleNext() {
+            if ((mActive = mTasks.poll()) != null) {
+                THREAD_POOL_EXECUTOR.execute(mActive);
+            }
+        }
+    }
+
+    /**
+     * 任务的执行状态
+     * 
+     * @author xuan
+     * @version $Revision: 1.0 $, $Date: 2013-9-22 下午7:10:47 $
+     */
+    public enum Status {
+        // 还未执行、执行中、执行完毕
+        PENDING, RUNNING, FINISHED,
     }
 
 }

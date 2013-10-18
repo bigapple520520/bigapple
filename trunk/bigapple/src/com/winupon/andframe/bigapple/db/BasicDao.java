@@ -14,6 +14,7 @@ import com.winupon.andframe.bigapple.db.callback.MapRowMapper;
 import com.winupon.andframe.bigapple.db.callback.MultiRowMapper;
 import com.winupon.andframe.bigapple.db.callback.SingleRowMapper;
 import com.winupon.andframe.bigapple.db.helper.SqlCreator;
+import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
  * 对原生数据库操作做了一层轻量级封装，主要屏蔽了显式的close操作，当然也可以使用原生的API
@@ -22,7 +23,6 @@ import com.winupon.andframe.bigapple.db.helper.SqlCreator;
  */
 public class BasicDao {
     private DBHelper dbHelper;
-    private SQLiteDatabase sqliteDatabase;
     private final Context context;
 
     public BasicDao(Context context) {
@@ -36,42 +36,41 @@ public class BasicDao {
      */
     public SQLiteDatabase getSQLiteDatabase() {
         dbHelper = new DBHelper(context);
-        sqliteDatabase = dbHelper.getWritableDatabase();
-        return sqliteDatabase;
+        return dbHelper.getWritableDatabase();
     }
 
     /**
-     * 使用完后请Close数据库连接
+     * 使用完后请Close数据库连接，dbHelper的close其实内部就是sqliteDatabase的close
      */
     public void close() {
-        sqliteDatabase.close();
+        // sqliteDatabase.close();
         dbHelper.close();
     }
 
-    /**
-     * 因为context是被声明成protected，子类可以直接使用，不必使用get方法获取，get方法获取在安卓中会略带一点性能消耗，不过影响不大
-     * 
-     * @return
-     */
-    @Deprecated
-    protected Context getContext() {
+    public Context getContext() {
         return context;
     }
 
-    // ----------------------------插入或者更新------------------------------------
-
+    // ///////////////////////////////////////////////插入或者更新////////////////////////////////////////////////////
     /**
-     * 不带参数的插入或者更新
+     * 插入或者更新
      * 
      * @param sql
      */
     protected void update(String sql) {
-        getSQLiteDatabase().execSQL(sql);
-        close();
+        try {
+            getSQLiteDatabase().execSQL(sql);
+        }
+        catch (Exception e) {
+            LogUtils.e("", e);
+        }
+        finally {
+            close();
+        }
     }
 
     /**
-     * 带参数插入
+     * 插入或者更新，带参
      * 
      * @param sql
      * @param args
@@ -81,13 +80,20 @@ public class BasicDao {
             update(sql);
         }
         else {
-            getSQLiteDatabase().execSQL(sql, args);
-            close();
+            try {
+                getSQLiteDatabase().execSQL(sql, args);
+            }
+            catch (Exception e) {
+                LogUtils.e("", e);
+            }
+            finally {
+                close();
+            }
         }
     }
 
     /**
-     * 批量更新
+     * 插入或者更新，批量
      * 
      * @param sql
      * @param argsList
@@ -97,7 +103,7 @@ public class BasicDao {
             return;
         }
 
-        getSQLiteDatabase();
+        SQLiteDatabase sqliteDatabase = getSQLiteDatabase();
         try {
             sqliteDatabase.beginTransaction();
             for (Object[] args : argsList) {
@@ -106,7 +112,7 @@ public class BasicDao {
             sqliteDatabase.setTransactionSuccessful();
         }
         catch (Exception e) {
-            e.printStackTrace();
+            LogUtils.e("", e);
         }
         finally {
             sqliteDatabase.endTransaction();
@@ -114,8 +120,7 @@ public class BasicDao {
         }
     }
 
-    // ----------------------------查询---------------------------------------------------
-
+    // ///////////////////////////////////////////////查询//////////////////////////////////////////////////////////////
     /**
      * 查询，返回多条记录
      * 
@@ -129,7 +134,6 @@ public class BasicDao {
 
         Cursor cursor = getSQLiteDatabase().rawQuery(sql, args);
 
-        // 遍历数据
         try {
             int i = 0;
             while (cursor.moveToNext()) {
@@ -139,7 +143,7 @@ public class BasicDao {
             }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            LogUtils.e("", e);
         }
         finally {
             cursor.close();
@@ -162,14 +166,13 @@ public class BasicDao {
 
         Cursor cursor = getSQLiteDatabase().rawQuery(sql, args);
 
-        // 便利数据
         try {
             if (cursor.moveToNext()) {
                 ret = singleRowMapper.mapRow(cursor);
             }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            LogUtils.e("", e);
         }
         finally {
             cursor.close();
@@ -192,9 +195,8 @@ public class BasicDao {
 
         Cursor cursor = getSQLiteDatabase().rawQuery(sql, args);
 
-        // 遍历数据
-        int i = 0;
         try {
+            int i = 0;
             while (cursor.moveToNext()) {
                 K k = mapRowMapper.mapRowKey(cursor, i);
                 V v = mapRowMapper.mapRowValue(cursor, i);
@@ -203,7 +205,7 @@ public class BasicDao {
             }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            LogUtils.e("", e);
         }
         finally {
             cursor.close();
@@ -236,7 +238,6 @@ public class BasicDao {
 
         String[] args = new String[inArgs.length + prefixArgs.length];
 
-        // 这样拷贝速度更快
         System.arraycopy(prefixArgs, 0, args, 0, prefixArgs.length);
         System.arraycopy(inArgs, 0, args, prefixArgs.length, inArgs.length);
 
@@ -266,7 +267,6 @@ public class BasicDao {
 
         String[] args = new String[inArgs.length + prefixArgs.length];
 
-        // 这样拷贝速度更快
         System.arraycopy(prefixArgs, 0, args, 0, prefixArgs.length);
         System.arraycopy(inArgs, 0, args, prefixArgs.length, inArgs.length);
 

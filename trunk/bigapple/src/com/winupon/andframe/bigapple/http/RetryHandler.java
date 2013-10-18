@@ -1,4 +1,4 @@
-package com.winupon.andframe.bigapple.http.handler;
+package com.winupon.andframe.bigapple.http;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -25,10 +25,10 @@ import android.os.SystemClock;
 public class RetryHandler implements HttpRequestRetryHandler {
     private static final int RETRY_SLEEP_INTERVAL = 1000;
 
-    // 重连白名单（需要重连异常）
+    // 需重连异常
     private static HashSet<Class<?>> exceptionWhiteList = new HashSet<Class<?>>();
 
-    // 重连黑名单（不需要重连的异常，例如用户自定义中断）
+    // 不需重连异常
     private static HashSet<Class<?>> exceptionBlackList = new HashSet<Class<?>>();
 
     static {
@@ -55,11 +55,11 @@ public class RetryHandler implements HttpRequestRetryHandler {
         boolean sent = (b != null && b.booleanValue());
 
         if (retriedTimes > maxRetries) {
-            // 尝试次数超过用户定义的次数，默认5次
+            // 超过最大重连数
             retry = false;
         }
         else if (exceptionBlackList.contains(exception.getClass())) {
-            // 线程被用户中断，则不继续尝试
+            // 不重连异常
             retry = false;
         }
         else if (exceptionWhiteList.contains(exception.getClass())) {

@@ -40,6 +40,10 @@ public class BitmapCommonUtils {
      * @return
      */
     public static int getBitmapSize(Bitmap bitmap) {
+        if (null == bitmap) {
+            return 0;
+        }
+
         return bitmap.getRowBytes() * bitmap.getHeight();
     }
 

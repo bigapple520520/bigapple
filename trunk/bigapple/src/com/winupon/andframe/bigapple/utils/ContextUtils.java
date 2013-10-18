@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
+import android.telephony.TelephonyManager;
 
 /**
  * 判断网络或者SD等之类的工具类
@@ -90,6 +91,16 @@ public abstract class ContextUtils {
      */
     public static String getExternalCacheDirPath(Context context) {
         return context.getExternalCacheDir().getPath();
+    }
+
+    /**
+     * 是否有sim卡
+     * 
+     * @return
+     */
+    public static boolean hasSimCard(Context context) {
+        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        return telephonyManager.getSimState() == TelephonyManager.SIM_STATE_READY;
     }
 
 }

@@ -43,7 +43,6 @@ import com.winupon.andframe.bigapple.http.client.HttpHandler;
 import com.winupon.andframe.bigapple.http.client.RequestCallBack;
 import com.winupon.andframe.bigapple.http.client.RequestParams;
 import com.winupon.andframe.bigapple.http.client.SyncHttpHandler;
-import com.winupon.andframe.bigapple.http.handler.RetryHandler;
 
 /**
  * Http请求工具类，注意在客户端使用时，考虑保持单例
@@ -197,8 +196,7 @@ public class AnHttpUtils {
         clientHeaderMap.put(header, value);
     }
 
-    // GET方法
-    // ----------------------------------------------------------------------------------------------------------------
+    // ///////////////////////////////////////////////异步GET方法//////////////////////////////////////////////////////
     public void get(String url, RequestCallBack<? extends Object> callBack) {
         get(url, null, callBack);
     }
@@ -215,6 +213,7 @@ public class AnHttpUtils {
         sendRequest(httpClient, httpContext, request, null, callBack);
     }
 
+    // ///////////////////////////////////////////////同步GET方法//////////////////////////////////////////////////////
     public Object getSync(String url) {
         return getSync(url, null);
     }
@@ -232,8 +231,7 @@ public class AnHttpUtils {
         return sendSyncRequest(httpClient, httpContext, request, null);
     }
 
-    // POST方法
-    // ----------------------------------------------------------------------------------------------------------------
+    // ///////////////////////////////////////////////异步POST方法//////////////////////////////////////////////////////
     public void post(String url, RequestCallBack<? extends Object> callBack) {
         post(url, null, callBack);
     }
@@ -267,6 +265,7 @@ public class AnHttpUtils {
         sendRequest(httpClient, httpContext, request, contentType, callBack);
     }
 
+    // ///////////////////////////////////////////////同步GET方法//////////////////////////////////////////////////////
     public Object postSync(String url) {
         return postSync(url, null);
     }
@@ -298,8 +297,7 @@ public class AnHttpUtils {
         return sendSyncRequest(httpClient, httpContext, request, contentType);
     }
 
-    // 下载方法，异步的，下载用的是GET请求
-    // ----------------------------------------------------------------------------------------------------------
+    // /////////////////////////////////////////异步GET下载方法///////////////////////////////////////////////////////
     public HttpHandler<File> download(String url, String target, RequestCallBack<File> callback) {
         return download(url, null, target, false, callback);
     }
@@ -320,11 +318,9 @@ public class AnHttpUtils {
         return handler;
     }
 
-    // 内部方法
-    // ----------------------------------------------------------------------------------------------------------------
-
+    // ///////////////////////////////////////////////内部方法///////////////////////////////////////////////////////
     /**
-     * 异步发起请求
+     * 异步请求
      * 
      * @param client
      * @param httpContext
@@ -342,7 +338,7 @@ public class AnHttpUtils {
     }
 
     /**
-     * 同步发起请求
+     * 同步请求
      * 
      * @param client
      * @param httpContext
@@ -360,13 +356,13 @@ public class AnHttpUtils {
     }
 
     /**
-     * 给地址拼接上参数，地址用UTF-8编码的
+     * 拼接参数,UTF-8编码
      * 
      * @param url
      * @param params
      * @return
      */
-    public static String getUrlWithQueryString(String url, RequestParams params) {
+    private static String getUrlWithQueryString(String url, RequestParams params) {
         if (params != null) {
             String paramString = params.getParamString();
             url += "?" + paramString;
@@ -375,7 +371,7 @@ public class AnHttpUtils {
     }
 
     /**
-     * POST请求时获取根据参数获取的HttpEntity对象
+     * 获取HttpEntity
      * 
      * @param params
      * @return

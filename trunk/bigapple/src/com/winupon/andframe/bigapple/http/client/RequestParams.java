@@ -29,8 +29,7 @@ public class RequestParams {
     protected ConcurrentHashMap<String, String> paramMap;// 普通参数
     protected ConcurrentHashMap<String, FileWraper> fileParamMap;// 文件参数
 
-    // 构造
-    // ----------------------------------------------------------------------------------------------------------------
+    // ///////////////////////////////////////////////构造//////////////////////////////////////////////////////////////
     public RequestParams() {
         init();
     }
@@ -66,8 +65,7 @@ public class RequestParams {
         fileParamMap = new ConcurrentHashMap<String, FileWraper>();
     }
 
-    // 添加参数
-    // ----------------------------------------------------------------------------------------------------------------
+    // /////////////////////////////////////////////////添加参数////////////////////////////////////////////////////////
     public void put(String key, String value) {
         if (key != null && value != null) {
             paramMap.put(key, value);
@@ -98,7 +96,7 @@ public class RequestParams {
     }
 
     /**
-     * 把所有参数打包成HttpEntity返回，POST请求时用
+     * 打包HttpEntity，POST请求时有用
      * 
      * @return
      */
@@ -108,12 +106,12 @@ public class RequestParams {
         if (!fileParamMap.isEmpty()) {
             MultipartEntity multipartEntity = new MultipartEntity();
 
-            // 添加普通参数
+            // 普通参数
             for (ConcurrentHashMap.Entry<String, String> entry : paramMap.entrySet()) {
                 multipartEntity.addPart(entry.getKey(), entry.getValue());
             }
 
-            // 添加文件参数
+            // 文件参数
             int currentIndex = 0;
             int lastIndex = fileParamMap.entrySet().size() - 1;
             for (ConcurrentHashMap.Entry<String, FileWraper> entry : fileParamMap.entrySet()) {
@@ -145,12 +143,11 @@ public class RequestParams {
         return entity;
     }
 
-    /**
-     * 获取参数列表，GTE请求时用
-     * 
-     * @return
-     */
-    protected List<BasicNameValuePair> getParamsList() {
+    public String getParamString() {
+        return URLEncodedUtils.format(getParamsList(), ENCODING);
+    }
+
+    private List<BasicNameValuePair> getParamsList() {
         List<BasicNameValuePair> basicNameValuePairList = new LinkedList<BasicNameValuePair>();
 
         for (ConcurrentHashMap.Entry<String, String> entry : paramMap.entrySet()) {
@@ -158,15 +155,6 @@ public class RequestParams {
         }
 
         return basicNameValuePairList;
-    }
-
-    /**
-     * 获取参数串
-     * 
-     * @return
-     */
-    public String getParamString() {
-        return URLEncodedUtils.format(getParamsList(), ENCODING);
     }
 
     @Override

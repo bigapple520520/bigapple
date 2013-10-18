@@ -15,51 +15,51 @@ import android.view.View.OnClickListener;
  * @author xuan
  */
 public class LoveAnTagHandler implements TagHandler {
+    private OnClickListener onClickListener;
 
-	private final OnClickListener onClickListener;
+    private int startIndex = 0;
+    private int stopIndex = 0;
 
-	private int startIndex = 0;
-	private int stopIndex = 0;
+    public LoveAnTagHandler() {
+    }
 
-	public LoveAnTagHandler(OnClickListener onClickListener) {
-		this.onClickListener = onClickListener;
-	}
+    public LoveAnTagHandler(OnClickListener onClickListener) {
+        this.onClickListener = onClickListener;
+    }
 
-	@Override
-	public void handleTag(boolean opening, String tag, Editable output,
-			XMLReader xmlReader) {
-		if (tag.toLowerCase().equals("lovean")) {
-			if (opening) {
-				startGame(tag, output, xmlReader);
-			} else {
-				endGame(tag, output, xmlReader);
-			}
-		}
+    @Override
+    public void handleTag(boolean opening, String tag, Editable output, XMLReader xmlReader) {
+        if (tag.toLowerCase().equals("lovean")) {
+            if (opening) {
+                startLovean(tag, output, xmlReader);
+            }
+            else {
+                endLovean(tag, output, xmlReader);
+            }
+        }
+    }
 
-	}
+    public void startLovean(String tag, Editable output, XMLReader xmlReader) {
+        startIndex = output.length();
+    }
 
-	public void startGame(String tag, Editable output, XMLReader xmlReader) {
-		startIndex = output.length();
-	}
+    public void endLovean(String tag, Editable output, XMLReader xmlReader) {
+        stopIndex = output.length();
+        output.setSpan(new LoveAnSpan(), startIndex, stopIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+    }
 
-	public void endGame(String tag, Editable output, XMLReader xmlReader) {
-		stopIndex = output.length();
-		output.setSpan(new LoveAnSpan(), startIndex, stopIndex,
-				Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-	}
-
-	/**
-	 * 事件处理
-	 * 
-	 * @author xuan
-	 */
-	private class LoveAnSpan extends ClickableSpan implements OnClickListener {
-		@Override
-		public void onClick(View view) {
-			if (null != onClickListener) {
-				onClickListener.onClick(view);
-			}
-		}
-	}
+    /**
+     * 事件处理
+     * 
+     * @author xuan
+     */
+    private class LoveAnSpan extends ClickableSpan implements OnClickListener {
+        @Override
+        public void onClick(View view) {
+            if (null != onClickListener) {
+                onClickListener.onClick(view);
+            }
+        }
+    }
 
 }

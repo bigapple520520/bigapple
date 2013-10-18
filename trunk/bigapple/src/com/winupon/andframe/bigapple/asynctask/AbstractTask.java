@@ -7,13 +7,14 @@ package com.winupon.andframe.bigapple.asynctask;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.winupon.andframe.bigapple.asynctask.callback.AsyncTaskFailCallback;
 import com.winupon.andframe.bigapple.asynctask.callback.AsyncTaskSuccessCallback;
 import com.winupon.andframe.bigapple.asynctask.helper.Result;
+import com.winupon.andframe.bigapple.bitmap.CompatibleAsyncTask;
+import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
  * 耗时任务类的基类，采用了监听器设计模式，模板方法,注意这个任务类的实例只能在UI线程中被创建
@@ -21,7 +22,7 @@ import com.winupon.andframe.bigapple.asynctask.helper.Result;
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-2-17 下午4:32:49 $
  */
-public abstract class AbstractTask<T> extends AsyncTask<Object, Integer, Result<T>> {
+public abstract class AbstractTask<T> extends CompatibleAsyncTask<Object, Integer, Result<T>> {
     protected final Context context;
     private boolean isShowProgressDialog = true;// 默认显示
     private boolean isCancel = true;// 默认可以取消
@@ -35,11 +36,17 @@ public abstract class AbstractTask<T> extends AsyncTask<Object, Integer, Result<
 
     public AbstractTask(Context context) {
         this.context = context;
+        initThreadPoolExecutor();
     }
 
     public AbstractTask(Context context, boolean isShowProgressDialog) {
         this.context = context;
         this.isShowProgressDialog = isShowProgressDialog;
+        initThreadPoolExecutor();
+    }
+
+    private void initThreadPoolExecutor() {
+        setDefaultExecutor(THREAD_POOL_EXECUTOR);
     }
 
     @Override
@@ -52,7 +59,6 @@ public abstract class AbstractTask<T> extends AsyncTask<Object, Integer, Result<
             }
             progressDialog.show();
         }
-
     }
 
     @Override
@@ -62,7 +68,7 @@ public abstract class AbstractTask<T> extends AsyncTask<Object, Integer, Result<
             result = doHttpRequest(objects);
         }
         catch (Exception e) {
-            e.printStackTrace();
+            LogUtils.e("", e);
         }
 
         return result;
@@ -75,7 +81,7 @@ public abstract class AbstractTask<T> extends AsyncTask<Object, Integer, Result<
                 asyncTaskSuccessCallback.successCallback(result);
             }
             else {
-                if (isShowProgressDialog && !TextUtils.isEmpty(result.getMessage())) {
+                if (!TextUtils.isEmpty(result.getMessage())) {
                     Toast.makeText(context, result.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -86,7 +92,7 @@ public abstract class AbstractTask<T> extends AsyncTask<Object, Integer, Result<
             }
             else {
                 String errorMessage = result.getMessage();
-                if (isShowProgressDialog && !TextUtils.isEmpty(errorMessage)) {
+                if (!TextUtils.isEmpty(errorMessage)) {
                     errorMessage = errorMessage.substring(errorMessage.indexOf(":") + 1, result.getMessage().length());
                     Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
                 }

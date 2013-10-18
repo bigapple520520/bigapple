@@ -10,7 +10,7 @@ import android.content.Context;
 import android.os.Handler;
 
 /**
- * 简化一些加载提示框的操作
+ * 简化一些加载提示框的操作，可能会有一点点的内存溢出问题，即context的引用
  * 
  * @author xuan
  * @version $Revision: 34344 $, $Date: 2013-01-21 15:40:03 +0800 (周一, 21 一月 2013) $

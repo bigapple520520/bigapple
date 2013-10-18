@@ -16,13 +16,10 @@ import android.os.Environment;
 public class UpdateConfig {
     public static final String DEFAULT_SAVE_FILENAME = Environment.getExternalStorageDirectory().getPath()
             + "/bigapple/bigapple-default.apk";
-
     public static final String DEFAULT_UPDATE_TITLE = "提示";
     public static final String DEFAULT_UPDATE_TEXT = "软件版本更新";
-
     public static final String DEFAULT_POSTIVE_BTN_TEXT = "确定";
     public static final String DEFAULT_NEGATIVE_BTN_TEXT = "取消";
-
     public static final String DEFAULT_PROGRESS_TEXT = "请稍后...";
 
     // apk存放目录和下载地址
@@ -32,10 +29,8 @@ public class UpdateConfig {
     // 更新提示语
     private String updateTitle = DEFAULT_UPDATE_TITLE;
     private String updateText = DEFAULT_UPDATE_TEXT;
-
     private String positiveBtnText = DEFAULT_POSTIVE_BTN_TEXT;
     private String negativeBtnText = DEFAULT_NEGATIVE_BTN_TEXT;
-
     private String progressText = DEFAULT_PROGRESS_TEXT;
 
     public String getSaveFileName() {

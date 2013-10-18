@@ -15,6 +15,7 @@ import android.text.Html.ImageGetter;
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-4-16 下午6:05:50 $
  */
+@Deprecated
 public class ImgGetter4Resid implements ImageGetter {
 
     private final Context context;

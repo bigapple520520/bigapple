@@ -8,14 +8,14 @@ import android.text.Html.ImageGetter;
  * 
  * @author xuan
  */
+@Deprecated
 public class ImgGetter4Path implements ImageGetter {
-	@Override
-	public Drawable getDrawable(String source) {
-		Drawable drawable = null;
-		drawable = Drawable.createFromPath(source); // 显示本地图片
-		drawable.setBounds(0, 0, drawable.getIntrinsicWidth(),
-				drawable.getIntrinsicHeight());
-		return drawable;
-	}
+    @Override
+    public Drawable getDrawable(String source) {
+        Drawable drawable = null;
+        drawable = Drawable.createFromPath(source); // 显示本地图片
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        return drawable;
+    }
 
 }

@@ -41,13 +41,10 @@ public class FileEntityHandler {
 
         File targetFile = new File(target);
         File parentFile = targetFile.getParentFile();
-
-        // 如果文件夹不存在就创建之
         if (!parentFile.exists() || !parentFile.isDirectory()) {
             parentFile.mkdirs();
         }
 
-        // 如果文件不存在就创建之
         if (!targetFile.exists()) {
             targetFile.createNewFile();
         }

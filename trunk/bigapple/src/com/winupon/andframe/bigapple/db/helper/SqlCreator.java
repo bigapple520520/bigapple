@@ -23,8 +23,9 @@ public class SqlCreator {
     private boolean hasWhere = true;
     private boolean isFirst = true;
 
+    // //////////////////////////////////////////// 构造 ////////////////////////////////////////////////////////////////
     /**
-     * 构造方法。
+     * 构造方法
      * 
      * @param baseSQL
      *            带有 WHERE 关键字的原始 sql
@@ -34,7 +35,7 @@ public class SqlCreator {
     }
 
     /**
-     * 构造方法。
+     * 构造方法
      * 
      * @param baseSQL
      *            原始 sql

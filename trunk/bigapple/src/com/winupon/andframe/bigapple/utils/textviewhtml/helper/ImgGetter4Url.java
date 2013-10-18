@@ -10,6 +10,7 @@ import android.text.Html.ImageGetter;
  * 
  * @author xuan
  */
+@Deprecated
 public class ImgGetter4Url implements ImageGetter {
     @Override
     public Drawable getDrawable(String source) {

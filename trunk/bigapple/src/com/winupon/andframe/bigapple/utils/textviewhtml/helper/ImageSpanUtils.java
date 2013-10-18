@@ -22,7 +22,7 @@ import android.text.style.ImageSpan;
 public abstract class ImageSpanUtils {
 
     /**
-     * 图片代替文字
+     * 图片代替文字显示
      * 
      * @param context
      * @param text
@@ -32,17 +32,11 @@ public abstract class ImageSpanUtils {
     public static SpannableString getSpannableStringByTextReplaceBitmap(Context context, String text, int resId) {
         Drawable drawable = context.getResources().getDrawable(resId);
         BitmapDrawable bd = (BitmapDrawable) drawable;
-
-        ImageSpan imageSpan = new ImageSpan(context, bd.getBitmap());
-
-        SpannableString spannableString = new SpannableString(text);
-        spannableString.setSpan(imageSpan, 0, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        return spannableString;
+        return getSpannableStringByTextReplaceBitmap(context, text, bd.getBitmap());
     }
 
     /**
-     * 图片代替文字
+     * 图片代替文字显示
      * 
      * @param context
      * @param text
@@ -51,10 +45,8 @@ public abstract class ImageSpanUtils {
      */
     public static SpannableString getSpannableStringByTextReplaceBitmap(Context context, String text, Bitmap bitmap) {
         ImageSpan imageSpan = new ImageSpan(context, bitmap);
-
         SpannableString spannableString = new SpannableString(text);
         spannableString.setSpan(imageSpan, 0, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
         return spannableString;
     }
 

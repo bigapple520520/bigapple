@@ -3,13 +3,9 @@ package com.winupon.andframe.bigapple.utils.textviewhtml;
 import android.content.Context;
 import android.text.Html;
 import android.text.Spanned;
-import android.text.TextUtils;
 import android.widget.TextView;
 
-import com.winupon.andframe.bigapple.utils.textviewhtml.helper.ImgGetter4Path;
-import com.winupon.andframe.bigapple.utils.textviewhtml.helper.ImgGetter4Resid;
-import com.winupon.andframe.bigapple.utils.textviewhtml.helper.ImgGetter4ResidBySize;
-import com.winupon.andframe.bigapple.utils.textviewhtml.helper.ImgGetter4Url;
+import com.winupon.andframe.bigapple.utils.textviewhtml.helper.DefaultImgGetter;
 
 /**
  * TextView使用Html格式的工具类
@@ -25,7 +21,7 @@ public abstract class TextViewHtmlUtils {
      * @param htmlStr
      */
     public static void setTextByHtml(TextView textView, String htmlStr) {
-        if (TextUtils.isEmpty(htmlStr)) {
+        if (null == htmlStr) {
             return;
         }
 
@@ -43,7 +39,7 @@ public abstract class TextViewHtmlUtils {
      */
     public static void setTextByHtml(TextView textView, String htmlStr, Html.ImageGetter imageGetter,
             Html.TagHandler tagHandler) {
-        if (TextUtils.isEmpty(htmlStr)) {
+        if (null == htmlStr) {
             return;
         }
 
@@ -69,7 +65,8 @@ public abstract class TextViewHtmlUtils {
      * @param htmlStr
      */
     public static void setTextAndImgByHtml4Url(TextView textView, String htmlStr) {
-        TextViewHtmlUtils.setTextByHtml(textView, htmlStr, new ImgGetter4Url(), null);
+        DefaultImgGetter defaultImgGetter = new DefaultImgGetter(DefaultImgGetter.FROM_TYPE_URL);
+        TextViewHtmlUtils.setTextByHtml(textView, htmlStr, defaultImgGetter, null);
     }
 
     /**
@@ -79,7 +76,8 @@ public abstract class TextViewHtmlUtils {
      * @param htmlStr
      */
     public static void setTextAndImgByHtml4Path(TextView textView, String htmlStr) {
-        TextViewHtmlUtils.setTextByHtml(textView, htmlStr, new ImgGetter4Path(), null);
+        DefaultImgGetter defaultImgGetter = new DefaultImgGetter(DefaultImgGetter.FROM_TYPE_PATH);
+        TextViewHtmlUtils.setTextByHtml(textView, htmlStr, defaultImgGetter, null);
     }
 
     /**
@@ -90,7 +88,8 @@ public abstract class TextViewHtmlUtils {
      * @param context
      */
     public static void setTextAndImgByHtml4Resid(TextView textView, String htmlStr, Context context) {
-        TextViewHtmlUtils.setTextByHtml(textView, htmlStr, new ImgGetter4Resid(context), null);
+        DefaultImgGetter defaultImgGetter = new DefaultImgGetter(context, DefaultImgGetter.FROM_TYPE_RESID);
+        TextViewHtmlUtils.setTextByHtml(textView, htmlStr, defaultImgGetter, null);
     }
 
     /**
@@ -102,7 +101,11 @@ public abstract class TextViewHtmlUtils {
      */
     public static void setTextAndImgByHtml4ResidBySize(TextView textView, String htmlStr, Context context, int width,
             int height) {
-        TextViewHtmlUtils.setTextByHtml(textView, htmlStr, new ImgGetter4ResidBySize(context, width, height), null);
+        DefaultImgGetter defaultImgGetter = new DefaultImgGetter(context, DefaultImgGetter.FROM_TYPE_RESID);
+        defaultImgGetter.setShowOriginalWH(false);
+        defaultImgGetter.setWidth(width);
+        defaultImgGetter.setHeight(height);
+        TextViewHtmlUtils.setTextByHtml(textView, htmlStr, defaultImgGetter, null);
     }
 
 }

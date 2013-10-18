@@ -22,7 +22,7 @@ public abstract class RequestCallBack<T> {
      * 设置是否加载中回调onLoading方法和回调的频率
      * 
      * @param progress
-     *            是否启用进度显示
+     *            是否启用进度显示，只有progress设置成true，onLoading方法才会被调用
      * @param rate
      *            进度更新频率
      */
@@ -32,14 +32,11 @@ public abstract class RequestCallBack<T> {
         return this;
     }
 
-    /**
-     * 访问开始前回调
-     */
     public void onStart() {
     };
 
     /**
-     * 正在加载中的回调，只有设置了progress=true，这个方法才会被调用，默认开启每隔1秒回调
+     * 正在加载中的回调，只有progress设置true，这个方法才会被调用
      * 
      * @param count
      * @param current
@@ -47,21 +44,9 @@ public abstract class RequestCallBack<T> {
     public void onLoading(long count, long current) {
     };
 
-    /**
-     * 成功后回调
-     * 
-     * @param t
-     */
     public void onSuccess(T t) {
     };
 
-    /**
-     * 访问异常时回调
-     * 
-     * @param t
-     * @param errorNo
-     * @param strMsg
-     */
     public void onFailure(Throwable t, int errorNo, String strMsg) {
     };
 

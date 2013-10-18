@@ -93,11 +93,9 @@ public class UpdateManager {
         this.updateConfig = updateConfig;
     }
 
-    // 更新
-    // --------------------------------------------------------------------------------------------------------
-
+    // /////////////////////////////////////////提示用户确定或者取消更新/////////////////////////////////////////////////
     /**
-     * 更新
+     * 提示更新
      * 
      * @param apkUrl
      *            apk下载地址
@@ -109,7 +107,7 @@ public class UpdateManager {
     }
 
     /**
-     * 更新
+     * 提示更新
      * 
      * @param apkUrl
      *            apk下载地址
@@ -138,7 +136,7 @@ public class UpdateManager {
     }
 
     /**
-     * 更新
+     * 提示更新
      * 
      * @param updateConfig
      *            配置参数
@@ -157,9 +155,7 @@ public class UpdateManager {
         showNoticeDialog();
     }
 
-    // 直接下载安装方法
-    // -------------------------------------------------------------------------------------------------------------
-
+    // /////////////////////////////////////////直接下载安装/////////////////////////////////////////////////
     /**
      * 下载安装
      * 
@@ -203,9 +199,14 @@ public class UpdateManager {
         update();
     }
 
-    // 内部方法
-    // ----------------------------------------------------------------------------------------------------------------
-    // 显示对话框，让用户选择是否下载更新
+    /**
+     * 取消下载
+     */
+    public void cancel() {
+        interceptFlag = true;
+    }
+
+    // //////////////////////////////////////内部辅助方法////////////////////////////////////////////////////////////////
     private void showNoticeDialog() {
         AlertDialog.Builder builder = new Builder(context);
         builder.setTitle(updateConfig.getUpdateTitle());
@@ -259,27 +260,24 @@ public class UpdateManager {
     // 实际的更新操作
     public void update() {
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            // sdcard 不可用
             Toast.makeText(context, "SD卡不可用，无法下载，请安装SD卡后再试。", Toast.LENGTH_SHORT).show();
             if (null != notifyCanGotoListener) {
                 notifyCanGotoListener.notifyCanGoto();
             }
 
-            // 因外力因素而无法下载更新
+            // SD卡不可用
             if (null != updateCancelListener) {
-                updateCancelListener.updateCancel(new CancelEvent(CancelEvent.DOWNLOAD_FAIL));
+                updateCancelListener.updateCancel(new CancelEvent(CancelEvent.SDCARD_DISABLED));
             }
             return;
         }
 
-        // 显示更新进度
         updateProgress = new ProgressDialog(context);
         updateProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         updateProgress.setTitle(updateConfig.getProgressText());
         updateProgress.setCancelable(false);
         updateProgress.show();
 
-        // 下载apk
         downloadApk();
     }
 
@@ -334,8 +332,8 @@ public class UpdateManager {
                     }
                     while (!interceptFlag);
 
+                    // 取消下载
                     if (interceptFlag) {
-                        // 取消下载
                         handler.sendEmptyMessage(DOWN_CANCEL);
                         interceptFlag = false;
                     }
@@ -365,7 +363,6 @@ public class UpdateManager {
         }).start();
     }
 
-    // 安装apk
     private void installApk() {
         File apkfile = new File(updateConfig.getSaveFileName());
         if (!apkfile.exists()) {
@@ -380,12 +377,6 @@ public class UpdateManager {
         context.startActivity(intent);
     }
 
-    /**
-     * 可跳去登录界面的监听
-     * 
-     * @author xuan
-     * @version $Revision: 1.0 $, $Date: 2013-5-2 下午2:22:30 $
-     */
     @Deprecated
     public interface NotifyCanGotoListener {
 
@@ -407,13 +398,6 @@ public class UpdateManager {
 
     public void setUpdateCancelListener(UpdateCancelListener updateCancelListener) {
         this.updateCancelListener = updateCancelListener;
-    }
-
-    /**
-     * 取消下载
-     */
-    public void cancel() {
-        interceptFlag = true;
     }
 
 }
