@@ -10,9 +10,9 @@ import java.io.File;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.winupon.andframe.bigapple.media.helper.MediaConfig;
+import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
  * 播放器工具类
@@ -21,13 +21,7 @@ import com.winupon.andframe.bigapple.media.helper.MediaConfig;
  * @version $Revision: 1.0 $, $Date: 2012-12-13 下午12:20:12 $
  */
 public class MediaPlayerModel {
-    public static final String POINT = ".";
-
-    private static final String TAG = "bigapple.MediaPlayerModel";
-
     private final MediaConfig mediaConfig;// 参数配置
-
-    // 保持单例
     private MediaPlayer mediaPlayer;
 
     public MediaPlayerModel(MediaConfig mediaConfig) {
@@ -52,7 +46,7 @@ public class MediaPlayerModel {
         }
 
         try {
-            mediaPlayer.setDataSource(mediaConfig.getVoicePath() + File.separator + fileName + POINT
+            mediaPlayer.setDataSource(mediaConfig.getVoicePath() + File.separator + fileName + "."
                     + mediaConfig.getVoiceExt());
             mediaPlayer.prepare();
             mediaPlayer.start();
@@ -64,32 +58,19 @@ public class MediaPlayerModel {
             });
         }
         catch (Exception e) {
-            Log.e(TAG, "", e);
+            LogUtils.e("", e);
         }
     }
 
-    /**
-     * 获取MediaPlayer对象
-     * 
-     * @return
-     */
     public MediaPlayer getMediaPlayer() {
         prepareMediaPlayer();
         return mediaPlayer;
     }
 
-    /**
-     * 设置MediaPlayer对象
-     * 
-     * @param mediaPlayer
-     */
     public void setMediaPlayer(MediaPlayer mediaPlayer) {
         this.mediaPlayer = mediaPlayer;
     }
 
-    /**
-     * 释放MediaPlayer对象
-     */
     public void release() {
         getMediaPlayer().release();
     }

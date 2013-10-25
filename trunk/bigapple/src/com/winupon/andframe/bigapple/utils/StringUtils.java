@@ -21,7 +21,6 @@ import android.text.TextUtils;
 public abstract class StringUtils {
     public static final String UTF8 = "utf-8";
     public static final String ISO88591 = "iso8859-1";
-
     public static final String EMPTY = "";
 
     /**
@@ -45,8 +44,14 @@ public abstract class StringUtils {
         return str == null ? EMPTY : str.trim();
     }
 
-    // join和split方法
-    // -------------------------------------------------------------------------------------------------------------
+    // ///////////////////////////////////////////////////join和split方法///////////////////////////////////////////////
+    /**
+     * join数组
+     * 
+     * @param array
+     * @param separator
+     * @return
+     */
     public static String join(Object[] array, String separator) {
         if (null == array) {
             return null;
@@ -236,8 +241,7 @@ public abstract class StringUtils {
         return list.toArray(new String[list.size()]);
     }
 
-    // UTF-8编码解码方法
-    // ------------------------------------------------------------------------------------------------------------
+    // ///////////////////////////////////////////////////UTF-8编码解码方法///////////////////////////////////////////////
     /**
      * 编码UTF-8
      * 

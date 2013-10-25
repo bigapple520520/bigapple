@@ -15,9 +15,9 @@ import android.media.MediaRecorder.OnErrorListener;
 import android.media.MediaRecorder.OnInfoListener;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.winupon.andframe.bigapple.media.helper.MediaConfig;
+import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
  * 录音器工具类，依赖FileUtils和UUIDUtils
@@ -26,14 +26,12 @@ import com.winupon.andframe.bigapple.media.helper.MediaConfig;
  * @version $Revision: 31004 $, $Date: 2012-09-28 19:33:03 +0800 (周五, 28 九月 2012) $
  */
 public class MediaRecorderModel {
-    private static final String TAG = "bigapple.MediaRecorderUtils";
-
     private final MediaConfig mediaConfig;// 配置信息
 
     private MediaRecorder mediaRecorder;// 录音器
     private volatile String fileName;// 文件名
 
-    private final ExecutorService singleThreadPool;// 单线程的线程池
+    private final ExecutorService singleThreadPool;
 
     private volatile long lastStartTimeMillis;// 记录开始录音时间，跟结束录音做对比看是否超过某个时间
     private boolean isStarted = false;// 标记是否正在录音
@@ -63,26 +61,26 @@ public class MediaRecorderModel {
             @Override
             public void run() {
                 if (isStarted) {
-                    Log.d(TAG, "startRecord isStarted");
+                    LogUtils.d("startRecord isStarted");
                     return;
                 }
 
                 try {
                     isStarted = true;
-                    Log.d(TAG, "startRecord1");
+                    LogUtils.d("startRecord1");
                     getMediaRecorder();
 
                     mediaRecorder.setOnInfoListener(new OnInfoListener() {
                         @Override
                         public void onInfo(MediaRecorder mr, int what, int extra) {
-                            Log.d(TAG, "info:" + what + "," + extra);
+                            LogUtils.d("info:" + what + "," + extra);
                         }
                     });
 
                     mediaRecorder.setOnErrorListener(new OnErrorListener() {
                         @Override
                         public void onError(MediaRecorder mr, int what, int extra) {
-                            Log.d(TAG, "error:" + what + "," + extra);
+                            LogUtils.d("error:" + what + "," + extra);
                         }
                     });
 
@@ -91,7 +89,6 @@ public class MediaRecorderModel {
 
                     // Preparing状态
                     mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
-
                     mediaRecorder.setOutputFile(mediaConfig.getVoicePath() + File.separator + fileName + "."
                             + mediaConfig.getVoiceExt());
 
@@ -99,7 +96,7 @@ public class MediaRecorderModel {
                         mediaRecorder.prepare();
                     }
                     catch (Exception e) {
-                        Log.e(TAG, "", e);
+                        LogUtils.e("", e);
                     }
 
                     // Prepared状态
@@ -114,10 +111,10 @@ public class MediaRecorderModel {
                     });
 
                     lastStartTimeMillis = System.currentTimeMillis();
-                    Log.d(TAG, "startRecord2");
+                    LogUtils.d("startRecord2");
                 }
                 catch (Exception e) {
-                    Log.e(TAG, "", e);
+                    LogUtils.e("", e);
                 }
             }
         });
@@ -133,12 +130,12 @@ public class MediaRecorderModel {
             @Override
             public void run() {
                 if (!isStarted) {
-                    Log.d(TAG, "stopRecord !isStarted");
+                    LogUtils.d("stopRecord !isStarted");
                     return;
                 }
 
                 try {
-                    Log.d(TAG, "stopRecord1");
+                    LogUtils.d("stopRecord1");
                     long x = System.currentTimeMillis() - lastStartTimeMillis;
                     boolean success = true;
 
@@ -157,7 +154,7 @@ public class MediaRecorderModel {
                             Thread.sleep(1000);
                         }
                         catch (InterruptedException e) {
-                            Log.e(TAG, "", e);
+                            LogUtils.e("", e);
                         }
                     }
 
@@ -183,10 +180,10 @@ public class MediaRecorderModel {
                         }
                     });
 
-                    Log.d(TAG, "stopRecord2");
+                    LogUtils.d("stopRecord2");
                 }
                 catch (Exception e) {
-                    Log.e(TAG, "", e);
+                    LogUtils.e("", e);
                 }
                 finally {
                     isStarted = false;
@@ -195,9 +192,6 @@ public class MediaRecorderModel {
         });
     }
 
-    /**
-     * 释放资源
-     */
     public void destroy() {
         singleThreadPool.shutdown();
     }
@@ -214,48 +208,11 @@ public class MediaRecorderModel {
         this.mediaRecorder = mediaRecorder;
     }
 
-    // 检查录音文件夹是否存在-不存在就新建一个
     private void checkFile() {
         File file = new File(mediaConfig.getVoicePath());
         if (!file.exists()) {
             file.mkdirs();
         }
-    }
-
-    /**
-     * 结束录音监听器
-     * 
-     * @author xuan
-     * @version $Revision: 1.0 $, $Date: 2012-11-27 下午2:26:10 $
-     */
-    public static interface OnRecordStopedListener {
-
-        /**
-         * 结束
-         * 
-         * @param success
-         * @param fileId
-         */
-        void onRecordStoped(boolean success, String fileId);
-
-        /**
-         * 录音时间太短
-         */
-        void onTooShort();
-    }
-
-    /**
-     * 开始录音监听器
-     * 
-     * @author xuan
-     * @version $Revision: 1.0 $, $Date: 2012-11-27 下午2:08:06 $
-     */
-    public static interface OnRecordStartedListener {
-
-        /**
-         * 开始
-         */
-        void onRecordStarted();
     }
 
     /**
@@ -289,6 +246,28 @@ public class MediaRecorderModel {
                 }
             }
         }
+    }
+
+    /**
+     * 结束录音监听器
+     * 
+     * @author xuan
+     * @version $Revision: 1.0 $, $Date: 2012-11-27 下午2:26:10 $
+     */
+    public static interface OnRecordStopedListener {
+        void onRecordStoped(boolean success, String fileId);
+
+        void onTooShort();
+    }
+
+    /**
+     * 开始录音监听器
+     * 
+     * @author xuan
+     * @version $Revision: 1.0 $, $Date: 2012-11-27 下午2:08:06 $
+     */
+    public static interface OnRecordStartedListener {
+        void onRecordStarted();
     }
 
 }
