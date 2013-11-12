@@ -14,11 +14,12 @@ import android.text.SpannableString;
 import android.text.style.ImageSpan;
 
 /**
- * 可以处理图标和文字添加到EditText中
+ * 可以处理图标和文字添加到EditText中，使用span包里的API代替
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-4-16 下午7:50:24 $
  */
+@Deprecated
 public abstract class ImageSpanUtils {
 
     /**

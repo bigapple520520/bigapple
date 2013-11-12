@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
- * 一个更接近底层数据库操作的适配器，可使用安卓原生API操作数据库
+ * 一个更接近底层数据库操作的适配器，可使用安卓原生API操作数据库，多线程操作不同实例，可能会有问题
  * 
  * @author xuan
  */

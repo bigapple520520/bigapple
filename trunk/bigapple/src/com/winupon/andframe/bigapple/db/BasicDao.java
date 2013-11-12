@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -22,6 +23,8 @@ import com.winupon.andframe.bigapple.utils.log.LogUtils;
  * @author xuan
  */
 public class BasicDao {
+    final static ReentrantLock lock = new ReentrantLock();// 保证多线程访问数据库的安全，性能有所损失
+
     private DBHelper dbHelper;
     private final Context context;
 
@@ -58,6 +61,7 @@ public class BasicDao {
      * @param sql
      */
     protected void update(String sql) {
+        lock.lock();
         try {
             getSQLiteDatabase().execSQL(sql);
         }
@@ -66,6 +70,7 @@ public class BasicDao {
         }
         finally {
             close();
+            lock.unlock();
         }
     }
 
@@ -80,6 +85,7 @@ public class BasicDao {
             update(sql);
         }
         else {
+            lock.lock();
             try {
                 getSQLiteDatabase().execSQL(sql, args);
             }
@@ -88,6 +94,7 @@ public class BasicDao {
             }
             finally {
                 close();
+                lock.unlock();
             }
         }
     }
@@ -103,6 +110,7 @@ public class BasicDao {
             return;
         }
 
+        lock.lock();
         SQLiteDatabase sqliteDatabase = getSQLiteDatabase();
         try {
             sqliteDatabase.beginTransaction();
@@ -117,6 +125,7 @@ public class BasicDao {
         finally {
             sqliteDatabase.endTransaction();
             close();
+            lock.unlock();
         }
     }
 
@@ -132,8 +141,8 @@ public class BasicDao {
     protected <T> List<T> query(String sql, String[] args, MultiRowMapper<T> multiRowMapper) {
         List<T> ret = new ArrayList<T>();
 
+        lock.lock();
         Cursor cursor = getSQLiteDatabase().rawQuery(sql, args);
-
         try {
             int i = 0;
             while (cursor.moveToNext()) {
@@ -148,6 +157,7 @@ public class BasicDao {
         finally {
             cursor.close();
             close();
+            lock.unlock();
         }
 
         return ret;
@@ -164,8 +174,8 @@ public class BasicDao {
     protected <T> T query(String sql, String[] args, SingleRowMapper<T> singleRowMapper) {
         T ret = null;
 
+        lock.lock();
         Cursor cursor = getSQLiteDatabase().rawQuery(sql, args);
-
         try {
             if (cursor.moveToNext()) {
                 ret = singleRowMapper.mapRow(cursor);
@@ -177,6 +187,7 @@ public class BasicDao {
         finally {
             cursor.close();
             close();
+            lock.unlock();
         }
 
         return ret;
@@ -193,8 +204,8 @@ public class BasicDao {
     protected <K, V> Map<K, V> query(String sql, String[] args, MapRowMapper<K, V> mapRowMapper) {
         Map<K, V> ret = new HashMap<K, V>();
 
+        lock.lock();
         Cursor cursor = getSQLiteDatabase().rawQuery(sql, args);
-
         try {
             int i = 0;
             while (cursor.moveToNext()) {
@@ -210,6 +221,7 @@ public class BasicDao {
         finally {
             cursor.close();
             close();
+            lock.unlock();
         }
 
         return ret;

@@ -5,7 +5,7 @@ import android.text.Html;
 import android.text.Spanned;
 import android.widget.TextView;
 
-import com.winupon.andframe.bigapple.utils.textviewhtml.helper.DefaultImgGetter;
+import com.winupon.andframe.bigapple.utils.textviewhtml.helper.SimpleImgGetter;
 
 /**
  * TextView使用Html格式的工具类
@@ -65,7 +65,7 @@ public abstract class TextViewHtmlUtils {
      * @param htmlStr
      */
     public static void setTextAndImgByHtml4Url(TextView textView, String htmlStr) {
-        DefaultImgGetter defaultImgGetter = new DefaultImgGetter(DefaultImgGetter.FROM_TYPE_URL);
+        SimpleImgGetter defaultImgGetter = new SimpleImgGetter(SimpleImgGetter.FROM_TYPE_URL);
         TextViewHtmlUtils.setTextByHtml(textView, htmlStr, defaultImgGetter, null);
     }
 
@@ -76,7 +76,7 @@ public abstract class TextViewHtmlUtils {
      * @param htmlStr
      */
     public static void setTextAndImgByHtml4Path(TextView textView, String htmlStr) {
-        DefaultImgGetter defaultImgGetter = new DefaultImgGetter(DefaultImgGetter.FROM_TYPE_PATH);
+        SimpleImgGetter defaultImgGetter = new SimpleImgGetter(SimpleImgGetter.FROM_TYPE_PATH);
         TextViewHtmlUtils.setTextByHtml(textView, htmlStr, defaultImgGetter, null);
     }
 
@@ -88,7 +88,7 @@ public abstract class TextViewHtmlUtils {
      * @param context
      */
     public static void setTextAndImgByHtml4Resid(TextView textView, String htmlStr, Context context) {
-        DefaultImgGetter defaultImgGetter = new DefaultImgGetter(context, DefaultImgGetter.FROM_TYPE_RESID);
+        SimpleImgGetter defaultImgGetter = new SimpleImgGetter(context, SimpleImgGetter.FROM_TYPE_RESID);
         TextViewHtmlUtils.setTextByHtml(textView, htmlStr, defaultImgGetter, null);
     }
 
@@ -101,7 +101,7 @@ public abstract class TextViewHtmlUtils {
      */
     public static void setTextAndImgByHtml4ResidBySize(TextView textView, String htmlStr, Context context, int width,
             int height) {
-        DefaultImgGetter defaultImgGetter = new DefaultImgGetter(context, DefaultImgGetter.FROM_TYPE_RESID);
+        SimpleImgGetter defaultImgGetter = new SimpleImgGetter(context, SimpleImgGetter.FROM_TYPE_RESID);
         defaultImgGetter.setShowOriginalWH(false);
         defaultImgGetter.setWidth(width);
         defaultImgGetter.setHeight(height);
