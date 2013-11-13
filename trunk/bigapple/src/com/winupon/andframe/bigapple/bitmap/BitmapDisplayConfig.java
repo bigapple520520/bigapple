@@ -17,6 +17,8 @@ import com.winupon.andframe.bigapple.bitmap.callback.SimpleImageLoadCallBack;
 public class BitmapDisplayConfig {
     private static final Bitmap TRANSPARENT_BITMAP = Bitmap.createBitmap(50, 50, Bitmap.Config.ALPHA_8);
 
+    private Bitmap.Config bitmapConfig = Bitmap.Config.ARGB_4444;
+
     private int bitmapMaxWidth = 0;
     private int bitmapMaxHeight = 0;
 
@@ -28,8 +30,6 @@ public class BitmapDisplayConfig {
     private ImageLoadCallBack imageLoadCallBack;
 
     private boolean showOriginal = false;
-
-    private Bitmap.Config bitmapConfig = Bitmap.Config.ARGB_4444;
 
     private final Context mContext;
 

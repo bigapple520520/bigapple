@@ -127,6 +127,7 @@ public class AnBitmapUtils {
      * 设置默认的缓存过期时间。如果http请求返回了过期时间，使用请求返回的时间。否则按设置的来
      * 
      * @param defaultExpiry
+     *            过期的那个时间点
      * @return
      */
     public AnBitmapUtils configDefaultCacheExpiry(long defaultExpiry) {

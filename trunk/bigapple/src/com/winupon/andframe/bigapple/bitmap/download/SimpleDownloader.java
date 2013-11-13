@@ -72,6 +72,7 @@ public class SimpleDownloader implements Downloader {
      * 设置图片过期时长
      * 
      * @param expiry
+     *            表示过期的那个时间点
      */
     @Override
     public void setDefaultExpiry(long expiry) {
