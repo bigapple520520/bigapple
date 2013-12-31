@@ -238,28 +238,4 @@ public class SqlCreator {
         return sql.toString();
     }
 
-    /**
-     * 根据参数个数生成IN括弧里面的部分sql，包含括弧
-     * 
-     * @param size
-     *            参数个数
-     * @return IN括弧里面的部分sql
-     */
-    public static String getInSQL(int size) {
-        StringBuilder inSQL = new StringBuilder();
-
-        inSQL.append("(");
-        for (int i = 0; i < size; i++) {
-            if (i == 0) {
-                inSQL.append("?");
-            }
-            else {
-                inSQL.append(",?");
-            }
-        }
-        inSQL.append(")");
-
-        return inSQL.toString();
-    }
-
 }

@@ -28,7 +28,7 @@ public class LruMemoryCache<K, V> {
             throw new IllegalArgumentException("maxSize <= 0");
         }
         this.maxSize = maxSize;
-        this.map = new LinkedHashMap<K, V>(0, 0.75f, true);// true表示以访问顺序排序
+        this.map = new LinkedHashMap<K, V>(0, 0.75f, true);// true表示以访问顺序排序，利用这个可实现LRU算法
         this.keyExpiryMap = new KeyExpiryMap<K, Long>(0, 0.75f);
     }
 

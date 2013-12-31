@@ -22,17 +22,18 @@ public final class R {
         public static final int loading=0x7f020003;
     }
     public static final class id {
-        public static final int button=0x7f080003;
+        public static final int button=0x7f080004;
         public static final int clearButton=0x7f080001;
         public static final int imageView=0x7f080002;
         public static final int loadButton=0x7f080000;
         public static final int menu_settings=0x7f080005;
-        public static final int textView=0x7f080004;
+        public static final int textView=0x7f080003;
     }
     public static final class layout {
         public static final int bitmap_layout_test=0x7f030000;
-        public static final int http_layout_test=0x7f030001;
-        public static final int main=0x7f030002;
+        public static final int demo_ioc=0x7f030001;
+        public static final int http_layout_test=0x7f030002;
+        public static final int main=0x7f030003;
     }
     public static final class menu {
         public static final int main=0x7f070000;

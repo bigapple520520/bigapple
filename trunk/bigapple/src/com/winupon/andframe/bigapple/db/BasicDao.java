@@ -14,7 +14,7 @@ import android.text.TextUtils;
 import com.winupon.andframe.bigapple.db.callback.MapRowMapper;
 import com.winupon.andframe.bigapple.db.callback.MultiRowMapper;
 import com.winupon.andframe.bigapple.db.callback.SingleRowMapper;
-import com.winupon.andframe.bigapple.db.helper.SqlCreator;
+import com.winupon.andframe.bigapple.db.helper.SqlUtils;
 import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
@@ -23,7 +23,9 @@ import com.winupon.andframe.bigapple.utils.log.LogUtils;
  * @author xuan
  */
 public class BasicDao {
-    final static ReentrantLock lock = new ReentrantLock();// 保证多线程访问数据库的安全，性能有所损失
+    public static boolean DEBUG = false;
+
+    private final static ReentrantLock lock = new ReentrantLock();// 保证多线程访问数据库的安全，性能有所损失
 
     private DBHelper dbHelper;
     private final Context context;
@@ -63,6 +65,7 @@ public class BasicDao {
     protected void update(String sql) {
         lock.lock();
         try {
+            debugSql(sql, null);
             getSQLiteDatabase().execSQL(sql);
         }
         catch (Exception e) {
@@ -87,6 +90,7 @@ public class BasicDao {
         else {
             lock.lock();
             try {
+                debugSql(sql, args);
                 getSQLiteDatabase().execSQL(sql, args);
             }
             catch (Exception e) {
@@ -115,6 +119,7 @@ public class BasicDao {
         try {
             sqliteDatabase.beginTransaction();
             for (Object[] args : argsList) {
+                debugSql(sql, args);
                 sqliteDatabase.execSQL(sql, args);
             }
             sqliteDatabase.setTransactionSuccessful();
@@ -142,6 +147,7 @@ public class BasicDao {
         List<T> ret = new ArrayList<T>();
 
         lock.lock();
+        debugSql(sql, args);
         Cursor cursor = getSQLiteDatabase().rawQuery(sql, args);
         try {
             int i = 0;
@@ -175,6 +181,7 @@ public class BasicDao {
         T ret = null;
 
         lock.lock();
+        debugSql(sql, args);
         Cursor cursor = getSQLiteDatabase().rawQuery(sql, args);
         try {
             if (cursor.moveToNext()) {
@@ -205,6 +212,7 @@ public class BasicDao {
         Map<K, V> ret = new HashMap<K, V>();
 
         lock.lock();
+        debugSql(sql, args);
         Cursor cursor = getSQLiteDatabase().rawQuery(sql, args);
         try {
             int i = 0;
@@ -242,7 +250,7 @@ public class BasicDao {
         }
 
         StringBuilder sql = new StringBuilder();
-        sql.append(prefix).append(SqlCreator.getInSQL(inArgs.length));
+        sql.append(prefix).append(SqlUtils.getInSQL(inArgs.length));
 
         if (!TextUtils.isEmpty(postfix)) {
             sql.append(postfix);
@@ -271,7 +279,7 @@ public class BasicDao {
         }
 
         StringBuilder sql = new StringBuilder();
-        sql.append(prefix).append(SqlCreator.getInSQL(inArgs.length));
+        sql.append(prefix).append(SqlUtils.getInSQL(inArgs.length));
 
         if (!TextUtils.isEmpty(postfix)) {
             sql.append(postfix);
@@ -283,6 +291,12 @@ public class BasicDao {
         System.arraycopy(inArgs, 0, args, prefixArgs.length, inArgs.length);
 
         return query(sql.toString(), args, mapRowMapper);
+    }
+
+    private void debugSql(String sql, Object[] args) {
+        if (DEBUG) {
+            LogUtils.d(SqlUtils.getSQL(sql, args));
+        }
     }
 
 }

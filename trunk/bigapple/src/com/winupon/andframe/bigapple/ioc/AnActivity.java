@@ -13,6 +13,8 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 
+import com.winupon.andframe.bigapple.utils.log.LogUtils;
+
 /**
  * 安卓IOC框架使用继承该类，或者使用ViewUtils，进行手动inject注入，但是使用ViewUtils便不支持InjectParamThis注解了
  * 
@@ -60,11 +62,14 @@ public class AnActivity extends Activity {
 
         if (null != injectView) {
             try {
-                field.setAccessible(true);
-                field.set(this, this.findViewById(injectView.value()));
+                View view = this.findViewById(injectView.value());
+                if (null != view) {
+                    field.setAccessible(true);
+                    field.set(this, view);
+                }
             }
             catch (Exception e) {
-                e.printStackTrace();
+                LogUtils.e("", e);
             }
         }
     }
@@ -84,7 +89,7 @@ public class AnActivity extends Activity {
                 field.set(this, constructor.newInstance(new Object[] { this }));
             }
             catch (Exception e) {
-                e.printStackTrace();
+                LogUtils.e("", e);
             }
         }
     }

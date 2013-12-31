@@ -6,14 +6,13 @@ import java.util.concurrent.ThreadFactory;
 
 import android.app.ActivityManager;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import com.winupon.andframe.bigapple.bitmap.core.BitmapCache;
+import com.winupon.andframe.bigapple.bitmap.core.BitmapCacheManager;
 import com.winupon.andframe.bigapple.bitmap.core.BitmapCommonUtils;
 import com.winupon.andframe.bigapple.bitmap.download.Downloader;
 import com.winupon.andframe.bigapple.bitmap.download.SimpleDownloader;
-import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
  * 全局配置，包括了缓存管理等一些参数
@@ -40,8 +39,6 @@ public class BitmapGlobalConfig {
 
     private long defaultCacheExpiry = 1000L * 60 * 60 * 24 * 30; // 默认30天过期
 
-    private AfterClearCacheListener afterClearCacheListener;// 清理缓存后的回调
-
     private final Context context;
 
     public BitmapGlobalConfig(Context context, String diskCachePath) {
@@ -51,8 +48,9 @@ public class BitmapGlobalConfig {
     }
 
     private void initBitmapCache() {
-        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_INIT_MEMORY_CACHE);
-        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_INIT_DISK_CACHE);
+        BitmapCacheManager bitmapCacheManager = BitmapCacheManager.getInstance(getBitmapCache());
+        bitmapCacheManager.initMemoryCache(null);
+        bitmapCacheManager.initDiskCache(null);
     }
 
     // ///////////////////////////////////////////获取磁盘缓存路径///////////////////////////////////////////////////////
@@ -190,152 +188,6 @@ public class BitmapGlobalConfig {
 
     private int getMemoryClass() {
         return ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
-    }
-
-    // /////////////////////////////////////////// 图片缓存管理 //////////////////////////////////////////////////////////
-    private class BitmapCacheManagementTask extends AsyncTask<Object, Void, Integer> {
-        public static final int MESSAGE_INIT_MEMORY_CACHE = 0;
-        public static final int MESSAGE_INIT_DISK_CACHE = 1;
-        public static final int MESSAGE_FLUSH = 2;
-        public static final int MESSAGE_CLOSE = 3;
-        public static final int MESSAGE_CLEAR = 4;
-        public static final int MESSAGE_CLEAR_MEMORY = 5;
-        public static final int MESSAGE_CLEAR_DISK = 6;
-        public static final int MESSAGE_CLEAR_BY_KEY = 7;
-        public static final int MESSAGE_CLEAR_MEMORY_BY_KEY = 8;
-        public static final int MESSAGE_CLEAR_DISK_BY_KEY = 9;
-
-        @Override
-        protected Integer doInBackground(Object... params) {
-            Integer type = (Integer) params[0];
-
-            try {
-                switch (type) {
-                case MESSAGE_INIT_MEMORY_CACHE:
-                    initMemoryCacheInBackground();
-                    break;
-                case MESSAGE_INIT_DISK_CACHE:
-                    initDiskInBackground();
-                    break;
-                case MESSAGE_FLUSH:
-                    clearMemoryCacheInBackground();
-                    flushCacheInBackground();
-                    break;
-                case MESSAGE_CLOSE:
-                    clearMemoryCacheInBackground();
-                    closeCacheInBackground();
-                case MESSAGE_CLEAR:
-                    clearCacheInBackground();
-                    break;
-                case MESSAGE_CLEAR_MEMORY:
-                    clearMemoryCacheInBackground();
-                    break;
-                case MESSAGE_CLEAR_DISK:
-                    clearDiskCacheInBackground();
-                    break;
-                case MESSAGE_CLEAR_BY_KEY:
-                    clearCacheInBackground(String.valueOf(params[1]), (BitmapDisplayConfig) params[2]);
-                    break;
-                case MESSAGE_CLEAR_MEMORY_BY_KEY:
-                    clearMemoryCacheInBackground(String.valueOf(params[1]), (BitmapDisplayConfig) params[2]);
-                    break;
-                case MESSAGE_CLEAR_DISK_BY_KEY:
-                    clearDiskCacheInBackground(String.valueOf(params[1]));
-                    break;
-                }
-            }
-            catch (Exception e) {
-                LogUtils.e(e.getMessage(), e);
-            }
-
-            return type;
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-            super.onPostExecute(result);
-
-            if (null != afterClearCacheListener) {
-                afterClearCacheListener.afterClearCache(result);
-                afterClearCacheListener = null;// 回调一次后设置成null
-            }
-        }
-
-        private void initMemoryCacheInBackground() {
-            getBitmapCache().initMemoryCache();
-        }
-
-        private void initDiskInBackground() {
-            getBitmapCache().initDiskCache();
-        }
-
-        private void clearCacheInBackground() {
-            getBitmapCache().clearCache();
-        }
-
-        private void clearMemoryCacheInBackground() {
-            getBitmapCache().clearMemoryCache();
-        }
-
-        private void clearDiskCacheInBackground() {
-            getBitmapCache().clearDiskCache();
-        }
-
-        private void clearCacheInBackground(String uri, BitmapDisplayConfig config) {
-            getBitmapCache().clearCache(uri, config);
-        }
-
-        private void clearMemoryCacheInBackground(String uri, BitmapDisplayConfig config) {
-            getBitmapCache().clearMemoryCache(uri, config);
-        }
-
-        private void clearDiskCacheInBackground(String uri) {
-            getBitmapCache().clearDiskCache(uri);
-        }
-
-        private void flushCacheInBackground() {
-            getBitmapCache().flush();
-        }
-
-        private void closeCacheInBackground() {
-            getBitmapCache().close();
-        }
-    }
-
-    public void clearCache() {
-        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_CLEAR);
-    }
-
-    public void clearMemoryCache() {
-        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_CLEAR_MEMORY);
-    }
-
-    public void clearDiskCache() {
-        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_CLEAR_DISK);
-    }
-
-    public void clearCache(String uri, BitmapDisplayConfig config) {
-        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_CLEAR_BY_KEY, uri, config);
-    }
-
-    public void clearMemoryCache(String uri, BitmapDisplayConfig config) {
-        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_CLEAR_MEMORY_BY_KEY, uri, config);
-    }
-
-    public void clearDiskCache(String uri) {
-        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_CLEAR_DISK_BY_KEY, uri);
-    }
-
-    public void flushCache() {
-        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_FLUSH);
-    }
-
-    public void closeCache() {
-        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_CLOSE);
-    }
-
-    public void setAfterClearCacheListener(AfterClearCacheListener afterClearCacheListener) {
-        this.afterClearCacheListener = afterClearCacheListener;
     }
 
 }

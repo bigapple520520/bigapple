@@ -13,6 +13,7 @@ import android.view.animation.Animation;
 import android.widget.ImageView;
 
 import com.winupon.andframe.bigapple.bitmap.callback.ImageLoadCallBack;
+import com.winupon.andframe.bigapple.bitmap.core.BitmapCacheManager;
 import com.winupon.andframe.bigapple.bitmap.download.Downloader;
 
 /**
@@ -28,12 +29,14 @@ public class AnBitmapUtils {
     private final Context context;
     private BitmapGlobalConfig globalConfig;
     private BitmapDisplayConfig defaultDisplayConfig;
+    private final BitmapCacheManager bitmapCacheManager;
 
     // /////////////////////////////// 创建实例，用户使用时可自行保持单例/////////////////////////////////////////////
     public AnBitmapUtils(Context context, String diskCachePath) {
         this.context = context;
         globalConfig = new BitmapGlobalConfig(context, diskCachePath);
         defaultDisplayConfig = new BitmapDisplayConfig(context);
+        bitmapCacheManager = BitmapCacheManager.getInstance(globalConfig.getBitmapCache());
     }
 
     public AnBitmapUtils(Context context) {
@@ -150,11 +153,6 @@ public class AnBitmapUtils {
         return this;
     }
 
-    public AnBitmapUtils configAfterClearCacheListener(AfterClearCacheListener afterClearCacheListener) {
-        globalConfig.setAfterClearCacheListener(afterClearCacheListener);
-        return this;
-    }
-
     public AnBitmapUtils configGlobalConfig(BitmapGlobalConfig globalConfig) {
         this.globalConfig = globalConfig;
         return this;
@@ -166,11 +164,11 @@ public class AnBitmapUtils {
     }
 
     public void display(ImageView imageView, String uri, BitmapDisplayConfig displayConfig) {
-        if (imageView == null) {
+        if (null == imageView) {
             return;
         }
 
-        if (displayConfig == null) {
+        if (null == displayConfig) {
             displayConfig = defaultDisplayConfig;
         }
 
@@ -179,11 +177,9 @@ public class AnBitmapUtils {
             return;
         }
 
-        Bitmap bitmap = null;
-        bitmap = globalConfig.getBitmapCache().getBitmapFromMemCache(uri, displayConfig);// 缓存中取
-
+        Bitmap bitmap = globalConfig.getBitmapCache().getBitmapFromMemCache(uri, displayConfig);// 缓存中取
         if (bitmap != null) {
-            imageView.setImageBitmap(bitmap);
+            displayConfig.getImageLoadCallBack().loadCompleted(imageView, bitmap, displayConfig);
         }
         else if (!bitmapLoadTaskExist(imageView, uri)) {
             final BitmapLoadTask loadTask = new BitmapLoadTask(imageView, displayConfig);
@@ -199,57 +195,95 @@ public class AnBitmapUtils {
     }
 
     // ////////////////////////////////////////缓存清理/////////////////////////////////////////////////////////////////
+    public void clearCache(AfterClearCacheListener listener) {
+        bitmapCacheManager.clearCache(listener);
+    }
+
     public void clearCache() {
-        globalConfig.clearCache();
+        clearCache(null);
+    }
+
+    public void clearMemoryCache(AfterClearCacheListener listener) {
+        bitmapCacheManager.clearMemoryCache(listener);
     }
 
     public void clearMemoryCache() {
-        globalConfig.clearMemoryCache();
+        clearMemoryCache(null);
+    }
+
+    public void clearDiskCache(AfterClearCacheListener listener) {
+        bitmapCacheManager.clearDiskCache(listener);
     }
 
     public void clearDiskCache() {
-        globalConfig.clearDiskCache();
+        bitmapCacheManager.clearDiskCache(null);
     }
 
-    public void clearCache(String uri, BitmapDisplayConfig config) {
-        if (config == null) {
-            config = defaultDisplayConfig;
-        }
-        globalConfig.clearCache(uri, config);
-    }
-
-    public void clearMemoryCache(String uri, BitmapDisplayConfig config) {
-        if (config == null) {
-            config = defaultDisplayConfig;
-        }
-        globalConfig.clearMemoryCache(uri, config);
-    }
-
-    public void clearDiskCache(String uri) {
-        globalConfig.clearDiskCache(uri);
-    }
-
-    public void flushCache() {
-        globalConfig.flushCache();
-    }
-
-    public void closeCache() {
-        globalConfig.closeCache();
-    }
-
-    /**
-     * 从内存缓存中获取图片对象
-     * 
-     * @param uri
-     * @param displayConfig
-     * @return
-     */
-    public Bitmap getBitmapFromMemCache(String uri, BitmapDisplayConfig displayConfig) {
-        if (displayConfig == null) {
+    public void clearCache(String uri, BitmapDisplayConfig displayConfig, AfterClearCacheListener listener) {
+        if (null == displayConfig) {
             displayConfig = defaultDisplayConfig;
         }
 
-        return globalConfig.getBitmapCache().getBitmapFromMemCache(uri, displayConfig);
+        bitmapCacheManager.clearCache(uri, displayConfig, listener);
+    }
+
+    public void clearCache(String uri, BitmapDisplayConfig displayConfig) {
+        clearCache(uri, displayConfig, null);
+    }
+
+    public void clearMemoryCache(String uri, BitmapDisplayConfig displayConfig, AfterClearCacheListener listener) {
+        if (null == displayConfig) {
+            displayConfig = defaultDisplayConfig;
+        }
+
+        bitmapCacheManager.clearMemoryCache(uri, displayConfig, listener);
+    }
+
+    public void clearMemoryCache(String uri, BitmapDisplayConfig displayConfig) {
+        clearMemoryCache(uri, displayConfig, null);
+    }
+
+    public void clearDiskCache(String uri, AfterClearCacheListener listener) {
+        bitmapCacheManager.clearDiskCache(uri, listener);
+    }
+
+    public void clearDiskCache(String uri) {
+        clearDiskCache(uri, null);
+    }
+
+    public void flushCache(AfterClearCacheListener listener) {
+        bitmapCacheManager.flushCache(listener);
+    }
+
+    public void flushCache() {
+        flushCache(null);
+    }
+
+    public void closeCache(AfterClearCacheListener listener) {
+        bitmapCacheManager.closeCache(listener);
+    }
+
+    public void closeCache() {
+        closeCache(null);
+    }
+
+    /**
+     * 从缓存中获取图片，如果没有，返回null
+     * 
+     * @param uri
+     * @return
+     */
+    public Bitmap getBitmapFromCache(String uri, BitmapDisplayConfig displayConfig) {
+        if (null == displayConfig) {
+            displayConfig = defaultDisplayConfig;
+        }
+
+        Bitmap bitmap = globalConfig.getBitmapCache().getBitmapFromMemCache(uri, displayConfig);
+        if (null == bitmap) {
+            bitmap = globalConfig.getBitmapCache().getBitmapFromDiskCache(uri, displayConfig);
+        }
+
+        return bitmap;
     }
 
     // //////////////////////////////////任务暂定开始操作///////////////////////////////////////////////////////////////
@@ -259,7 +293,7 @@ public class AnBitmapUtils {
 
     public void pauseTasks() {
         pauseTask = true;
-        flushCache();
+        flushCache(null);
     }
 
     /**

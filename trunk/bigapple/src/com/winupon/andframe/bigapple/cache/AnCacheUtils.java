@@ -19,13 +19,9 @@ import com.winupon.andframe.bigapple.cache.impl.ObjectMemoryCache;
  * @version $Revision: 1.0 $, $Date: 2013-9-17 下午8:46:35 $
  */
 public abstract class AnCacheUtils {
-    private static final int DEFAULT_OBJECT_CACHE_SIZE = 20;// 默认可放20个单位的缓存
-    private static final int DEFAULT_BITMAP_CACHE_SIZE = 1024 * 1024 * 3;// 默认3M
-    private static final float DEFAULT_BITMAP_CACHE_PERCENT = 0.3f;// 默认按照系统可以内存的0.3系数，所以会根据不同手机调整
-
-    private static int objectCacheSize = DEFAULT_OBJECT_CACHE_SIZE;
-    private static int bitmapCacheSize = DEFAULT_BITMAP_CACHE_SIZE;
-    private static float bitmapCachePercent = DEFAULT_BITMAP_CACHE_PERCENT;
+    private static int objectCacheSize = 20;// 默认可放20个单位的缓存
+    private static int bitmapCacheSize = 1024 * 1024 * 3;// 默认3M
+    private static float bitmapCachePercent = 0.3f;// 默认按照系统可以内存的0.3系数，所以会根据不同手机调整
 
     private static Cache<String, Object> objectMemoryCache;
     private static Cache<String, Bitmap> bitmapMemoryCache;
@@ -75,7 +71,7 @@ public abstract class AnCacheUtils {
      * 
      * @param size
      */
-    public static void configObjectCacheSize(int size) {
+    public static void resetObjectCache(int size) {
         objectCacheSize = size;
         closeObjectCache();
     }
@@ -85,7 +81,7 @@ public abstract class AnCacheUtils {
      * 
      * @param size
      */
-    public static void configBitmapCacheSize(int size) {
+    public static void resetBitmapCache(int size) {
         bitmapCacheSize = size;
         closeBitmapCache();
     }
@@ -95,7 +91,7 @@ public abstract class AnCacheUtils {
      * 
      * @param size
      */
-    public static void configBitmapCacheSize(float percent) {
+    public static void resetBitmapCache(float percent) {
         bitmapCachePercent = percent;
         closeBitmapCache();
     }

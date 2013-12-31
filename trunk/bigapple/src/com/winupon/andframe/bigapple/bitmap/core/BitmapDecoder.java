@@ -17,7 +17,6 @@ import com.winupon.andframe.bigapple.utils.log.LogUtils;
 public abstract class BitmapDecoder {
     public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight,
             Bitmap.Config config) {
-
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         options.inPurgeable = true;
@@ -57,7 +56,6 @@ public abstract class BitmapDecoder {
 
     public static Bitmap decodeSampledBitmapFromDescriptor(FileDescriptor fileDescriptor, int reqWidth, int reqHeight,
             Bitmap.Config config) {
-
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         options.inPurgeable = true;
@@ -77,12 +75,12 @@ public abstract class BitmapDecoder {
     }
 
     public static Bitmap decodeSampledBitmapFromByteArray(byte[] data, int reqWidth, int reqHeight, Bitmap.Config config) {
-
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         options.inPurgeable = true;
         BitmapFactory.decodeByteArray(data, 0, data.length, options);
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
         options.inJustDecodeBounds = false;
         if (config != null) {
             options.inPreferredConfig = config;
@@ -110,7 +108,6 @@ public abstract class BitmapDecoder {
             }
 
             final float totalPixels = width * height;
-
             final float totalReqPixelsCap = reqWidth * reqHeight * 2;
 
             while (totalPixels / (inSampleSize * inSampleSize) > totalReqPixelsCap) {

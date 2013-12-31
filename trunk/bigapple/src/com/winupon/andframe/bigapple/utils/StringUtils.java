@@ -364,4 +364,8 @@ public abstract class StringUtils {
         return realLength;
     }
 
+    public static String defaultIfEmpty(String str, String defaultStr) {
+        return TextUtils.isEmpty(str) ? defaultStr : str;
+    }
+
 }

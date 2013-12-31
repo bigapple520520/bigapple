@@ -39,8 +39,11 @@ public abstract class ViewUtils {
                 InjectView injectView = field.getAnnotation(InjectView.class);
                 if (null != injectView) {
                     try {
-                        field.setAccessible(true);
-                        field.set(handler, finder.findViewById(injectView.value()));
+                        View view = finder.findViewById(injectView.value());
+                        if (null != view) {
+                            field.setAccessible(true);
+                            field.set(handler, view);
+                        }
                     }
                     catch (Exception e) {
                         LogUtils.e(e.getMessage(), e);

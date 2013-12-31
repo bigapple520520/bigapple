@@ -57,7 +57,7 @@ public class SimpleDownloader implements Downloader {
         }
         catch (Exception e) {
             result = -1;
-            LogUtils.e(e.getMessage(), e);
+            LogUtils.e("", e);
         }
         finally {
             IOUtils.closeQuietly(bis);

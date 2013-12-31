@@ -19,6 +19,8 @@ public class BitmapDisplayConfig {
 
     private Bitmap.Config bitmapConfig = Bitmap.Config.ARGB_4444;
 
+    private boolean showOriginal = false;
+
     private int bitmapMaxWidth = 0;
     private int bitmapMaxHeight = 0;
 
@@ -28,8 +30,6 @@ public class BitmapDisplayConfig {
     private Bitmap loadFailedBitmap;
 
     private ImageLoadCallBack imageLoadCallBack;
-
-    private boolean showOriginal = false;
 
     private final Context mContext;
 

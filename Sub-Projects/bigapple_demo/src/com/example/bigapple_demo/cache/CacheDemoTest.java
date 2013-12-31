@@ -111,8 +111,6 @@ public abstract class CacheDemoTest {
 
         // 马上再取，就有了
         showObject(context, cache.get("xuan"));
-        
-        
 
         // 等缓存过期
         new Thread(new Runnable() {
