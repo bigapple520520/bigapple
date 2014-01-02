@@ -3,7 +3,7 @@
  * Copyright (c) 2013 ZDSoft Networks, Inc. All rights reserved.
  * $Id$
  */
-package com.winupon.andframe.bigapple.http2;
+package com.winupon.andframe.bigapple.http2.httpclient;
 
 import java.util.LinkedList;
 import java.util.Map;
@@ -28,6 +28,13 @@ public class AndroidHttpClientFace {
 
     private static final String DEFAULT_ENCODE = "utf-8";
 
+    /**
+     * post请求
+     * 
+     * @param url
+     * @param paramsMap
+     * @return
+     */
     public static String requestURLPost(String url, Map<String, String> paramsMap) {
         Log.v(TAG, url + paramsMap.toString());
 

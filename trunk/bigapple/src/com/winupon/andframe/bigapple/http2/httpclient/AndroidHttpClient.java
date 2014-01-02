@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.winupon.andframe.bigapple.http2;
+package com.winupon.andframe.bigapple.http2.httpclient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -160,11 +160,9 @@ public final class AndroidHttpClient implements HttpClient {
         this.delegate = new DefaultHttpClient(ccm, params) {
             @Override
             protected BasicHttpProcessor createHttpProcessor() {
-                // Add interceptor to prevent making requests from main thread.
                 BasicHttpProcessor processor = super.createHttpProcessor();
-                processor.addRequestInterceptor(sThreadCheckInterceptor);
-                processor.addRequestInterceptor(new CurlLogger());
-
+                processor.addRequestInterceptor(sThreadCheckInterceptor);// 防止在主线程中使用
+                processor.addRequestInterceptor(new CurlLogger());// 日志
                 return processor;
             }
 
