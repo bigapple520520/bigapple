@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
  * 请求参数封装
@@ -107,7 +110,13 @@ public class RequestParams {
     public String getUrlParamsString() {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, String> e : paramMap.entrySet()) {
-            sb.append(e.getKey()).append("=").append(e.getValue()).append("&");
+            try {
+                sb.append(e.getKey()).append("=").append(URLEncoder.encode(e.getValue(), "utf-8")).append("&");
+            }
+            catch (Exception e2) {
+                LogUtils.e("", e2);
+                return "";
+            }
         }
 
         return sb.toString();

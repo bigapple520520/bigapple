@@ -5,8 +5,6 @@
  */
 package com.winupon.andframe.bigapple.demo.http2;
 
-import java.io.File;
-
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
@@ -15,8 +13,9 @@ import android.widget.TextView;
 
 import com.winupon.andframe.bigapple.R;
 import com.winupon.andframe.bigapple.bitmap.CompatibleAsyncTask;
-import com.winupon.andframe.bigapple.http2.urlhttpclient.DownloadCallBack;
+import com.winupon.andframe.bigapple.http2.urlhttpclient.RequestParams;
 import com.winupon.andframe.bigapple.http2.urlhttpclient.URLHttpClient;
+import com.winupon.andframe.bigapple.http2.urlhttpclient.handler.EntityCallBack;
 import com.winupon.andframe.bigapple.ioc.AnActivity;
 import com.winupon.andframe.bigapple.ioc.InjectView;
 import com.winupon.andframe.bigapple.utils.log.LogUtils;
@@ -61,7 +60,9 @@ public class UrlHttpClientDemoActivity extends AnActivity {
                         URLHttpClient client = new URLHttpClient();
                         String ret = null;
                         try {
-                            ret = client.get("http://www.baidu.com");
+                            RequestParams requestParams = new RequestParams();
+                            requestParams.put("name", "我就是get上去的参数");
+                            ret = client.get("http://blog.xuanner.com/testGet.php", requestParams);
                         }
                         catch (Exception e) {
                             LogUtils.e("", e);
@@ -87,7 +88,7 @@ public class UrlHttpClientDemoActivity extends AnActivity {
                 new CompatibleAsyncTask<Object, Object, String>() {
                     @Override
                     protected void onPreExecute() {
-                        textView.setText("正在努力get中");
+                        textView.setText("正在努力post中");
                     }
 
                     @Override
@@ -95,7 +96,10 @@ public class UrlHttpClientDemoActivity extends AnActivity {
                         URLHttpClient client = new URLHttpClient();
                         String ret = null;
                         try {
-                            ret = client.post("http://www.renren.com");
+                            RequestParams requestParams = new RequestParams();
+                            requestParams.put("name", "我就是name");
+                            requestParams.put("value", "我就是value");
+                            ret = client.post("http://blog.xuanner.com/testPost.php", requestParams);
                         }
                         catch (Exception e) {
                             LogUtils.e("", e);
@@ -130,21 +134,13 @@ public class UrlHttpClientDemoActivity extends AnActivity {
                         String filePath = null;
                         try {
                             filePath = Environment.getExternalStorageDirectory().getPath() + "/bigappletest/11.jpg";
-                            client.download("http://img2.pcpop.com/ArticleImages/0x0/0/118/000118652.jpg", new File(
-                                    filePath), new DownloadCallBack() {
-                                @Override
-                                public void onStart(long count) {
-                                }
-
-                                @Override
-                                public void onLoading(long count, long current) {
-                                    publishProgress(count, current);
-                                }
-
-                                @Override
-                                public void onEnd() {
-                                }
-                            });
+                            client.download("http://img2.pcpop.com/ArticleImages/0x0/0/118/000118652.jpg", filePath,
+                                    new EntityCallBack() {
+                                        @Override
+                                        public void callBack(long count, long current, boolean mustNoticeUI) {
+                                            publishProgress(count, current);
+                                        }
+                                    }, false);
                         }
                         catch (Exception e) {
                             LogUtils.e("", e);
@@ -167,5 +163,4 @@ public class UrlHttpClientDemoActivity extends AnActivity {
             }
         });
     }
-
 }
