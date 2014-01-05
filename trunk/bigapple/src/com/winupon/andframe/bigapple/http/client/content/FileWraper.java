@@ -14,18 +14,19 @@ import java.io.InputStream;
  * @version $Revision: 1.0 $, $Date: 2013-8-7 下午8:14:21 $
  */
 public class FileWraper {
-    public InputStream inputStream;
-    public String fileName;
-    public String contentType;
+	public InputStream inputStream;
+	public String fileName;
+	public String contentType;
 
-    public FileWraper(InputStream inputStream, String fileName, String contentType) {
-        this.inputStream = inputStream;
-        this.fileName = fileName;
-        this.contentType = contentType;
-    }
+	public FileWraper(InputStream inputStream, String fileName,
+			String contentType) {
+		this.inputStream = inputStream;
+		this.fileName = fileName;
+		this.contentType = contentType;
+	}
 
-    public String getFileName() {
-        return (null != fileName) ? fileName : "nofilename";
-    }
+	public String getFileName() {
+		return (null != fileName) ? fileName : "nofilename";
+	}
 
 }

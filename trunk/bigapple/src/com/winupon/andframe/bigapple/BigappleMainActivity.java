@@ -6,9 +6,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import com.winupon.andframe.bigapple.demo.http2.UrlHttpClientDemoActivity;
 import com.winupon.andframe.bigapple.ioc.AnActivity;
 import com.winupon.andframe.bigapple.ioc.InjectView;
+import com.winupon.andframe.bigapple.zzdemo.http2.UrlHttpClientDemoActivity;
 
 public class BigappleMainActivity extends AnActivity {
 

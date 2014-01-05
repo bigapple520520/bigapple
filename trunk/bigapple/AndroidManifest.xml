@@ -31,7 +31,7 @@
             </intent-filter>
         </activity>
         
-        <activity android:name=".demo.http2.UrlHttpClientDemoActivity" />
+        <activity android:name="com.winupon.andframe.bigapple.zzdemo.http2.UrlHttpClientDemoActivity" />
     </application>
 
 </manifest>

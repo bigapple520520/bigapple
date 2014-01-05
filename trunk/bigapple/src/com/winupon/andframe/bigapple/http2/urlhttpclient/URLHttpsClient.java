@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import com.winupon.andframe.bigapple.http2.urlhttpclient.core.RequestParams;
 import com.winupon.andframe.bigapple.http2.urlhttpclient.entity.MultipartEntity;
 import com.winupon.andframe.bigapple.http2.urlhttpclient.entity.UrlEncodedFormEntity;
@@ -25,7 +27,7 @@ import com.winupon.andframe.bigapple.utils.log.LogUtils;
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2014-1-2 下午1:02:31 $
  */
-public class URLHttpClient {
+public class URLHttpsClient {
 	private int connectionTimeout = 1000 * 60;
 	private int readTimeout = 1000 * 60;
 	private String encode = "utf-8";
@@ -52,9 +54,9 @@ public class URLHttpClient {
 		}
 
 		String result = null;
-		HttpURLConnection connection = null;
+		HttpsURLConnection connection = null;
 		try {
-			connection = (HttpURLConnection) new URL(url).openConnection();
+			connection = (HttpsURLConnection) new URL(url).openConnection();
 			connection.setConnectTimeout(connectionTimeout);
 			connection.setReadTimeout(readTimeout);
 			connection.setRequestProperty("Accept-Encoding", "identity");

@@ -6,7 +6,7 @@ package com.winupon.andframe.bigapple.http2.urlhttpclient.handler;
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-8-7 下午2:11:00 $
  */
-public interface EntityCallBack {
+public interface ResultCallBack {
 
     /**
      * 处理结果时回调
