@@ -18,7 +18,7 @@ import com.winupon.andframe.bigapple.io.IOUtils;
 import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
- * 图片缓存对象
+ * 图片缓存对象，打包了内存缓存和磁盘缓存
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-8-1 下午6:20:12 $
@@ -29,8 +29,8 @@ public class BitmapCache {
     private static LruDiskCache mDiskLruCache;
     private static LruMemoryCache<String, SoftReference<Bitmap>> mMemoryCache;
 
-    private final Object mDiskCacheLock = new Object();
-    private boolean isDiskCacheReadied = false;
+    private final Object mDiskCacheLock = new Object();// 操作磁盘缓存锁
+    private boolean isDiskCacheReadied = false;// 标识磁盘是否可已读
 
     private final BitmapGlobalConfig globalConfig;
 
@@ -39,6 +39,9 @@ public class BitmapCache {
     }
 
     // ////////////////////////////////////////初始化缓存///////////////////////////////////////////////////////////////
+    /**
+     * 初始化内存缓存
+     */
     public void initMemoryCache() {
         if (!globalConfig.isMemoryCacheEnabled()) {
             return;
@@ -59,6 +62,9 @@ public class BitmapCache {
         };
     }
 
+    /**
+     * 初始化磁盘缓存
+     */
     public void initDiskCache() {
         if (!globalConfig.isDiskCacheEnabled()) {
             return;
@@ -129,7 +135,7 @@ public class BitmapCache {
                                         outputStream);
                                 if (bitmapMeta.expiryTimestamp < 0) {
                                     editor.abort();
-                                    return null;
+                                    return null;// 下载失败
                                 }
                                 else {
                                     editor.setEntryExpiryTimestamp(bitmapMeta.expiryTimestamp);

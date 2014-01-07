@@ -15,6 +15,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import android.annotation.TargetApi;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
@@ -27,6 +28,7 @@ import com.winupon.andframe.bigapple.utils.log.LogUtils;
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-9-22 下午6:28:18 $
  */
+@TargetApi(9)
 public abstract class CompatibleAsyncTask<Params, Progress, Result> {
     private static final int CORE_POOL_SIZE = 5;
     private static final int MAXIMUM_POOL_SIZE = 128;
@@ -310,7 +312,7 @@ public abstract class CompatibleAsyncTask<Params, Progress, Result> {
      * @version $Revision: 1.0 $, $Date: 2013-9-22 下午6:59:45 $
      */
     private static class SerialExecutor implements Executor {
-        // 双向队列
+        // 双向队列 added API 9
         final ArrayDeque<Runnable> mTasks = new ArrayDeque<Runnable>();
         Runnable mActive;
 

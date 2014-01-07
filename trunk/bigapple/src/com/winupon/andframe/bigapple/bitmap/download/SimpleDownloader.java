@@ -34,8 +34,7 @@ public class SimpleDownloader implements Downloader {
         long result = -1;
         try {
             if (uri.startsWith("/")) {
-                FileInputStream fileInputStream = new FileInputStream(uri);
-                bis = new BufferedInputStream(fileInputStream);
+                bis = new BufferedInputStream(new FileInputStream(uri));
                 result = System.currentTimeMillis() + getDefaultExpiry();
             }
             else {
@@ -56,7 +55,6 @@ public class SimpleDownloader implements Downloader {
             outputStream.flush();
         }
         catch (Exception e) {
-            result = -1;
             LogUtils.e("", e);
         }
         finally {
