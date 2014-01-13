@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.winupon.andframe.bigapple.asynctask.callback.AsyncTaskFailCallback;
+import com.winupon.andframe.bigapple.asynctask.callback.AsyncTaskResultNullCallback;
 import com.winupon.andframe.bigapple.asynctask.callback.AsyncTaskSuccessCallback;
 import com.winupon.andframe.bigapple.asynctask.helper.Result;
 import com.winupon.andframe.bigapple.bitmap.CompatibleAsyncTask;
@@ -31,6 +32,7 @@ public abstract class AbstractTask<T> extends CompatibleAsyncTask<Object, Intege
 
     private AsyncTaskSuccessCallback<T> asyncTaskSuccessCallback;// 成功回调
     private AsyncTaskFailCallback<T> asyncTaskFailCallback;// 失败回调
+    private AsyncTaskResultNullCallback asyncTaskResultNullCallback;// result返回null的回调
 
     private ProgressDialog progressDialog;// 提示框
 
@@ -76,6 +78,17 @@ public abstract class AbstractTask<T> extends CompatibleAsyncTask<Object, Intege
 
     @Override
     protected void onPostExecute(Result<T> result) {
+        if (isShowProgressDialog) {// 先隐藏提示框
+            progressDialog.dismiss();
+        }
+
+        if (null == result) {
+            if (null != asyncTaskResultNullCallback) {
+                asyncTaskResultNullCallback.resultNullCallback();
+            }
+            return;
+        }
+
         if (result.isSuccess()) {
             if (null != asyncTaskSuccessCallback) {
                 asyncTaskSuccessCallback.successCallback(result);
@@ -99,9 +112,6 @@ public abstract class AbstractTask<T> extends CompatibleAsyncTask<Object, Intege
             }
         }
 
-        if (isShowProgressDialog) {
-            progressDialog.dismiss();
-        }
     }
 
     /**
@@ -120,6 +130,15 @@ public abstract class AbstractTask<T> extends CompatibleAsyncTask<Object, Intege
      */
     public void setAsyncTaskFailCallback(AsyncTaskFailCallback<T> asyncTaskFailCallback) {
         this.asyncTaskFailCallback = asyncTaskFailCallback;
+    }
+
+    /**
+     * 设置result返回null的回调
+     * 
+     * @param asyncTaskResultNullCallback
+     */
+    public void setAsyncTaskResultNullCallback(AsyncTaskResultNullCallback asyncTaskResultNullCallback) {
+        this.asyncTaskResultNullCallback = asyncTaskResultNullCallback;
     }
 
     public boolean isShowProgressDialog() {
