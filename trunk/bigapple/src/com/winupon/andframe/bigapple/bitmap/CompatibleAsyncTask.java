@@ -34,7 +34,10 @@ public abstract class CompatibleAsyncTask<Params, Progress, Result> {
     private static final int MAXIMUM_POOL_SIZE = 128;
     private static final int KEEP_ALIVE = 1;
 
-    private static final ThreadFactory sThreadFactory = new ThreadFactory() {
+    /**
+     * 产生线程池的工厂类
+     */
+    protected static final ThreadFactory sThreadFactory = new ThreadFactory() {
         private final AtomicInteger mCount = new AtomicInteger(1);
 
         public Thread newThread(Runnable r) {
@@ -48,13 +51,13 @@ public abstract class CompatibleAsyncTask<Params, Progress, Result> {
     private static final BlockingQueue<Runnable> sPoolWorkQueue = new LinkedBlockingQueue<Runnable>(10);
 
     /**
-     * 默认线程池
+     * 自带线程池
      */
     public static final Executor THREAD_POOL_EXECUTOR = new ThreadPoolExecutor(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE,
             KEEP_ALIVE, TimeUnit.SECONDS, sPoolWorkQueue, sThreadFactory);
 
     /**
-     * 顺序单个执行线程池
+     * 借用（自带线程池）实现的串行任务执行线程池
      */
     public static final Executor SERIAL_EXECUTOR = new SerialExecutor();
 
@@ -63,6 +66,9 @@ public abstract class CompatibleAsyncTask<Params, Progress, Result> {
 
     private static final InternalHandler sHandler = new InternalHandler();
 
+    /**
+     * 默认执行的线程池
+     */
     private static volatile Executor sDefaultExecutor = SERIAL_EXECUTOR;
 
     private final WorkerRunnable<Params, Result> mWorker;
@@ -118,7 +124,7 @@ public abstract class CompatibleAsyncTask<Params, Progress, Result> {
     }
 
     /**
-     * 指定线程池执行
+     * 启动任务类，指定执行任务的线程池
      * 
      * @param exec
      * @param params
@@ -147,28 +153,69 @@ public abstract class CompatibleAsyncTask<Params, Progress, Result> {
         return this;
     }
 
+    /**
+     * 启动任务类
+     * 
+     * @param runnable
+     */
     public static void execute(Runnable runnable) {
         sDefaultExecutor.execute(runnable);
     }
 
+    /**
+     * 判断任务类是否被取消了
+     * 
+     * @return
+     */
     public final boolean isCancelled() {
         return mCancelled.get();
     }
 
+    /**
+     * 取消已经启动的任务类
+     * 
+     * @param mayInterruptIfRunning
+     *            如果任务类已经在执行，是否可以打断
+     * @return
+     */
     public final boolean cancel(boolean mayInterruptIfRunning) {
         mCancelled.set(true);
         return mFuture.cancel(mayInterruptIfRunning);
     }
 
+    /**
+     * 阻塞获取异步任务执行返回的结果
+     * 
+     * @return
+     * @throws InterruptedException
+     * @throws ExecutionException
+     */
     public final Result get() throws InterruptedException, ExecutionException {
         return mFuture.get();
     }
 
+    /**
+     * 阻塞获取异步任务执行返回的结果
+     * 
+     * @param timeout
+     *            阻塞超时时间
+     * @param unit
+     *            阻塞超时时间的单位
+     * @return
+     * @throws InterruptedException
+     * @throws ExecutionException
+     * @throws TimeoutException
+     */
     public final Result get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException,
             TimeoutException {
         return mFuture.get(timeout, unit);
     }
 
+    /**
+     * 获取当前任务类的状态
+     * 
+     * @return
+     */
     public final Status getStatus() {
         return mStatus;
     }
@@ -177,6 +224,11 @@ public abstract class CompatibleAsyncTask<Params, Progress, Result> {
         sHandler.getLooper();
     }
 
+    /**
+     * 设置默认执行的线程池
+     * 
+     * @param exec
+     */
     public static void setDefaultExecutor(Executor exec) {
         sDefaultExecutor = exec;
     }
@@ -234,6 +286,7 @@ public abstract class CompatibleAsyncTask<Params, Progress, Result> {
         }
     }
 
+    // 任务类结束后的回调，被取消和执行完成分别调用的方法不一样
     private void finish(Result result) {
         if (isCancelled()) {
             onCancelled(result);
@@ -244,6 +297,7 @@ public abstract class CompatibleAsyncTask<Params, Progress, Result> {
         mStatus = Status.FINISHED;
     }
 
+    // 任务类启动了，但是没有被调用，基本上是那种被取消的情况
     private void postResultIfNotInvoked(Result result) {
         final boolean wasTaskInvoked = mTaskInvoked.get();
         if (!wasTaskInvoked) {
@@ -251,6 +305,7 @@ public abstract class CompatibleAsyncTask<Params, Progress, Result> {
         }
     }
 
+    // 提交结果，执行完成和手动取消都会调用
     private Result postResult(Result result) {
         Message message = sHandler.obtainMessage(MESSAGE_POST_RESULT, new AsyncTaskResult<Result>(this, result));
         message.sendToTarget();
@@ -312,7 +367,7 @@ public abstract class CompatibleAsyncTask<Params, Progress, Result> {
      * @version $Revision: 1.0 $, $Date: 2013-9-22 下午6:59:45 $
      */
     private static class SerialExecutor implements Executor {
-        // 双向队列 added API 9
+        // 双向队列（ArrayDeque） added API 9
         final ArrayDeque<Runnable> mTasks = new ArrayDeque<Runnable>();
         Runnable mActive;
 
@@ -328,6 +383,7 @@ public abstract class CompatibleAsyncTask<Params, Progress, Result> {
                 }
             });
 
+            // 启动排在队列中第一的任务，之后的任务都是由排在他前一个的任务来启动
             if (mActive == null) {
                 scheduleNext();
             }
