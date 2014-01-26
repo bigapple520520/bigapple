@@ -8,6 +8,7 @@ package com.winupon.andframe.bigapple.utils.cache;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 
 /**
@@ -17,6 +18,7 @@ import android.graphics.Bitmap;
  * @version $Revision: 1.0 $, $Date: 2013-8-20 上午9:07:41 $
  */
 @Deprecated
+@TargetApi(12)
 public abstract class AnCacheManager {
     private static final int DEFAULT_OBJECT_CACHE_SIZE = 20;// 默认可放20个单位
     private static final int DEFAULT_BITMAP_CACHE_SIZE = 3 * 1024 * 1024;// 默认可放3M
