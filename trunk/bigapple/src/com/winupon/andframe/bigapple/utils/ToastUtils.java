@@ -15,7 +15,7 @@ import android.widget.Toast;
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-3-25 下午7:40:05 $
  */
-public class ToastUtils {
+public abstract class ToastUtils {
     /**
      * 显示吐司信息（较长时间）
      * 

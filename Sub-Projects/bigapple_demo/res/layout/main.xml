@@ -1,10 +1,13 @@
-<RelativeLayout 
+<ScrollView 
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
-    <TextView
-        android:id="@+id/textView"
+    android:layout_height="fill_parent"
+    android:background="@android:color/white"
+    android:scrollbars="vertical">
+    <LinearLayout 
+        android:id="@+id/content"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:text="@string/hello_world" />
-</RelativeLayout>
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    </LinearLayout>
+</ScrollView>

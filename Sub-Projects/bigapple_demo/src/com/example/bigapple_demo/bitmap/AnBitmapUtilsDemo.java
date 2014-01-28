@@ -48,14 +48,12 @@ public abstract class AnBitmapUtilsDemo {
      * 清理所有缓存，包括内存和磁盘
      */
     public static void clearCache(final Context context) {
-        getDeFaultAnBitmapUtils(context).configAfterClearCacheListener(new AfterClearCacheListener() {
+        getDeFaultAnBitmapUtils(context).clearCache(new AfterClearCacheListener() {
             @Override
             public void afterClearCache(int arg0) {
                 ToastUtils.displayTextShort(context, "我清理了哦");
             }
         });
-
-        getDeFaultAnBitmapUtils(context).clearCache();
     }
 
 }
