@@ -32,6 +32,8 @@
         </activity>
         
         <activity android:name="com.winupon.andframe.bigapple.zzdemo.http2.UrlHttpClientDemoActivity" />
+        <activity android:name="com.winupon.andframe.bigapple.zzdemo.ioc.IocDemoActivity" />
+        <activity android:name="com.winupon.andframe.bigapple.zzdemo.db.DbDemoActivity" />
     </application>
 
 </manifest>
