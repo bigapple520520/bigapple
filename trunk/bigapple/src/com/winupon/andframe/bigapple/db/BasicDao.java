@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -54,6 +55,149 @@ public class BasicDao {
 
     public Context getContext() {
         return context;
+    }
+
+    // ///////////////////////////////////////////////android的sqlite原生api///////////////////////////////////////////
+    /**
+     * 插入
+     * 
+     * @param table
+     * @param nullColumnHack
+     *            当values是空时，指向该字段的设置成null，插入。
+     * @param values
+     * @return
+     */
+    protected long insert(String table, String nullColumnHack, ContentValues values) {
+        long updateCount = 0;
+
+        lock.lock();
+        try {
+            updateCount = getSQLiteDatabase().insert(table, nullColumnHack, values);
+        }
+        catch (Exception e) {
+            LogUtils.e("", e);
+        }
+        finally {
+            close();
+            lock.unlock();
+        }
+
+        return updateCount;
+    }
+
+    /**
+     * 更新
+     * 
+     * @param table
+     * @param values
+     * @param whereClause
+     * @param whereArgs
+     * @return
+     */
+    protected int update(String table, ContentValues values, String whereClause, String[] whereArgs) {
+        int updateCount = 0;
+
+        lock.lock();
+        try {
+            updateCount = getSQLiteDatabase().update(table, values, whereClause, whereArgs);
+        }
+        catch (Exception e) {
+            LogUtils.e("", e);
+        }
+        finally {
+            close();
+            lock.unlock();
+        }
+
+        return updateCount;
+    }
+
+    /**
+     * 删除
+     * 
+     * @param table
+     * @param whereClause
+     * @param whereArgs
+     * @return
+     */
+    protected int delete(String table, String whereClause, String[] whereArgs) {
+        int updateCount = 0;
+
+        lock.lock();
+        try {
+            updateCount = getSQLiteDatabase().delete(table, whereClause, whereArgs);
+        }
+        catch (Exception e) {
+            LogUtils.e("", e);
+        }
+        finally {
+            close();
+            lock.unlock();
+        }
+
+        return updateCount;
+    }
+
+    /**
+     * 查询
+     * 
+     * @param table
+     * @param columns
+     * @param selection
+     * @param selectionArgs
+     * @param groupBy
+     * @param having
+     * @param orderBy
+     * @param limit
+     * @return
+     */
+    protected Cursor query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy,
+            String having, String orderBy, String limit) {
+        Cursor cursor = null;
+        lock.lock();
+        try {
+            cursor = getSQLiteDatabase().query(table, columns, selection, selectionArgs, groupBy, having, orderBy,
+                    limit);
+        }
+        catch (Exception e) {
+            LogUtils.e("", e);
+        }
+        finally {
+            close();
+            lock.unlock();
+        }
+
+        return cursor;
+    }
+
+    /**
+     * 查询
+     * 
+     * @param table
+     * @param columns
+     * @param selection
+     * @param selectionArgs
+     * @param groupBy
+     * @param having
+     * @param orderBy
+     * @return
+     */
+    protected Cursor query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy,
+            String having, String orderBy) {
+        Cursor cursor = null;
+        lock.lock();
+        try {
+            cursor = getSQLiteDatabase().query(table, columns, selection, selectionArgs, groupBy, having, orderBy);
+        }
+        catch (Exception e) {
+            LogUtils.e("", e);
+        }
+        finally {
+            close();
+            lock.unlock();
+        }
+
+        return cursor;
     }
 
     // ///////////////////////////////////////////////插入或者更新////////////////////////////////////////////////////
