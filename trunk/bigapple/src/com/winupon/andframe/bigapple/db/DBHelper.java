@@ -17,6 +17,8 @@ import com.winupon.andframe.bigapple.utils.log.LogUtils;
  * @version $Revision: 1.0 $, $Date: 2013-3-20 下午7:33:06 $
  */
 public class DBHelper extends SQLiteOpenHelper {
+    private static DBHelper instance;// 单例
+
     /**
      * 用于初始化或升级数据库的文件名格式
      */
@@ -57,9 +59,29 @@ public class DBHelper extends SQLiteOpenHelper {
         DBHelper.databaseName = databaseName;
     }
 
+    public static void init(int databaseVersion, String databaseName, Context applicationContext) {
+        DBHelper.databaseVersion = databaseVersion;
+        DBHelper.databaseName = databaseName;
+        instance = new DBHelper(applicationContext);
+    }
+
+    public static void init(int databaseVersion, Context applicationContext) {
+        DBHelper.databaseVersion = databaseVersion;
+        instance = new DBHelper(applicationContext);
+    }
+
     public DBHelper(Context context) {
         super(context, databaseName, null, databaseVersion);
         this.context = context;
+    }
+
+    /**
+     * 获取DBHelper的单例，必须先调用init
+     * 
+     * @return
+     */
+    public static DBHelper getInstance() {
+        return instance;
     }
 
     /**

@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
@@ -23,17 +22,10 @@ import com.winupon.andframe.bigapple.utils.log.LogUtils;
  * 
  * @author xuan
  */
-public class BasicDao {
+public class BasicDao2 {
     public static boolean DEBUG = false;
 
     private final static ReentrantLock lock = new ReentrantLock();// 保证多线程访问数据库的安全，性能有所损失
-
-    private DBHelper dbHelper;
-    private final Context context;
-
-    public BasicDao(Context context) {
-        this.context = context;
-    }
 
     /**
      * 想使用安卓本身的数据操作方法可以获取这个对象，但操作完后要显示的Close掉
@@ -41,19 +33,14 @@ public class BasicDao {
      * @return
      */
     public SQLiteDatabase getSQLiteDatabase() {
-        dbHelper = new DBHelper(context);
-        return dbHelper.getWritableDatabase();
+        return DBHelper.getInstance().getWritableDatabase();
     }
 
     /**
      * 使用完后请Close数据库连接，dbHelper的close其实内部就是sqliteDatabase的close
      */
     public void close() {
-        dbHelper.close();
-    }
-
-    public Context getContext() {
-        return context;
+        DBHelper.getInstance().close();
     }
 
     // ///////////////////////////////////////////////android的sqlite原生api///////////////////////////////////////////

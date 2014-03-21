@@ -10,28 +10,23 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import android.content.Context;
 import android.database.Cursor;
 
-import com.winupon.andframe.bigapple.db.BasicDao;
+import com.winupon.andframe.bigapple.db.BasicDao2;
 import com.winupon.andframe.bigapple.db.callback.MultiRowMapper;
 import com.winupon.andframe.bigapple.utils.DateUtils;
 import com.winupon.andframe.bigapple.utils.uuid.UUIDUtils;
 
 /**
- * db部分demo的dao
+ * 可保持单例的数据库操作
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-11-8 下午2:25:17 $
  */
-public class TestDao extends BasicDao {
-    public TestDao(Context context) {
-        super(context);
-    }
-
+public class TestDao2 extends BasicDao2 {
     private final static String SQL_INSERT = "INSERT INTO test_table(id,name,creation_time) VALUES(?,?,?)";
     private final static String SQL_DELETE = "DELETE FROM test_table";
-    private final static String SQL_FIND = "SELECT * FROM test_table ORDER BY creation_time DESC";
+    private final static String SQL_FIND = "SELECT * FROM test_table";
 
     /**
      * 单条插入数据
@@ -49,7 +44,7 @@ public class TestDao extends BasicDao {
         List<Object[]> data = new ArrayList<Object[]>();
 
         for (int i = 0; i < 1000; i++) {
-            Object[] d = new Object[3];
+            Object[] d = new Object[2];
             d[0] = UUIDUtils.createId();
             d[1] = String.valueOf(i);
             d[2] = DateUtils.date2StringBySecond(new Date());
