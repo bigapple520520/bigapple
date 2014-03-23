@@ -1,4 +1,4 @@
-package com.winupon.andframe.bigapple.http2.urlhttpclient.entity;
+package com.winupon.andframe.bigapple.http2.request.entity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.winupon.andframe.bigapple.http2.urlhttpclient.core.FileWraper;
-import com.winupon.andframe.bigapple.http2.urlhttpclient.core.RequestParams;
+import com.winupon.andframe.bigapple.http2.request.param.FileWraper;
+import com.winupon.andframe.bigapple.http2.request.param.RequestParams;
 import com.winupon.andframe.bigapple.io.IOUtils;
 import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
@@ -19,7 +19,7 @@ import com.winupon.andframe.bigapple.utils.log.LogUtils;
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-8-7 下午2:49:53 $
  */
-public class MultipartEntity implements Entity {
+public class MultipartEntity implements RequestEntiy {
 	private final static char[] MULTIPART_CHARS = "-_1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 			.toCharArray();
 

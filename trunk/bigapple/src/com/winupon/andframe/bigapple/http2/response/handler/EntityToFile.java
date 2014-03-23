@@ -1,4 +1,4 @@
-package com.winupon.andframe.bigapple.http2.urlhttpclient.handler;
+package com.winupon.andframe.bigapple.http2.response.handler;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -12,17 +12,31 @@ import android.text.TextUtils;
 import com.winupon.andframe.bigapple.io.IOUtils;
 
 /**
- * 返回流的存储文件方式处理
+ * 返回流的字符串方式处理，保存到文件
  * 
  * @author xuan
- * @version $Revision: 1.0 $, $Date: 2013-8-7 下午2:10:03 $
+ * 
  */
-public class FileResultHandler {
+public class EntityToFile {
 	private static final int BUFFER_SIZE = 4 * 1024;
-	private boolean stop = false;
+	private volatile boolean stop = false;
 
 	/**
-	 * 处理返回接口成文件保存
+	 * 响应实体保存成文件
+	 * 
+	 * @param connection
+	 * @param callback
+	 * @param target
+	 * @return
+	 * @throws IOException
+	 */
+	public File toFile(HttpURLConnection connection, HandlerCallBack callback,
+			String target) throws IOException {
+		return toFile(connection, callback, target, false);
+	}
+
+	/**
+	 * 响应实体保存成文件
 	 * 
 	 * @param connection
 	 * @param callback
@@ -31,9 +45,8 @@ public class FileResultHandler {
 	 * @return
 	 * @throws IOException
 	 */
-	public File handleResult(HttpURLConnection connection,
-			ResultCallBack callback, String target, boolean isResume)
-			throws IOException {
+	public File toFile(HttpURLConnection connection, HandlerCallBack callback,
+			String target, boolean isResume) throws IOException {
 		if (TextUtils.isEmpty(target)) {
 			return null;
 		}

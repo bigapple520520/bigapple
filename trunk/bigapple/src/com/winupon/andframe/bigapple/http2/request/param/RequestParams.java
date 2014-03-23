@@ -1,4 +1,4 @@
-package com.winupon.andframe.bigapple.http2.urlhttpclient.core;
+package com.winupon.andframe.bigapple.http2.request.param;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -107,7 +107,7 @@ public class RequestParams {
 	}
 
 	/**
-	 * 获取Url后的拼接串
+	 * 获取Url后的拼接串,UTF8编码
 	 * 
 	 * @return
 	 */

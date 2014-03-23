@@ -3,7 +3,7 @@
  * Copyright (c) 2013 ZDSoft Networks, Inc. All rights reserved.
  * $Id$
  */
-package com.winupon.andframe.bigapple.http2.urlhttpclient.core;
+package com.winupon.andframe.bigapple.http2.request.param;
 
 import java.io.InputStream;
 

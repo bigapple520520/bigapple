@@ -1,4 +1,4 @@
-package com.winupon.andframe.bigapple.http2.urlhttpclient.entity;
+package com.winupon.andframe.bigapple.http2.request.entity;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -8,7 +8,7 @@ import java.util.Map;
 
 import android.text.TextUtils;
 
-import com.winupon.andframe.bigapple.http2.urlhttpclient.core.RequestParams;
+import com.winupon.andframe.bigapple.http2.request.param.RequestParams;
 import com.winupon.andframe.bigapple.io.IOUtils;
 
 /**
@@ -16,10 +16,13 @@ import com.winupon.andframe.bigapple.io.IOUtils;
  * 
  * @author xuan
  */
-public class UrlEncodedFormEntity implements Entity {
+public class UrlEncodedFormEntity implements RequestEntiy {
 	private String encode = "utf-8";
-
 	private final RequestParams requestParams;
+
+	public UrlEncodedFormEntity(RequestParams requestParams) {
+		this.requestParams = requestParams;
+	}
 
 	public UrlEncodedFormEntity(RequestParams requestParams, String encode) {
 		this.requestParams = requestParams;
