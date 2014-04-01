@@ -2,7 +2,6 @@ package com.winupon.andframe.bigapple.bitmap;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.DisplayMetrics;
 import android.view.animation.Animation;
 
 import com.winupon.andframe.bigapple.bitmap.callback.ImageLoadCallBack;
@@ -17,32 +16,28 @@ import com.winupon.andframe.bigapple.bitmap.callback.SimpleImageLoadCallBack;
 public class BitmapDisplayConfig {
     private static final Bitmap TRANSPARENT_BITMAP = Bitmap.createBitmap(50, 50, Bitmap.Config.ALPHA_8);
 
-    private Bitmap.Config bitmapConfig = Bitmap.Config.ARGB_4444;
+    private Bitmap.Config bitmapConfig = Bitmap.Config.ARGB_8888;// 2.3之后默认参数
 
-    private boolean showOriginal = false;
-
-    private int bitmapMaxWidth = 0;
-    private int bitmapMaxHeight = 0;
+    private boolean showOriginal = false;// 是否显示原图
+    private int bitmapMaxWidth = 900;// showOriginal=false时才有效
+    private int bitmapMaxHeight = 900;// showOriginal=false时才有效
 
     private Animation animation;
 
     private Bitmap loadingBitmap = TRANSPARENT_BITMAP;
     private Bitmap loadFailedBitmap;
 
-    private ImageLoadCallBack imageLoadCallBack;
+    private ImageLoadCallBack imageLoadCallBack = new SimpleImageLoadCallBack();
 
-    private final Context mContext;
-
+    @Deprecated
     public BitmapDisplayConfig(Context context) {
-        mContext = context;
+        // 废弃，效果等于那个无参够着方法
+    }
+
+    public BitmapDisplayConfig() {
     }
 
     public int getBitmapMaxWidth() {
-        if (bitmapMaxWidth == 0) {// 图片的显示最大尺寸（为屏幕的大小,默认为屏幕宽度的1/2）
-            DisplayMetrics displayMetrics = mContext.getResources().getDisplayMetrics();
-            bitmapMaxWidth = (int) Math.floor(displayMetrics.widthPixels / 2);
-            bitmapMaxHeight = bitmapMaxHeight == 0 ? bitmapMaxWidth : bitmapMaxHeight;
-        }
         return bitmapMaxWidth;
     }
 
@@ -51,11 +46,6 @@ public class BitmapDisplayConfig {
     }
 
     public int getBitmapMaxHeight() {
-        if (bitmapMaxHeight == 0) {// 图片的显示最大尺寸（为屏幕的大小,默认为屏幕宽度的1/2）
-            DisplayMetrics displayMetrics = mContext.getResources().getDisplayMetrics();
-            bitmapMaxHeight = (int) Math.floor(displayMetrics.widthPixels / 2);
-            bitmapMaxWidth = bitmapMaxWidth == 0 ? bitmapMaxHeight : bitmapMaxWidth;
-        }
         return bitmapMaxHeight;
     }
 
@@ -88,9 +78,6 @@ public class BitmapDisplayConfig {
     }
 
     public ImageLoadCallBack getImageLoadCallBack() {
-        if (imageLoadCallBack == null) {
-            imageLoadCallBack = new SimpleImageLoadCallBack();
-        }
         return imageLoadCallBack;
     }
 

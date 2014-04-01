@@ -35,7 +35,7 @@ public class AnBitmapUtils {
     public AnBitmapUtils(Context context, String diskCachePath) {
         this.context = context;
         globalConfig = new BitmapGlobalConfig(context, diskCachePath);
-        defaultDisplayConfig = new BitmapDisplayConfig(context);
+        defaultDisplayConfig = new BitmapDisplayConfig();
         bitmapCacheManager = BitmapCacheManager.getInstance(globalConfig.getBitmapCache());
     }
 
@@ -65,7 +65,7 @@ public class AnBitmapUtils {
         globalConfig.setDiskCacheSize(diskCacheSize);
     }
 
-    // ///////////////////////////////对外可配置参数///////////////////////////////////////////////////////////////////
+    // ///////////////////////////////默认BitmapDisplayConfig参数配置/////////////////////////////////////////////////
     public AnBitmapUtils configDefaultLoadingImage(Bitmap bitmap) {
         defaultDisplayConfig.setLoadingBitmap(bitmap);
         return this;
@@ -121,6 +121,7 @@ public class AnBitmapUtils {
         return this;
     }
 
+    // ////////////////////////////////////////globalConfig参数配置/////////////////////////////////////////////////////
     public AnBitmapUtils configDownloader(Downloader downloader) {
         globalConfig.setDownloader(downloader);
         return this;
