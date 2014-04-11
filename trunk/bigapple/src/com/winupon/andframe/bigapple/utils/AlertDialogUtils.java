@@ -5,6 +5,7 @@
  */
 package com.winupon.andframe.bigapple.utils;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -28,7 +29,12 @@ public class AlertDialogUtils {
      * @param buttonText
      */
     public static void displayAlert(Context context, String title, String message, String buttonText) {
-        AlertDialog alertDialog = new AlertDialog.Builder(context)
+        if (null == context || !(context instanceof Activity)) {
+            return;
+        }
+        final Activity activity = (Activity) context;
+
+        AlertDialog alertDialog = new AlertDialog.Builder(activity)
                 .setPositiveButton(buttonText, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -36,7 +42,10 @@ public class AlertDialogUtils {
                     }
                 }).setTitle(title).setMessage(message).create();
 
-        alertDialog.show();
+        if (!activity.isFinishing()) {
+            alertDialog.show();
+        }
+
     }
 
     /**
@@ -78,8 +87,12 @@ public class AlertDialogUtils {
     public static void displayAlert4Choice(Context context, String title, String message, String positiveBtnText,
             DialogInterface.OnClickListener positionOnclick, String negativeBtnText,
             DialogInterface.OnClickListener negativeOnclick) {
+        if (null == context || !(context instanceof Activity)) {
+            return;
+        }
+        final Activity activity = (Activity) context;
 
-        Builder builder = new AlertDialog.Builder(context);
+        Builder builder = new AlertDialog.Builder(activity);
         builder.setCancelable(true);
         builder.setTitle(title);
         builder.setMessage(message);
@@ -104,7 +117,9 @@ public class AlertDialogUtils {
         }
         builder.setNegativeButton(negativeBtnText, negativeOnclick);
 
-        builder.create().show();
+        if (!activity.isFinishing()) {
+            builder.create().show();
+        }
     }
 
     /**
@@ -116,9 +131,14 @@ public class AlertDialogUtils {
      * @param selectNames
      * @param OnClickListener
      */
-    public static void displayAlert4SingleChoice(Context context, String title, boolean cancelable,
+    public static void displayAlert4SingleChoice(final Context context, String title, boolean cancelable,
             String[] selectNames, final DialogInterface.OnClickListener onClickListener) {
-        AlertDialog accountDlg = new AlertDialog.Builder(context).setTitle(title).setCancelable(cancelable)
+        if (null == context || !(context instanceof Activity)) {
+            return;
+        }
+        final Activity activity = (Activity) context;
+
+        AlertDialog accountDlg = new AlertDialog.Builder(activity).setTitle(title).setCancelable(cancelable)
                 .setSingleChoiceItems(selectNames, -1, new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -126,10 +146,15 @@ public class AlertDialogUtils {
                             onClickListener.onClick(dialog, which);
                         }
 
-                        dialog.dismiss();
+                        if (!activity.isFinishing()) {
+                            dialog.dismiss();
+                        }
                     }
                 }).create();
-        accountDlg.show();
+
+        if (!activity.isFinishing()) {
+            accountDlg.show();
+        }
     }
 
     /**
@@ -141,9 +166,14 @@ public class AlertDialogUtils {
      * @param selectNames
      * @param OnClickListener
      */
-    public static void displayAlert4SingleChoice2(Context context, String title, boolean cancelable,
+    public static void displayAlert4SingleChoice2(final Context context, String title, boolean cancelable,
             String[] selectNames, final DialogInterface.OnClickListener onClickListener) {
-        AlertDialog accountDlg = new AlertDialog.Builder(context).setTitle(title).setCancelable(cancelable)
+        if (null == context || !(context instanceof Activity)) {
+            return;
+        }
+        final Activity activity = (Activity) context;
+
+        AlertDialog accountDlg = new AlertDialog.Builder(activity).setTitle(title).setCancelable(cancelable)
                 .setItems(selectNames, new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -151,10 +181,15 @@ public class AlertDialogUtils {
                             onClickListener.onClick(dialog, which);
                         }
 
-                        dialog.dismiss();
+                        if (!activity.isFinishing()) {
+                            dialog.dismiss();
+                        }
                     }
                 }).create();
-        accountDlg.show();
+
+        if (!activity.isFinishing()) {
+            accountDlg.show();
+        }
     }
 
 }
