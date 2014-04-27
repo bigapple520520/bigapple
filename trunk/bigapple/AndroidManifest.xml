@@ -2,7 +2,6 @@
     package="com.winupon.andframe.bigapple"
     android:versionCode="1"
     android:versionName="1.0" >
-    
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RESTART_PACKAGES" />
@@ -13,28 +12,23 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    
     <uses-sdk
         android:minSdkVersion="9"
         android:targetSdkVersion="15" />
-
     <application
+        android:name="com.winupon.andframe.bigapple.MyApplication"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:name="com.winupon.andframe.bigapple.MyApplication" >
-        <activity
-            android:name=".BigappleMainActivity" >
+        android:theme="@style/AppTheme" >
+        <activity android:name=".BigappleMainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
         <activity android:name="com.winupon.andframe.bigapple.zzdemo.http2.UrlHttpClientDemoActivity" />
         <activity android:name="com.winupon.andframe.bigapple.zzdemo.ioc.IocDemoActivity" />
         <activity android:name="com.winupon.andframe.bigapple.zzdemo.db.DbDemoActivity" />
+        <activity android:name="com.winupon.andframe.bigapple.zzdemo.bitmap.BitmapDemoActivity" />
     </application>
-
 </manifest>
