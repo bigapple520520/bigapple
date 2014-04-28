@@ -14,20 +14,39 @@ import com.winupon.andframe.bigapple.bitmap.AnBitmapUtils;
 import com.winupon.andframe.bigapple.bitmap.BitmapDisplayConfig;
 
 /**
- * 从网络加载图片demo,封装单例的AnBitmapUtils实例，类似于一个门面模式，应用程序在使用时，可以屏蔽底层代码
+ * 从网络加载图片demo,封装单例的AnBitmapUtils实例，类似于一个门面模式，应用程序在使用时，可以屏蔽底层代码<br>
+ * 
+ * 注意：<br>
+ * 1、使用者在使用时请保持单例，这样内存缓存设置的最大阀值才能被限制住<br>
+ * 2、创建AnBitmapUtils实例所用的Context请使用Application对象，不要用Activity对象，防止Activity内存泄露<br>
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-9-5 下午6:49:46 $
  */
 public abstract class AnBitmapUtilsFace {
-	public static AnBitmapUtils defaultAnBitmapUtils;
+	private static AnBitmapUtils instance;
 
-	public static AnBitmapUtils getDeFaultAnBitmapUtils(Context context) {
-		if (null == defaultAnBitmapUtils) {
-			defaultAnBitmapUtils = new AnBitmapUtils(context);
+	/**
+	 * 在程序一开始的时候就初始化
+	 * 
+	 * @param application
+	 */
+	public static void init(Context application) {
+		if (null == instance) {
+			instance = new AnBitmapUtils(application);
+			instance.getGlobalConfig().setThreadPoolSize(5);
+			instance.getGlobalConfig().setDiskCacheEnabled(true);
+			instance.getGlobalConfig().setMemoryCacheEnabled(true);
+		}
+	}
+
+	public static AnBitmapUtils getInstance() {
+		if (null == instance) {
+			throw new RuntimeException(
+					"请先初始化AnBitmapUtils实例，方法：在程序启动的时候调用init方法！");
 		}
 
-		return defaultAnBitmapUtils;
+		return instance;
 	}
 
 	/**
@@ -36,9 +55,21 @@ public abstract class AnBitmapUtilsFace {
 	 * @param context
 	 * @param imageView
 	 */
-	public static void display(Context context, ImageView imageView, String uri) {
-		getDeFaultAnBitmapUtils(context).display(imageView,
-				"http://img7.9158.com/200709/01/11/53/200709018758949.jpg");
+	public static void display(ImageView imageView, String uri) {
+		getInstance().display(imageView, uri);
+	}
+
+	/**
+	 * 显示图片
+	 * 
+	 * @param imageView
+	 * @param uri
+	 * @param displayConfig
+	 *            显示方式参数配制
+	 */
+	public static void display(ImageView imageView, String uri,
+			BitmapDisplayConfig displayConfig) {
+		getInstance().display(imageView, uri, displayConfig);
 	}
 
 	/**
@@ -50,16 +81,13 @@ public abstract class AnBitmapUtilsFace {
 	 * @param loading
 	 * @param fail
 	 */
-	public static void display(Context context, ImageView imageView,
-			String uri, Bitmap loading, Bitmap fail) {
-		BitmapDisplayConfig bitmapDisplayConfig = new BitmapDisplayConfig(
-				context);
-		bitmapDisplayConfig.setLoadingBitmap(loading);
-		bitmapDisplayConfig.setLoadFailedBitmap(fail);
+	public static void display(ImageView imageView, String uri, Bitmap loading,
+			Bitmap fail) {
+		BitmapDisplayConfig displayConfig = new BitmapDisplayConfig();
+		displayConfig.setLoadingBitmap(loading);// 加载中的图片显示
+		displayConfig.setLoadFailedBitmap(fail);// 加载失败的图片显示
 
-		getDeFaultAnBitmapUtils(context).display(imageView,
-				"http://img7.9158.com/200709/01/11/53/200709018758949.jpg",
-				bitmapDisplayConfig);
+		getInstance().display(imageView, uri, displayConfig);
 	}
 
 	// ///////////////////////////////////////////常用清理缓存部分///////////////////////////////////////////////////////////
@@ -69,7 +97,7 @@ public abstract class AnBitmapUtilsFace {
 	 * @param context
 	 */
 	public static void clear(final Context context) {
-		getDeFaultAnBitmapUtils(context).clearCache();
+		getInstance().clearCache();
 	}
 
 	/**
@@ -77,10 +105,11 @@ public abstract class AnBitmapUtilsFace {
 	 * 
 	 * @param context
 	 * @param afterClearCacheListener
+	 *            缓存清理后的回调
 	 */
 	public static void clear(final Context context,
 			AfterClearCacheListener afterClearCacheListener) {
-		getDeFaultAnBitmapUtils(context).clearCache(afterClearCacheListener);
+		getInstance().clearCache(afterClearCacheListener);
 	}
 
 	/**
@@ -90,7 +119,7 @@ public abstract class AnBitmapUtilsFace {
 	 * @param cacheKey
 	 */
 	public static void clearBykey(final Context context, String cacheKey) {
-		getDeFaultAnBitmapUtils(context).clearCache(cacheKey, null);
+		getInstance().clearCache(cacheKey, null);
 	}
 
 	/**
@@ -102,8 +131,7 @@ public abstract class AnBitmapUtilsFace {
 	 */
 	public static void clearByKey(final Context context, String cacheKey,
 			AfterClearCacheListener afterClearCacheListener) {
-		getDeFaultAnBitmapUtils(context).clearCache(cacheKey, null,
-				afterClearCacheListener);
+		getInstance().clearCache(cacheKey, null, afterClearCacheListener);
 	}
 
 }

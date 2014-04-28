@@ -8,6 +8,7 @@ package com.winupon.andframe.bigapple;
 import android.app.Application;
 
 import com.winupon.andframe.bigapple.db.DBHelper;
+import com.winupon.andframe.bigapple.zzdemo.bitmap.AnBitmapUtilsFace;
 
 /**
  * 应用入口
@@ -16,12 +17,15 @@ import com.winupon.andframe.bigapple.db.DBHelper;
  * @version $Revision: 1.0 $, $Date: 2014-3-21 下午4:21:58 $
  */
 public class MyApplication extends Application {
-    @Override
-    public void onCreate() {
-        super.onCreate();
+	@Override
+	public void onCreate() {
+		super.onCreate();
 
-        // 初始化数据库在这里
-        DBHelper.init(1, "bigapple_test_database", this);
-    }
+		// 初始化数据库在这里
+		DBHelper.init(1, "bigapple_test_database", this);
+
+		// 图片加载器初始化
+		AnBitmapUtilsFace.init(this);
+	}
 
 }
