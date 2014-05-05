@@ -23,150 +23,50 @@ import com.winupon.andframe.bigapple.utils.log.LogUtils;
  * @version $Revision: 1.0 $, $Date: 2013-8-9 下午4:48:21 $
  */
 public class AnBitmapUtils {
-<<<<<<< HEAD
     private boolean pauseTask = false;
     private final Object pauseTaskLock = new Object();
 
-    private final Context context;
+    private final Context application;
     private BitmapGlobalConfig globalConfig;
     private BitmapDisplayConfig defaultDisplayConfig;
     private final BitmapCacheManager bitmapCacheManager;
 
-    // /////////////////////////////// 创建实例，用户使用时可自行保持单例/////////////////////////////////////////////
-    public AnBitmapUtils(Context context, String diskCachePath) {
-        this.context = context;
-        globalConfig = new BitmapGlobalConfig(context, diskCachePath);
+    // ///////////////////////////////
+    // 创建实例，用户使用时可自行保持单例/////////////////////////////////////////////
+    public AnBitmapUtils(Context application) {
+        this.application = application;
+        globalConfig = new BitmapGlobalConfig(application);
         defaultDisplayConfig = new BitmapDisplayConfig();
         bitmapCacheManager = BitmapCacheManager.getInstance(globalConfig.getBitmapCache());
     }
 
-    public AnBitmapUtils(Context context) {
-        this(context, null);
+    // ///////////////////////////////默认BitmapDisplayConfig参数配置，即默认显示方式/////////////////////////////////////////////////
+    public BitmapDisplayConfig getDefaultDisplayConfig() {
+        return defaultDisplayConfig;
     }
 
-    public AnBitmapUtils(Context context, String diskCachePath, int memoryCacheSize) {
-        this(context, diskCachePath);
-        globalConfig.setMemoryCacheSize(memoryCacheSize);
+    public void setDefaultDisplayConfig(BitmapDisplayConfig defaultDisplayConfig) {
+        this.defaultDisplayConfig = defaultDisplayConfig;
     }
 
-    public AnBitmapUtils(Context context, String diskCachePath, int memoryCacheSize, int diskCacheSize) {
-        this(context, diskCachePath);
-        globalConfig.setMemoryCacheSize(memoryCacheSize);
-        globalConfig.setDiskCacheSize(diskCacheSize);
+    // ////////////////////////////////////////globalConfig参数配置，即默认参数配制/////////////////////////////////////////////////////
+    public BitmapGlobalConfig getGlobalConfig() {
+        return globalConfig;
     }
 
-    public AnBitmapUtils(Context context, String diskCachePath, float memoryCachePercent) {
-        this(context, diskCachePath);
-        globalConfig.setMemCacheSizePercent(memoryCachePercent);
-    }
-
-    public AnBitmapUtils(Context context, String diskCachePath, float memoryCachePercent, int diskCacheSize) {
-        this(context, diskCachePath);
-        globalConfig.setMemCacheSizePercent(memoryCachePercent);
-        globalConfig.setDiskCacheSize(diskCacheSize);
-    }
-
-    // ///////////////////////////////默认BitmapDisplayConfig参数配置/////////////////////////////////////////////////
-    public AnBitmapUtils configDefaultLoadingImage(Bitmap bitmap) {
-        defaultDisplayConfig.setLoadingBitmap(bitmap);
-        return this;
-    }
-
-    public AnBitmapUtils configDefaultLoadingImage(int resId) {
-        defaultDisplayConfig.setLoadingBitmap(BitmapFactory.decodeResource(context.getResources(), resId));
-        return this;
-    }
-
-    public AnBitmapUtils configDefaultLoadFailedImage(Bitmap bitmap) {
-        defaultDisplayConfig.setLoadFailedBitmap(bitmap);
-        return this;
-    }
-
-    public AnBitmapUtils configDefaultLoadFailedImage(int resId) {
-        defaultDisplayConfig.setLoadFailedBitmap(BitmapFactory.decodeResource(context.getResources(), resId));
-        return this;
-    }
-
-    public AnBitmapUtils configDefaultBitmapMaxWidth(int bitmapWidth) {
-        defaultDisplayConfig.setBitmapMaxWidth(bitmapWidth);
-        return this;
-    }
-
-    public AnBitmapUtils configDefaultBitmapMaxHeight(int bitmapHeight) {
-        defaultDisplayConfig.setBitmapMaxHeight(bitmapHeight);
-        return this;
-    }
-
-    public AnBitmapUtils configDefaultImageLoadAnimation(Animation animation) {
-        defaultDisplayConfig.setAnimation(animation);
-        return this;
-    }
-
-    public AnBitmapUtils configDefaultImageLoadCallBack(ImageLoadCallBack imageLoadCallBack) {
-        defaultDisplayConfig.setImageLoadCallBack(imageLoadCallBack);
-        return this;
-    }
-
-    public AnBitmapUtils configDefaultShowOriginal(boolean showOriginal) {
-        defaultDisplayConfig.setShowOriginal(showOriginal);
-        return this;
-    }
-
-    public AnBitmapUtils configDefaultBitmapConfig(Bitmap.Config config) {
-        defaultDisplayConfig.setBitmapConfig(config);
-        return this;
-    }
-
-    public AnBitmapUtils configDefaultDisplayConfig(BitmapDisplayConfig displayConfig) {
-        defaultDisplayConfig = displayConfig;
-        return this;
-    }
-
-    // ////////////////////////////////////////globalConfig参数配置/////////////////////////////////////////////////////
-    public AnBitmapUtils configDownloader(Downloader downloader) {
-        globalConfig.setDownloader(downloader);
-        return this;
-    }
-
-    /**
-     * 设置默认的缓存过期时间。如果http请求返回了过期时间，使用请求返回的时间。否则按设置的来
-     * 
-     * @param defaultExpiry
-     *            过期的那个时间点
-     * @return
-     */
-    public AnBitmapUtils configDefaultCacheExpiry(long defaultExpiry) {
-        globalConfig.setDefaultCacheExpiry(defaultExpiry);
-        return this;
-    }
-
-    public AnBitmapUtils configThreadPoolSize(int poolSize) {
-        globalConfig.setThreadPoolSize(poolSize);
-        return this;
-    }
-
-    public AnBitmapUtils configMemoryCacheEnabled(boolean enabled) {
-        globalConfig.setMemoryCacheEnabled(enabled);
-        return this;
-    }
-
-    public AnBitmapUtils configDiskCacheEnabled(boolean enabled) {
-        globalConfig.setDiskCacheEnabled(enabled);
-        return this;
-    }
-
-    public AnBitmapUtils configGlobalConfig(BitmapGlobalConfig globalConfig) {
+    public void setGlobalConfig(BitmapGlobalConfig globalConfig) {
         this.globalConfig = globalConfig;
-        return this;
     }
 
-    // /////////////////////////////// 加载展示图片 ////////////////////////////////////////////////////////////////////
+    // /////////////////////////////// 加载展示图片
+    // ////////////////////////////////////////////////////////////////////
     public void display(ImageView imageView, String uri) {
         display(imageView, uri, null);
     }
 
     public void display(ImageView imageView, String uri, BitmapDisplayConfig displayConfig) {
         if (null == imageView) {
+            LogUtils.d("图片加载不处理，原因：图片显示控件imageView为空");
             return;
         }
 
@@ -179,19 +79,21 @@ public class AnBitmapUtils {
             return;
         }
 
-        Bitmap bitmap = globalConfig.getBitmapCache().getBitmapFromMemCache(uri, displayConfig);// 缓存中取
-        if (bitmap != null) {
+        // 内存缓存中取
+        Bitmap bitmap = globalConfig.getBitmapCache().getBitmapFromMemCache(uri, displayConfig);
+
+        if (null != bitmap) {
+            // 内存缓存命中
             displayConfig.getImageLoadCallBack().loadCompleted(imageView, bitmap, displayConfig);
         }
         else if (!bitmapLoadTaskExist(imageView, uri)) {
+            // 启动任务类：从网络下载或者从磁盘中获取
             final BitmapLoadTask loadTask = new BitmapLoadTask(imageView, displayConfig);
 
-            // 设置下载任务资源
-            final AsyncBitmapDrawable asyncBitmapDrawable = new AsyncBitmapDrawable(context.getResources(),
+            final AsyncBitmapDrawable asyncBitmapDrawable = new AsyncBitmapDrawable(application.getResources(),
                     displayConfig.getLoadingBitmap(), loadTask);
-            imageView.setImageDrawable(asyncBitmapDrawable);
+            imageView.setImageDrawable(asyncBitmapDrawable);// 设置下载任务资源
 
-            // 执行从网络上获取磁盘中加载图片
             loadTask.executeOnExecutor(globalConfig.getBitmapLoadExecutor(), uri);
         }
     }
@@ -202,7 +104,7 @@ public class AnBitmapUtils {
     }
 
     public void clearCache() {
-        clearCache(null);
+        bitmapCacheManager.clearCache(null);
     }
 
     public void clearMemoryCache(AfterClearCacheListener listener) {
@@ -210,7 +112,7 @@ public class AnBitmapUtils {
     }
 
     public void clearMemoryCache() {
-        clearMemoryCache(null);
+        bitmapCacheManager.clearMemoryCache(null);
     }
 
     public void clearDiskCache(AfterClearCacheListener listener) {
@@ -221,28 +123,20 @@ public class AnBitmapUtils {
         bitmapCacheManager.clearDiskCache(null);
     }
 
-    public void clearCache(String uri, BitmapDisplayConfig displayConfig, AfterClearCacheListener listener) {
-        if (null == displayConfig) {
-            displayConfig = defaultDisplayConfig;
-        }
-
-        bitmapCacheManager.clearCache(uri, displayConfig, listener);
+    public void clearCache(String uri, AfterClearCacheListener listener) {
+        bitmapCacheManager.clearCache(uri, listener);
     }
 
-    public void clearCache(String uri, BitmapDisplayConfig displayConfig) {
-        clearCache(uri, displayConfig, null);
+    public void clearCache(String uri) {
+        bitmapCacheManager.clearCache(uri, null);
     }
 
-    public void clearMemoryCache(String uri, BitmapDisplayConfig displayConfig, AfterClearCacheListener listener) {
-        if (null == displayConfig) {
-            displayConfig = defaultDisplayConfig;
-        }
-
-        bitmapCacheManager.clearMemoryCache(uri, displayConfig, listener);
+    public void clearMemoryCache(String uri, AfterClearCacheListener listener) {
+        bitmapCacheManager.clearMemoryCache(uri, listener);
     }
 
-    public void clearMemoryCache(String uri, BitmapDisplayConfig displayConfig) {
-        clearMemoryCache(uri, displayConfig, null);
+    public void clearMemoryCache(String uri) {
+        bitmapCacheManager.clearMemoryCache(uri, null);
     }
 
     public void clearDiskCache(String uri, AfterClearCacheListener listener) {
@@ -250,7 +144,7 @@ public class AnBitmapUtils {
     }
 
     public void clearDiskCache(String uri) {
-        clearDiskCache(uri, null);
+        bitmapCacheManager.clearDiskCache(uri, null);
     }
 
     public void flushCache(AfterClearCacheListener listener) {
@@ -258,7 +152,7 @@ public class AnBitmapUtils {
     }
 
     public void flushCache() {
-        flushCache(null);
+        bitmapCacheManager.flushCache(null);
     }
 
     public void closeCache(AfterClearCacheListener listener) {
@@ -266,7 +160,7 @@ public class AnBitmapUtils {
     }
 
     public void closeCache() {
-        closeCache(null);
+        bitmapCacheManager.closeCache(null);
     }
 
     /**
@@ -414,10 +308,12 @@ public class AnBitmapUtils {
 
             final ImageView imageView = this.getTargetImageView();
             if (imageView != null) {
-                if (bitmap != null) {// 显示图片
+                if (bitmap != null) {
+                    // 显示图片
                     displayConfig.getImageLoadCallBack().loadCompleted(imageView, bitmap, displayConfig);
                 }
-                else {// 显示获取错误图片
+                else {
+                    // 显示获取错误图片
                     displayConfig.getImageLoadCallBack().loadFailed(imageView, displayConfig.getLoadFailedBitmap());
                 }
             }
@@ -447,352 +343,5 @@ public class AnBitmapUtils {
             return null;
         }
     }
-=======
-	private boolean pauseTask = false;
-	private final Object pauseTaskLock = new Object();
-
-	private final Context application;
-	private BitmapGlobalConfig globalConfig;
-	private BitmapDisplayConfig defaultDisplayConfig;
-	private final BitmapCacheManager bitmapCacheManager;
-
-	// ///////////////////////////////
-	// 创建实例，用户使用时可自行保持单例/////////////////////////////////////////////
-	public AnBitmapUtils(Context application) {
-		this.application = application;
-		globalConfig = new BitmapGlobalConfig(application);
-		defaultDisplayConfig = new BitmapDisplayConfig();
-		bitmapCacheManager = BitmapCacheManager.getInstance(globalConfig
-				.getBitmapCache());
-	}
-
-	// ///////////////////////////////默认BitmapDisplayConfig参数配置，即默认显示方式/////////////////////////////////////////////////
-	public BitmapDisplayConfig getDefaultDisplayConfig() {
-		return defaultDisplayConfig;
-	}
-
-	public void setDefaultDisplayConfig(BitmapDisplayConfig defaultDisplayConfig) {
-		this.defaultDisplayConfig = defaultDisplayConfig;
-	}
-
-	// ////////////////////////////////////////globalConfig参数配置，即默认参数配制/////////////////////////////////////////////////////
-	public BitmapGlobalConfig getGlobalConfig() {
-		return globalConfig;
-	}
-
-	public void setGlobalConfig(BitmapGlobalConfig globalConfig) {
-		this.globalConfig = globalConfig;
-	}
-
-	// /////////////////////////////// 加载展示图片
-	// ////////////////////////////////////////////////////////////////////
-	public void display(ImageView imageView, String uri) {
-		display(imageView, uri, null);
-	}
-
-	public void display(ImageView imageView, String uri,
-			BitmapDisplayConfig displayConfig) {
-		if (null == imageView) {
-			LogUtils.d("图片加载不处理，原因：图片显示控件imageView为空");
-			return;
-		}
-
-		if (null == displayConfig) {
-			displayConfig = defaultDisplayConfig;
-		}
-
-		if (TextUtils.isEmpty(uri)) {
-			displayConfig.getImageLoadCallBack().loadFailed(imageView,
-					displayConfig.getLoadFailedBitmap());
-			return;
-		}
-
-		// 内存缓存中取
-		Bitmap bitmap = globalConfig.getBitmapCache().getBitmapFromMemCache(
-				uri, displayConfig);
-
-		if (null != bitmap) {
-			// 内存缓存命中
-			displayConfig.getImageLoadCallBack().loadCompleted(imageView,
-					bitmap, displayConfig);
-		} else if (!bitmapLoadTaskExist(imageView, uri)) {
-			// 启动任务类：从网络下载或者从磁盘中获取
-			final BitmapLoadTask loadTask = new BitmapLoadTask(imageView,
-					displayConfig);
-
-			final AsyncBitmapDrawable asyncBitmapDrawable = new AsyncBitmapDrawable(
-					application.getResources(),
-					displayConfig.getLoadingBitmap(), loadTask);
-			imageView.setImageDrawable(asyncBitmapDrawable);// 设置下载任务资源
-
-			loadTask.executeOnExecutor(globalConfig.getBitmapLoadExecutor(),
-					uri);
-		}
-	}
-
-	// ////////////////////////////////////////缓存清理/////////////////////////////////////////////////////////////////
-	public void clearCache(AfterClearCacheListener listener) {
-		bitmapCacheManager.clearCache(listener);
-	}
-
-	public void clearCache() {
-		clearCache(null);
-	}
-
-	public void clearMemoryCache(AfterClearCacheListener listener) {
-		bitmapCacheManager.clearMemoryCache(listener);
-	}
-
-	public void clearMemoryCache() {
-		clearMemoryCache(null);
-	}
-
-	public void clearDiskCache(AfterClearCacheListener listener) {
-		bitmapCacheManager.clearDiskCache(listener);
-	}
-
-	public void clearDiskCache() {
-		bitmapCacheManager.clearDiskCache(null);
-	}
-
-	public void clearCache(String uri, BitmapDisplayConfig displayConfig,
-			AfterClearCacheListener listener) {
-		if (null == displayConfig) {
-			displayConfig = defaultDisplayConfig;
-		}
-
-		bitmapCacheManager.clearCache(uri, displayConfig, listener);
-	}
-
-	public void clearCache(String uri, BitmapDisplayConfig displayConfig) {
-		clearCache(uri, displayConfig, null);
-	}
-
-	public void clearMemoryCache(String uri, BitmapDisplayConfig displayConfig,
-			AfterClearCacheListener listener) {
-		if (null == displayConfig) {
-			displayConfig = defaultDisplayConfig;
-		}
-
-		bitmapCacheManager.clearMemoryCache(uri, displayConfig, listener);
-	}
-
-	public void clearMemoryCache(String uri, BitmapDisplayConfig displayConfig) {
-		clearMemoryCache(uri, displayConfig, null);
-	}
-
-	public void clearDiskCache(String uri, AfterClearCacheListener listener) {
-		bitmapCacheManager.clearDiskCache(uri, listener);
-	}
-
-	public void clearDiskCache(String uri) {
-		clearDiskCache(uri, null);
-	}
-
-	public void flushCache(AfterClearCacheListener listener) {
-		bitmapCacheManager.flushCache(listener);
-	}
-
-	public void flushCache() {
-		flushCache(null);
-	}
-
-	public void closeCache(AfterClearCacheListener listener) {
-		bitmapCacheManager.closeCache(listener);
-	}
-
-	public void closeCache() {
-		closeCache(null);
-	}
-
-	/**
-	 * 从缓存中获取图片，如果没有，返回null
-	 * 
-	 * @param uri
-	 * @return
-	 */
-	public Bitmap getBitmapFromCache(String uri,
-			BitmapDisplayConfig displayConfig) {
-		if (null == displayConfig) {
-			displayConfig = defaultDisplayConfig;
-		}
-
-		Bitmap bitmap = globalConfig.getBitmapCache().getBitmapFromMemCache(
-				uri, displayConfig);
-		if (null == bitmap) {
-			bitmap = globalConfig.getBitmapCache().getBitmapFromDiskCache(uri,
-					displayConfig);
-		}
-
-		return bitmap;
-	}
-
-	// //////////////////////////////////任务暂定开始操作///////////////////////////////////////////////////////////////
-	public void resumeTasks() {
-		pauseTask = false;
-	}
-
-	public void pauseTasks() {
-		pauseTask = true;
-		flushCache(null);
-	}
-
-	/**
-	 * 一般退出程序时可以调用，用来释放，所有被暂定的任务
-	 */
-	public void stopTasks() {
-		pauseTask = true;
-		synchronized (pauseTaskLock) {
-			pauseTaskLock.notifyAll();
-		}
-	}
-
-	// ///////////////////////////////判断获取ImageView的下载任务///////////////////////////////////////////////////////
-	private static BitmapLoadTask getBitmapTaskFromImageView(ImageView imageView) {
-		if (imageView != null) {
-			final Drawable drawable = imageView.getDrawable();
-			if (drawable instanceof AsyncBitmapDrawable) {
-				final AsyncBitmapDrawable asyncBitmapDrawable = (AsyncBitmapDrawable) drawable;
-				return asyncBitmapDrawable.getBitmapWorkerTask();
-			}
-		}
-		return null;
-	}
-
-	private static boolean bitmapLoadTaskExist(ImageView imageView, String uri) {
-		final BitmapLoadTask oldLoadTask = getBitmapTaskFromImageView(imageView);
-
-		if (oldLoadTask != null) {
-			final String oldUri = oldLoadTask.uri;
-			if (TextUtils.isEmpty(oldUri) || !oldUri.equals(uri)) {
-				oldLoadTask.cancel(true);
-			} else {
-				// 同一个线程已经在执行
-				return true;
-			}
-		}
-		return false;
-	}
-
-	// ///////////////////////////////////内部类定义////////////////////////////////////////////////////////////////////
-	/**
-	 * 包含加载任务的图片资源
-	 * 
-	 * @author xuan
-	 * @version $Revision: 1.0 $, $Date: 2013-9-17 下午2:44:24 $
-	 */
-	private class AsyncBitmapDrawable extends BitmapDrawable {
-		private final WeakReference<BitmapLoadTask> bitmapLoadTaskReference;
-
-		public AsyncBitmapDrawable(Resources res, Bitmap bitmap,
-				BitmapLoadTask bitmapWorkerTask) {
-			super(res, bitmap);
-			bitmapLoadTaskReference = new WeakReference<BitmapLoadTask>(
-					bitmapWorkerTask);
-		}
-
-		public BitmapLoadTask getBitmapWorkerTask() {
-			return bitmapLoadTaskReference.get();
-		}
-	}
-
-	/**
-	 * 图片加载任务
-	 * 
-	 * @author xuan
-	 * @version $Revision: 1.0 $, $Date: 2013-9-17 下午2:45:22 $
-	 */
-	private class BitmapLoadTask extends
-			CompatibleAsyncTask<Object, Void, Bitmap> {
-		private String uri;
-		private final WeakReference<ImageView> targetImageViewReference;
-		private final BitmapDisplayConfig displayConfig;
-
-		public BitmapLoadTask(ImageView imageView, BitmapDisplayConfig config) {
-			targetImageViewReference = new WeakReference<ImageView>(imageView);
-			displayConfig = config;
-		}
-
-		@Override
-		protected Bitmap doInBackground(Object... params) {
-			if (params != null && params.length > 0) {
-				uri = (String) params[0];
-			} else {
-				return null;
-			}
-
-			Bitmap bitmap = null;
-			synchronized (pauseTaskLock) {
-				while (pauseTask && !this.isCancelled()) {
-					try {
-						pauseTaskLock.wait();
-					} catch (InterruptedException e) {
-					}
-				}
-			}
-
-			// 从磁盘缓存获取图片
-			if (!pauseTask && !this.isCancelled()
-					&& this.getTargetImageView() != null) {
-				bitmap = globalConfig.getBitmapCache().getBitmapFromDiskCache(
-						uri, displayConfig);
-			}
-
-			// 下载图片
-			if (bitmap == null && !pauseTask && !this.isCancelled()
-					&& this.getTargetImageView() != null) {
-				bitmap = globalConfig.getBitmapCache().downloadBitmap(uri,
-						displayConfig);
-			}
-
-			return bitmap;
-		}
-
-		// 获取图片任务完成
-		@Override
-		protected void onPostExecute(Bitmap bitmap) {
-			if (isCancelled() || pauseTask) {
-				bitmap = null;
-			}
-
-			final ImageView imageView = this.getTargetImageView();
-			if (imageView != null) {
-				if (bitmap != null) {
-					// 显示图片
-					displayConfig.getImageLoadCallBack().loadCompleted(
-							imageView, bitmap, displayConfig);
-				} else {
-					// 显示获取错误图片
-					displayConfig.getImageLoadCallBack().loadFailed(imageView,
-							displayConfig.getLoadFailedBitmap());
-				}
-			}
-		}
-
-		@Override
-		protected void onCancelled(Bitmap bitmap) {
-			super.onCancelled(bitmap);
-			synchronized (pauseTaskLock) {
-				pauseTaskLock.notifyAll();
-			}
-		}
-
-		/**
-		 * 获取线程匹配的imageView,防止出现闪动的现象
-		 * 
-		 * @return
-		 */
-		private ImageView getTargetImageView() {
-			final ImageView imageView = targetImageViewReference.get();
-			final BitmapLoadTask bitmapWorkerTask = getBitmapTaskFromImageView(imageView);
-
-			if (this == bitmapWorkerTask) {
-				return imageView;
-			}
-
-			return null;
-		}
-	}
->>>>>>> 61bb41709ae045e5229902c7dbe803ce270be42b
 
 }

@@ -28,7 +28,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import android.text.TextUtils;
-import android.util.Log;
+
+import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
  * 提供访问HTTP服务的工具类
@@ -37,11 +38,9 @@ import android.util.Log;
  * @version $Revision: 1.0 $, $Date: 2013-3-25 上午9:24:40 $
  */
 public abstract class HttpUtils {
-    private static final String TAG = "bigapple.HttpUtils";
-
     private static final int DEFAULT_CONNECTION_TIMEOUT = 1000 * 12;
     private static final int DEFAULT_READ_TIMEOUT = 1000 * 12;
-    private static final int DEFAULT_DOWNLOAD_READ_TIMEOUT = 1000 * 60 * 10;
+    private static final int DEFAULT_DOWNLOAD_READ_TIMEOUT = 1000 * 60 * 10;// 下载超时
     private static final String DEFAULT_ENCODE = "utf-8";
 
     private static final int DEDAULT_BUFFER_SIZE = 8 * 1024;
@@ -94,7 +93,7 @@ public abstract class HttpUtils {
             readTimeout = DEFAULT_READ_TIMEOUT;
         }
 
-        Log.d(TAG, url);
+        LogUtils.d("GET请求地址：" + url);
         String result = null;
         BufferedReader reader = null;
         try {
@@ -118,7 +117,7 @@ public abstract class HttpUtils {
             result = buffer.toString();
         }
         catch (IOException e) {
-            Log.e(TAG, "Request url[" + url + "] error");
+            LogUtils.e("请求地址[" + url + "] 错误，原因：" + e);
             throw e;
         }
         finally {
@@ -144,7 +143,7 @@ public abstract class HttpUtils {
      * @return
      */
     public static String requestURLPost(String url, Map<String, String> paramsMap) {
-        Log.v(TAG, url + paramsMap.toString());
+        LogUtils.d("POST请求地址：" + url + paramsMap.toString());
 
         LinkedList<BasicNameValuePair> params = new LinkedList<BasicNameValuePair>();
 
@@ -153,7 +152,7 @@ public abstract class HttpUtils {
                 params.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
             }
             catch (Exception e) {
-                Log.e(TAG, "", e);
+                LogUtils.e("添加参数错误，原因：" + e);
             }
         }
 
@@ -168,11 +167,11 @@ public abstract class HttpUtils {
                 result = EntityUtils.toString(response.getEntity(), DEFAULT_ENCODE);
             }
             else {
-                Log.e(TAG, "请求返回失败");
+                LogUtils.e("请求返回失败");
             }
         }
         catch (Exception e) {
-            Log.e(TAG, "", e);
+            LogUtils.e("请求异常错误，原因：" + e);
         }
 
         return result;
@@ -207,7 +206,7 @@ public abstract class HttpUtils {
             }
         }
         catch (Exception e) {
-            Log.e(TAG, "download file from url[" + downloadUrl + "] error", e);
+            LogUtils.e("下载文件异常错误，原因：" + e);
             file.delete();
             throw e;
         }

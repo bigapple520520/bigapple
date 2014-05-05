@@ -79,13 +79,13 @@ public abstract class IOUtils {
      */
     public static byte[] toByteArray(InputStream input, long longSize) throws IOException {
         if (longSize > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException("Size cannot be greater than Integer max value: " + longSize);
+            throw new IllegalArgumentException("流的期望长度不能超过int能表示的范围，当前长度： " + longSize);
         }
 
         int size = (int) longSize;// 转成int
 
         if (size < 0) {
-            throw new IllegalArgumentException("Size must be equal or greater than zero: " + size);
+            throw new IllegalArgumentException("流的期望长度必须大于等于0，当前长度： " + size);
         }
 
         if (size == 0) {
@@ -101,7 +101,7 @@ public abstract class IOUtils {
         }
 
         if (offset != size) {
-            throw new IOException("Unexpected readed size. current: " + offset + ", excepted: " + size);
+            throw new IOException("实际读取的流的长度和期望的长度不一致，实际读取长度：" + offset + ", 期望长度: " + size);
         }
 
         return data;

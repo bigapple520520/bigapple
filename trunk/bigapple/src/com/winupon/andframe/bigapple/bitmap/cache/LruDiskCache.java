@@ -116,7 +116,7 @@ public final class LruDiskCache implements Closeable {
      * if it exists when the cache is opened.
      */
 
-    private final File directory;
+    private final File directory;// 缓存目录
     private final File journalFile;
     private final File journalFileTmp;
     private final File journalFileBackup;
@@ -162,7 +162,7 @@ public final class LruDiskCache implements Closeable {
     }
 
     /**
-     * 打开磁盘缓存
+     * 初始化打开磁盘缓存
      * 
      * @param directory
      *            缓存路径
@@ -177,11 +177,11 @@ public final class LruDiskCache implements Closeable {
      */
     public static LruDiskCache open(File directory, int appVersion, int valueCount, long maxSize) throws IOException {
         if (maxSize <= 0) {
-            throw new IllegalArgumentException("maxSize <= 0");
+            throw new IllegalArgumentException("非法参数错误，原因： 缓存最大容量maxSize <= 0");
         }
 
         if (valueCount <= 0) {
-            throw new IllegalArgumentException("valueCount <= 0");
+            throw new IllegalArgumentException("非法参数错误，原因：缓存数valueCount <= 0");
         }
 
         // 如果备份文件存在，说明上一次在记录日志的时候异常退出了，所以恢复备份文件
@@ -214,7 +214,7 @@ public final class LruDiskCache implements Closeable {
             }
         }
 
-        // 如果是第一次，新建日志文件
+        // 第一次，新建目录和日志文件
         directory.mkdirs();
         cache = new LruDiskCache(directory, appVersion, valueCount, maxSize);
         cache.rebuildJournal();
@@ -234,8 +234,8 @@ public final class LruDiskCache implements Closeable {
             if (!MAGIC.equals(magic) || !VERSION_1.equals(version)
                     || !Integer.toString(appVersion).equals(appVersionString)
                     || !Integer.toString(valueCount).equals(valueCountString) || !"".equals(blank)) {
-                throw new IOException("unexpected journal header: [" + magic + ", " + version + ", " + valueCountString
-                        + ", " + blank + "]");
+                throw new IOException("日志文件头格式错误: [" + magic + ", " + version + ", " + valueCountString + ", " + blank
+                        + "]");
             }
 
             int lineCount = 0;
@@ -245,6 +245,7 @@ public final class LruDiskCache implements Closeable {
                     lineCount++;
                 }
                 catch (EOFException endOfJournal) {
+                    // 日子读取到最后一行
                     break;
                 }
             }
@@ -589,6 +590,13 @@ public final class LruDiskCache implements Closeable {
                 && redundantOpCount >= lruEntries.size();
     }
 
+    /**
+     * 删除缓存
+     * 
+     * @param key
+     * @return
+     * @throws IOException
+     */
     public boolean remove(String key) throws IOException {
         String diskKey = DiskCacheKeyGenerator.generate(key);
         return removeByDiskKey(diskKey);
@@ -668,7 +676,7 @@ public final class LruDiskCache implements Closeable {
     private void validateKey(String diskKey) {
         Matcher matcher = LEGAL_KEY_PATTERN.matcher(diskKey);
         if (!matcher.matches()) {
-            throw new IllegalArgumentException("keys must match regex [a-z0-9_-]{1,64}: \"" + diskKey + "\"");
+            throw new IllegalArgumentException("key必须符合正则表达式：[a-z0-9_-]{1,64}: \"" + diskKey + "\"");
         }
     }
 
@@ -717,6 +725,8 @@ public final class LruDiskCache implements Closeable {
             }
         }
     }
+
+    // ////////////////////////////////////////////内部类/////////////////////////////////////////////////////////////
 
     // ////////////////////////////////////严格的行阅读器StrictLineReader//////////////////////////////////////////////
     /**
@@ -875,11 +885,13 @@ public final class LruDiskCache implements Closeable {
                 cacheKey = bytesToHexString(mDigest.digest());
             }
             catch (NoSuchAlgorithmException e) {
+                // 当请求算法在特定环境中不可用时
                 cacheKey = String.valueOf(key.hashCode());
             }
             return cacheKey;
         }
 
+        // 字节转16进制串
         private static String bytesToHexString(byte[] bytes) {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < bytes.length; i++) {
@@ -893,9 +905,8 @@ public final class LruDiskCache implements Closeable {
         }
     }
 
-    // ////////////////////////////////////////////内部类/////////////////////////////////////////////////////////////
     /**
-     * 对应一个文件的条目
+     * 对应一个key的文件条目（一个key可包含多个文件）
      * 
      * @author xuan
      * @version $Revision: 1.0 $, $Date: 2013-9-17 下午7:57:30 $
@@ -924,7 +935,13 @@ public final class LruDiskCache implements Closeable {
         }
 
         /**
-         * Set lengths using decimal numbers like "10123".
+         * 设置长度，请用十进制，例如："10123"
+         * 
+         * @param strings
+         *            十进制数组
+         * @param startIndex
+         *            开始设置的位置索引
+         * @throws IOException
          */
         private void setLengths(String[] strings, int startIndex) throws IOException {
             if ((strings.length - startIndex) != valueCount) {
@@ -1011,13 +1028,13 @@ public final class LruDiskCache implements Closeable {
                     outputStream = new FileOutputStream(dirtyFile);
                 }
                 catch (FileNotFoundException e) {
-                    // Attempt to recreate the cache directory.
+                    // 创建缓存目录
                     directory.mkdirs();
                     try {
                         outputStream = new FileOutputStream(dirtyFile);
                     }
                     catch (FileNotFoundException e2) {
-                        // We are unable to recover. Silently eat the writes.
+                        // 无法恢复文件，返回一个空输出流
                         return NULL_OUTPUT_STREAM;
                     }
                 }
@@ -1061,6 +1078,12 @@ public final class LruDiskCache implements Closeable {
             }
         }
 
+        /**
+         * 一个静默的输出流，异常时能被默默的捕捉到
+         * 
+         * @author xuan
+         * @version $Revision: 1.0 $, $Date: 2014-5-5 上午9:44:33 $
+         */
         private class FaultHidingOutputStream extends FilterOutputStream {
             private FaultHidingOutputStream(OutputStream out) {
                 super(out);
@@ -1132,27 +1155,30 @@ public final class LruDiskCache implements Closeable {
          * Returns an editor for this snapshot's entry, or null if either the entry has changed since this snapshot was
          * created or if another edit is in progress.
          */
+        /**
+         * 返回条目的编辑对象
+         * 
+         * @return
+         * @throws IOException
+         */
         public Editor edit() throws IOException {
             return LruDiskCache.this.editByDiskKey(diskKey, sequenceNumber);
         }
 
         /**
-         * Returns the unbuffered stream with the value for {@code index}.
+         * 获取指定流，未加过缓存的
+         * 
+         * @param index
+         * @return
          */
         public FileInputStream getInputStream(int index) {
             return ins[index];
         }
 
-        /**
-         * Returns the string value for {@code index}.
-         */
         public String getString(int index) throws IOException {
             return inputStreamToString(getInputStream(index));
         }
 
-        /**
-         * Returns the byte length of the value for {@code index}.
-         */
         public long getLength(int index) {
             return lengths[index];
         }
