@@ -30,5 +30,6 @@
         <activity android:name="com.winupon.andframe.bigapple.zzdemo.ioc.IocDemoActivity" />
         <activity android:name="com.winupon.andframe.bigapple.zzdemo.db.DbDemoActivity" />
         <activity android:name="com.winupon.andframe.bigapple.zzdemo.bitmap.BitmapDemoActivity" />
+        <activity android:name="com.winupon.andframe.bigapple.zzdemo.utils.PinyinDemoActivity" />
     </application>
 </manifest>

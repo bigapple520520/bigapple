@@ -33,6 +33,7 @@ public final class R {
         public static final int buttonPost=0x7f07000f;
         public static final int buttonUpload=0x7f070011;
         public static final int content=0x7f070000;
+        public static final int editText=0x7f070013;
         public static final int gridView=0x7f070006;
         public static final int imageView=0x7f070002;
         public static final int textView=0x7f070003;
@@ -46,6 +47,7 @@ public final class R {
         public static final int demo_db_main=0x7f030002;
         public static final int demo_http2_main=0x7f030003;
         public static final int demo_ioc_main=0x7f030004;
+        public static final int demo_utils_pinyin_main=0x7f030005;
     }
     public static final class string {
         public static final int app_name=0x7f050000;
