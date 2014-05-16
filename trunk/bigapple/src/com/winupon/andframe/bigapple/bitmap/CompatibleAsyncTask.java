@@ -15,7 +15,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import android.annotation.TargetApi;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
@@ -28,7 +27,6 @@ import com.winupon.andframe.bigapple.utils.log.LogUtils;
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-9-22 下午6:28:18 $
  */
-@TargetApi(9)
 public abstract class CompatibleAsyncTask<Params, Progress, Result> {
     private static final int CORE_POOL_SIZE = 5;
     private static final int MAXIMUM_POOL_SIZE = 128;
@@ -40,6 +38,7 @@ public abstract class CompatibleAsyncTask<Params, Progress, Result> {
     protected static final ThreadFactory sThreadFactory = new ThreadFactory() {
         private final AtomicInteger mCount = new AtomicInteger(1);
 
+        @Override
         public Thread newThread(Runnable r) {
             return new Thread(r, "CompatibleAsyncTask #" + mCount.getAndIncrement());
         }
@@ -84,6 +83,7 @@ public abstract class CompatibleAsyncTask<Params, Progress, Result> {
      */
     public CompatibleAsyncTask() {
         mWorker = new WorkerRunnable<Params, Result>() {
+            @Override
             public Result call() throws Exception {
                 mTaskInvoked.set(true);
 
@@ -371,8 +371,10 @@ public abstract class CompatibleAsyncTask<Params, Progress, Result> {
         final ArrayDeque<Runnable> mTasks = new ArrayDeque<Runnable>();
         Runnable mActive;
 
+        @Override
         public synchronized void execute(final Runnable r) {
             mTasks.offer(new Runnable() {
+                @Override
                 public void run() {
                     try {
                         r.run();

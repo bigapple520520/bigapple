@@ -16,11 +16,13 @@ import android.view.ViewGroup.LayoutParams;
 import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
- * 安卓IOC框架使用继承该类，或者使用ViewUtils，进行手动inject注入，但是使用ViewUtils便不支持InjectParamThis注解了
+ * 安卓IOC框架使用继承该类，或者使用ViewUtils，进行手动inject注入，但是使用ViewUtils便不支持InjectParamThis注解了<br>
+ * 移动到app下的AnActivity了
  * 
  * @author xuan
  * @version $Revision: 33154 $, $Date: 2012-12-09 16:28:10 +0800 (周日, 09 十二月 2012) $
  */
+@Deprecated
 public class AnActivity extends Activity {
 
     @Override
@@ -35,6 +37,7 @@ public class AnActivity extends Activity {
         initAn();
     }
 
+    @Override
     public void setContentView(View view) {
         super.setContentView(view);
         initAn();
