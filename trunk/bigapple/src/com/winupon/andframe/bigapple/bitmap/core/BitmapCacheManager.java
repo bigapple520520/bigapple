@@ -11,7 +11,7 @@ import com.winupon.andframe.bigapple.bitmap.AfterClearCacheListener;
 import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
- * BitmapCache管理
+ * BitmapCache管理器
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-12-31 上午9:21:47 $
@@ -32,7 +32,7 @@ public class BitmapCacheManager {
     }
 
     private class BitmapCacheManagementTask extends AsyncTask<Object, Void, Integer> {
-        private AfterClearCacheListener afterClearCacheListener;
+        private AfterClearCacheListener afterClearCacheListener;// 清理缓存后回调
 
         public static final int MESSAGE_INIT_MEMORY_CACHE = 0;
         public static final int MESSAGE_INIT_DISK_CACHE = 1;
@@ -104,47 +104,103 @@ public class BitmapCacheManager {
         }
     }
 
-    public void initMemoryCache(AfterClearCacheListener listener) {
-        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_INIT_MEMORY_CACHE, null, null,
-                listener);
+    /**
+     * 初始化内存缓存
+     */
+    public void initMemoryCache() {
+        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_INIT_MEMORY_CACHE, null, null);
     }
 
-    public void initDiskCache(AfterClearCacheListener listener) {
-        new BitmapCacheManagementTask()
-                .execute(BitmapCacheManagementTask.MESSAGE_INIT_DISK_CACHE, null, null, listener);
+    /**
+     * 初始化磁盘缓存
+     */
+    public void initDiskCache() {
+        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_INIT_DISK_CACHE, null, null);
     }
 
+    /**
+     * 清理内存缓存和磁盘缓存
+     * 
+     * @param listener
+     *            清理之后回调
+     */
     public void clearCache(AfterClearCacheListener listener) {
-        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_CLEAR, null, null, listener);
+        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_CLEAR, null, listener);
     }
 
+    /**
+     * 清理内存缓存
+     * 
+     * @param listener
+     *            清理之后回调
+     */
     public void clearMemoryCache(AfterClearCacheListener listener) {
-        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_CLEAR_MEMORY, null, null, listener);
+        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_CLEAR_MEMORY, null, listener);
     }
 
+    /**
+     * 清理磁盘缓存
+     * 
+     * @param listener
+     *            清理之后回调
+     */
     public void clearDiskCache(AfterClearCacheListener listener) {
-        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_CLEAR_DISK, null, null, listener);
+        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_CLEAR_DISK, null, listener);
     }
 
+    /**
+     * 清理指定内存缓存和磁盘缓存
+     * 
+     * @param uri
+     *            图片地址
+     * @param listener
+     *            清理之后回调
+     */
     public void clearCache(String uri, AfterClearCacheListener listener) {
         new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_CLEAR_BY_KEY, uri, listener);
     }
 
+    /**
+     * 清理内存缓存
+     * 
+     * @param uri
+     *            图片地址
+     * @param listener
+     *            清理之后回调
+     */
     public void clearMemoryCache(String uri, AfterClearCacheListener listener) {
         new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_CLEAR_MEMORY_BY_KEY, uri, listener);
     }
 
+    /**
+     * 清理磁盘缓存
+     * 
+     * @param uri
+     *            图片地址
+     * @param listener
+     *            清理之后回调
+     */
     public void clearDiskCache(String uri, AfterClearCacheListener listener) {
-        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_CLEAR_DISK_BY_KEY, uri, null,
-                listener);
+        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_CLEAR_DISK_BY_KEY, uri, listener);
     }
 
+    /**
+     * flush内存缓存和磁盘缓存
+     * 
+     * @param listener
+     *            清理之后回调
+     */
     public void flushCache(AfterClearCacheListener listener) {
-        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_FLUSH, null, null, listener);
+        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_FLUSH, null, listener);
     }
 
+    /**
+     * 关闭内存缓存和磁盘缓存，清理后缓存不可使用，需要重新初始化
+     * 
+     * @param listener
+     */
     public void closeCache(AfterClearCacheListener listener) {
-        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_CLOSE, null, null, listener);
+        new BitmapCacheManagementTask().execute(BitmapCacheManagementTask.MESSAGE_CLOSE, null, listener);
     }
 
 }

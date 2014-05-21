@@ -11,7 +11,9 @@ import android.text.TextUtils;
 import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
- * DBHelper，第一次运行程序或升级程序后自动创建或升级数据库
+ * 初始化数据库工具类。一般可以在Application的onCreate方法中调用。<br>
+ * 例如：DBHelper.init(1, "database_name", this);<br>
+ * 第一次运行程序或升级程序后自动创建或升级数据库，运行一次即可。
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-3-20 下午7:33:06 $
@@ -42,8 +44,24 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param databaseVersion
      *            数据库版本号
      */
+    @Deprecated
     public static void init(int databaseVersion) {
         DBHelper.databaseVersion = databaseVersion;
+    }
+
+    /**
+     * 初始化数据库，必须操作<br>
+     * 废弃，在初始化的时候，请传入Application实例，并操作数据库时继承BasicDao2
+     * 
+     * @param databaseVersion
+     *            数据库版本号
+     * @param databaseName
+     *            数据库名称
+     */
+    @Deprecated
+    public static void init(int databaseVersion, String databaseName) {
+        DBHelper.databaseVersion = databaseVersion;
+        DBHelper.databaseName = databaseName;
     }
 
     /**
@@ -53,23 +71,34 @@ public class DBHelper extends SQLiteOpenHelper {
      *            数据库版本号
      * @param databaseName
      *            数据库名称
+     * @param applicationContext
+     *            Application实例
      */
-    public static void init(int databaseVersion, String databaseName) {
-        DBHelper.databaseVersion = databaseVersion;
-        DBHelper.databaseName = databaseName;
-    }
-
     public static void init(int databaseVersion, String databaseName, Context applicationContext) {
         DBHelper.databaseVersion = databaseVersion;
         DBHelper.databaseName = databaseName;
         instance = new DBHelper(applicationContext);
     }
 
+    /**
+     * 初始化数据库，必须操作，默认数据名称是：bigapple
+     * 
+     * @param databaseVersion
+     *            数据库版本号
+     * @param applicationContext
+     *            Application实例
+     */
     public static void init(int databaseVersion, Context applicationContext) {
         DBHelper.databaseVersion = databaseVersion;
         instance = new DBHelper(applicationContext);
     }
 
+    /**
+     * 废弃的构造，请使用单例
+     * 
+     * @param context
+     */
+    @Deprecated
     public DBHelper(Context context) {
         super(context, databaseName, null, databaseVersion);
         this.context = context;
@@ -85,17 +114,18 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * 数据库第一次被创建时被调用（不在构造函数中发生，是在调用getWritableDatabase或getReadableDatabase时被调用时）
+     * 数据库第一次被创建时被调用 。<br>
+     * 触发时机：不在构造时发生，而是在调用getWritableDatabase或getReadableDatabase时被调用时。
      * 
      * @param db
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
         if (databaseVersion <= 0) {
-            throw new RuntimeException("DBHelper.DATABASE_VERSION必须初始化，请调用init方法");
+            throw new RuntimeException("DBHelper.DATABASE_VERSION必须初始化，请调用init方法初始化");
         }
 
-        LogUtils.i("initing dababase");
+        LogUtils.d("开始初始化数据库...");
 
         // read and execute assets/db_1.sql
         executeSqlFromFile(db, DB_INIT_OR_UPGRADE_FILENAME.replace("${db.version}", "1"));
@@ -133,7 +163,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * @param fileName
      */
     private void executeSqlFromFile(SQLiteDatabase db, String fileName) {
-        LogUtils.i("begin to execute sql in assets/" + fileName);
+        LogUtils.i("开始执行在assets中的数据库文件：" + fileName);
 
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(context.getAssets().open(fileName)));
@@ -165,7 +195,7 @@ public class DBHelper extends SQLiteOpenHelper {
             throw new RuntimeException(e);
         }
 
-        LogUtils.i("succeed to execute sql in assets/" + fileName);
+        LogUtils.d("成功执行在assets中的数据库文件：" + fileName);
     }
 
 }

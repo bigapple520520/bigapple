@@ -16,7 +16,7 @@ import com.winupon.andframe.bigapple.utils.log.LogUtils;
 /**
  * 网络图片加载工具类<br>
  * 注意： <br>
- * 1、使用者在使用时请保持单例，这样内存缓存设置的最大阀值才能被限制住<br>
+ * 1、使用者在使用时请保持单例，这样缓存设置的最大阀值才能被限制住<br>
  * 2、创建AnBitmapUtils实例所用的Context请使用Application对象，不要用Activity对象，防止Activity内存泄露<br>
  * 
  * @author xuan
@@ -41,29 +41,68 @@ public class AnBitmapUtils {
     }
 
     // ///////////////////////////////默认BitmapDisplayConfig参数配置，即默认显示方式/////////////////////////////////////////////////
+    /**
+     * 获取默认的图片显示配置
+     * 
+     * @return
+     */
     public BitmapDisplayConfig getDefaultDisplayConfig() {
         return defaultDisplayConfig;
     }
 
+    /**
+     * 设置默认的图片显示配置
+     * 
+     * @param defaultDisplayConfig
+     */
     public void setDefaultDisplayConfig(BitmapDisplayConfig defaultDisplayConfig) {
         this.defaultDisplayConfig = defaultDisplayConfig;
     }
 
     // ////////////////////////////////////////globalConfig参数配置，即默认参数配制/////////////////////////////////////////////////////
+    /**
+     * 获取图片加载各种参数配置
+     * 
+     * @return
+     */
     public BitmapGlobalConfig getGlobalConfig() {
         return globalConfig;
     }
 
+    /**
+     * 设置图片加载各种参数配置
+     * 
+     * @param globalConfig
+     */
     public void setGlobalConfig(BitmapGlobalConfig globalConfig) {
         this.globalConfig = globalConfig;
     }
 
     // /////////////////////////////// 加载展示图片
     // ////////////////////////////////////////////////////////////////////
+
+    /**
+     * 显示图片
+     * 
+     * @param imageView
+     *            显示图片控件
+     * @param uri
+     *            图片地址
+     */
     public void display(ImageView imageView, String uri) {
         display(imageView, uri, null);
     }
 
+    /**
+     * 显示图片
+     * 
+     * @param imageView
+     *            显示图片控件
+     * @param uri
+     *            图片地址
+     * @param displayConfig
+     *            图片显示规格
+     */
     public void display(ImageView imageView, String uri, BitmapDisplayConfig displayConfig) {
         if (null == imageView) {
             LogUtils.d("图片加载不处理，原因：图片显示控件imageView为空");
@@ -99,66 +138,153 @@ public class AnBitmapUtils {
     }
 
     // ////////////////////////////////////////缓存清理/////////////////////////////////////////////////////////////////
+    /**
+     * 清理内存缓存和磁盘缓存
+     * 
+     * @param listener
+     *            清理后回调
+     */
     public void clearCache(AfterClearCacheListener listener) {
         bitmapCacheManager.clearCache(listener);
     }
 
+    /**
+     * 清理内存缓存和磁盘缓存
+     */
     public void clearCache() {
         bitmapCacheManager.clearCache(null);
     }
 
+    /**
+     * 清理内存缓存
+     * 
+     * @param listener
+     *            清理后回调
+     */
     public void clearMemoryCache(AfterClearCacheListener listener) {
         bitmapCacheManager.clearMemoryCache(listener);
     }
 
+    /**
+     * 清理内存缓存
+     */
     public void clearMemoryCache() {
         bitmapCacheManager.clearMemoryCache(null);
     }
 
+    /**
+     * 清理磁盘缓存
+     * 
+     * @param listener
+     *            清理后回调
+     */
     public void clearDiskCache(AfterClearCacheListener listener) {
         bitmapCacheManager.clearDiskCache(listener);
     }
 
+    /**
+     * 清理磁盘缓存
+     */
     public void clearDiskCache() {
         bitmapCacheManager.clearDiskCache(null);
     }
 
+    /**
+     * 清理指定内存缓存和磁盘缓存
+     * 
+     * @param uri
+     *            图片地址
+     * @param listener
+     *            清理后回调
+     */
     public void clearCache(String uri, AfterClearCacheListener listener) {
         bitmapCacheManager.clearCache(uri, listener);
     }
 
+    /**
+     * 清理指定内存缓存和磁盘缓存
+     * 
+     * @param uri
+     *            图片地址
+     */
     public void clearCache(String uri) {
         bitmapCacheManager.clearCache(uri, null);
     }
 
+    /**
+     * 清理指定内存缓存
+     * 
+     * @param uri
+     *            图片地址
+     * @param listener
+     *            清理后回调
+     */
     public void clearMemoryCache(String uri, AfterClearCacheListener listener) {
         bitmapCacheManager.clearMemoryCache(uri, listener);
     }
 
+    /**
+     * 清理指定内存缓存
+     * 
+     * @param uri
+     *            图片地址
+     */
     public void clearMemoryCache(String uri) {
         bitmapCacheManager.clearMemoryCache(uri, null);
     }
 
+    /**
+     * 清理指定磁盘缓存
+     * 
+     * @param uri
+     *            图片地址
+     * @param listener
+     *            清理后回调
+     */
     public void clearDiskCache(String uri, AfterClearCacheListener listener) {
         bitmapCacheManager.clearDiskCache(uri, listener);
     }
 
+    /**
+     * 清理指定磁盘缓存
+     * 
+     * @param uri
+     *            图片地址
+     */
     public void clearDiskCache(String uri) {
         bitmapCacheManager.clearDiskCache(uri, null);
     }
 
+    /**
+     * flush内存缓存和磁盘缓存
+     * 
+     * @param listener
+     *            清理后回调
+     */
     public void flushCache(AfterClearCacheListener listener) {
         bitmapCacheManager.flushCache(listener);
     }
 
+    /**
+     * flush内存缓存和磁盘缓存
+     */
     public void flushCache() {
         bitmapCacheManager.flushCache(null);
     }
 
+    /**
+     * 关闭内存缓存和磁盘缓存
+     * 
+     * @param listener
+     *            清理后回调
+     */
     public void closeCache(AfterClearCacheListener listener) {
         bitmapCacheManager.closeCache(listener);
     }
 
+    /**
+     * 关闭内存缓存和磁盘缓存
+     */
     public void closeCache() {
         bitmapCacheManager.closeCache(null);
     }
@@ -167,6 +293,7 @@ public class AnBitmapUtils {
      * 从缓存中获取图片，如果没有，返回null
      * 
      * @param uri
+     *            图片地址
      * @return
      */
     public Bitmap getBitmapFromCache(String uri, BitmapDisplayConfig displayConfig) {
@@ -183,17 +310,23 @@ public class AnBitmapUtils {
     }
 
     // //////////////////////////////////任务暂定开始操作///////////////////////////////////////////////////////////////
+    /**
+     * 重启加载任务
+     */
     public void resumeTasks() {
         pauseTask = false;
     }
 
+    /**
+     * 暂停加载任务
+     */
     public void pauseTasks() {
         pauseTask = true;
         flushCache(null);
     }
 
     /**
-     * 一般退出程序时可以调用，用来释放，所有被暂定的任务
+     * 停止加载任务。一般退出程序时可以调用，用来释放，所有被暂定的任务
      */
     public void stopTasks() {
         pauseTask = true;

@@ -16,8 +16,17 @@ import java.io.Serializable;
 public class Result<T> implements Serializable {
     private static final long serialVersionUID = 1336383322394823709L;
 
+    /**
+     * 结果的成功失败标识
+     */
     private boolean success;
+    /**
+     * 结果的提示
+     */
     private String message;
+    /**
+     * 结果的数据
+     */
     private T value;
 
     public Result() {

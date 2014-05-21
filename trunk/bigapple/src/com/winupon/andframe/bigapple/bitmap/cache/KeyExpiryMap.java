@@ -3,7 +3,8 @@ package com.winupon.andframe.bigapple.bitmap.cache;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 用来存放超时时长的Map集合
+ * 一个定制的线程安全的Map。<br>
+ * 用来存放超时时长。
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-9-17 下午7:14:46 $

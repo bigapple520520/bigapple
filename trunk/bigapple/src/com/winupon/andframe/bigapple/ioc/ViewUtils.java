@@ -13,21 +13,45 @@ import android.view.View;
 import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
- * 注解注入View
+ * 自动注入xml布局中组件的工具类，一般可以在Activity中的onCreate方法中调用。<br>
+ * 例如：ViewUtils.inject(this)。<br>
+ * 这样在这个Activity中用注解（@InjectView）标识的View，都会被自动注入。
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-10-28 下午5:35:12 $
  */
 public abstract class ViewUtils {
 
+    /**
+     * 注解注入View
+     * 
+     * @param activity
+     *            使用当前的activity对象，注入当前activity中注解标识的View
+     */
     public static void inject(Activity activity) {
         injectObject(activity, new ViewFinder(activity));
     }
 
+    /**
+     * 注解注入View
+     * 
+     * @param handler
+     *            需要注入View的当前对象
+     * @param view
+     *            蕴含View的View对象，例如可以用：LayoutInflater.from(this).inflate(xml,null);来从xml中产生一个View对象
+     */
     public static void inject(Object handler, View view) {
         injectObject(handler, new ViewFinder(view));
     }
 
+    /**
+     * 注解注入View
+     * 
+     * @param handler
+     *            需要注入View的当前对象
+     * @param view
+     *            蕴含View的Activity对象
+     */
     public static void inject(Object handler, Activity activity) {
         injectObject(handler, new ViewFinder(activity));
     }

@@ -11,7 +11,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 在实例化时需要传入this参数
+ * 注入在实例化时需要传入this参数的注解<br>
  * 
  * @author xuan
  * @version $Revision: 32935 $, $Date: 2012-11-30 14:17:17 +0800 (周五, 30 十一月 2012) $
@@ -28,7 +28,7 @@ public @interface InjectParamThis {
     Class<?> value();
 
     /**
-     * 注解
+     * 备注
      * 
      * @return
      */

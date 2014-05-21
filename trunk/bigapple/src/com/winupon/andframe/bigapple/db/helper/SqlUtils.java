@@ -1,9 +1,11 @@
 package com.winupon.andframe.bigapple.db.helper;
 
+import java.util.Date;
+
 import com.winupon.andframe.bigapple.utils.DateUtils;
 
 /**
- * Sql工具类
+ * Sql拼接工具类
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2012-11-22 上午10:13:34 $
@@ -14,10 +16,14 @@ public abstract class SqlUtils {
      * 取得填充参数后的sql
      * 
      * @param preparedSQL
-     *            预编译sql
+     *            预编译sql<br>
+     *            例如：SELECT * FROM user WHERE name=?
      * @param args
-     *            参数数组
-     * @return 填充参数后的sql
+     *            参数数组<br>
+     *            例如：{xuan}
+     * 
+     * @return 填充参数后的sql<br>
+     *         例如：SELECT * FROM user WHERE name=xuan
      */
     public static String getSQL(String preparedSQL, Object[] args) {
         if (args == null || args.length == 0) {
@@ -43,9 +49,9 @@ public abstract class SqlUtils {
                 sql.append(arg);
                 sql.append("'");
             }
-            else if (arg instanceof java.util.Date) {
+            else if (arg instanceof Date) {
                 sql.append("'");
-                sql.append(DateUtils.date2String((java.util.Date) arg));
+                sql.append(DateUtils.date2String((Date) arg));
                 sql.append("'");
             }
             else {
@@ -62,8 +68,11 @@ public abstract class SqlUtils {
      * 根据参数个数生成IN括弧里面的部分sql，包含括弧
      * 
      * @param size
-     *            参数个数
-     * @return IN括弧里面的部分sql
+     *            参数个数<br>
+     *            例如：3
+     * 
+     * @return IN括弧里面的部分sql<br>
+     *         例如：(?,?,?)
      */
     public static String getInSQL(int size) {
         StringBuilder inSQL = new StringBuilder();

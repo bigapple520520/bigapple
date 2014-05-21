@@ -4,16 +4,28 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 
 /**
- * OnScrollListener针对AnBitmapUtils工具的实现
+ * OnScrollListener针对AnBitmapUtils工具的实现。<br>
+ * 作用：快速滑动时可设置不加载图片，防止卡顿现象
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-9-17 下午3:44:51 $
  */
 public class PauseOnScrollListener implements OnScrollListener {
     private final AnBitmapUtils anBitmapUtils;
-    private final boolean pauseOnScroll;// 设置滚动时是否停止下载
-    private final boolean pauseOnFling;// 设置手指做抛的动作时，是否停止下载
-    private final OnScrollListener externalListener;// 自定义的OnScrollListener监听实现
+    /**
+     * 标识滚动时是否停止下载
+     */
+    private final boolean pauseOnScroll;
+
+    /**
+     * 标识手指做抛的动作时，是否停止下载
+     */
+    private final boolean pauseOnFling;
+
+    /**
+     * 外部自定义的OnScrollListener监听实现
+     */
+    private final OnScrollListener externalListener;
 
     public PauseOnScrollListener(AnBitmapUtils anBitmapUtils, boolean pauseOnScroll, boolean pauseOnFling) {
         this(anBitmapUtils, pauseOnScroll, pauseOnFling, null);

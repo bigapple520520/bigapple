@@ -36,8 +36,11 @@ public abstract class IOUtils {
      * 把数据以指定编码写入输出流中
      * 
      * @param data
+     *            字符串数据
      * @param output
+     *            输出流
      * @param encoding
+     *            编码
      * @throws IOException
      */
     public static void write(String data, OutputStream output, String encoding) throws IOException {
@@ -50,7 +53,9 @@ public abstract class IOUtils {
      * 把字节流按指定编码组成字符串
      * 
      * @param input
+     *            输入流
      * @param encoding
+     *            编码
      * @return
      * @throws IOException
      */

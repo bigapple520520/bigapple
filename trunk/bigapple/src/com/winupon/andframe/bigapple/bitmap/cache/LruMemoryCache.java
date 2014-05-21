@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * 内存缓存
+ * 基于Lru算法的内存缓存。
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-9-17 下午7:03:41 $
@@ -223,6 +223,7 @@ public class LruMemoryCache<K, V> {
         return new LinkedHashMap<K, V>(map);
     }
 
+    @Override
     public synchronized final String toString() {
         int accesses = hitCount + missCount;
         int hitPercent = accesses != 0 ? (100 * hitCount / accesses) : 0;

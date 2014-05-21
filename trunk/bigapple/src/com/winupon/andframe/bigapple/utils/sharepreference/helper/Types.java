@@ -13,4 +13,5 @@ package com.winupon.andframe.bigapple.utils.sharepreference.helper;
  */
 public enum Types {
     BOOLEAN, STRING, INTEGER, LONG, FLOAT
+
 }

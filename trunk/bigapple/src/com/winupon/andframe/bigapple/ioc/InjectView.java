@@ -11,7 +11,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 世界上最轻量级IOC框架
+ * 注入View注解
  * 
  * @author xuan
  */
@@ -27,7 +27,7 @@ public @interface InjectView {
     int value() default -1;
 
     /**
-     * 注解
+     * 备注
      * 
      * @return
      */

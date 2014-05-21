@@ -66,9 +66,10 @@ public abstract class CompatibleAsyncTask<Params, Progress, Result> {
     private static final InternalHandler sHandler = new InternalHandler();
 
     /**
-     * 默认执行的线程池
+     * 默认执行的线程池，5个
      */
-    private static volatile Executor sDefaultExecutor = SERIAL_EXECUTOR;
+    // private static volatile Executor sDefaultExecutor = SERIAL_EXECUTOR;
+    private static volatile Executor sDefaultExecutor = THREAD_POOL_EXECUTOR;
 
     private final WorkerRunnable<Params, Result> mWorker;
     private final FutureTask<Result> mFuture;

@@ -13,7 +13,8 @@ import com.winupon.andframe.bigapple.cache.impl.BitmapMemoryCache;
 import com.winupon.andframe.bigapple.cache.impl.ObjectMemoryCache;
 
 /**
- * 作为一个缓存工厂存在
+ * 作为一个缓存工厂存在<br>
+ * 做了多线程安全的同步。
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-9-17 下午8:46:35 $
@@ -31,7 +32,7 @@ public abstract class AnCacheUtils {
      * 
      * @return
      */
-    public static Cache<String, Object> getObjectMemoryCache() {
+    public synchronized static Cache<String, Object> getObjectMemoryCache() {
         if (null == objectMemoryCache) {
             objectMemoryCache = new ObjectMemoryCache(objectCacheSize);
         }
@@ -44,7 +45,7 @@ public abstract class AnCacheUtils {
      * 
      * @return
      */
-    public static Cache<String, Bitmap> getBitmapMemoryCache() {
+    public synchronized static Cache<String, Bitmap> getBitmapMemoryCache() {
         if (null == bitmapMemoryCache) {
             bitmapMemoryCache = new BitmapMemoryCache(bitmapCacheSize);
         }
@@ -57,7 +58,7 @@ public abstract class AnCacheUtils {
      * 
      * @return
      */
-    public static Cache<String, Bitmap> getBitmapMemoryCache(Context context) {
+    public synchronized static Cache<String, Bitmap> getBitmapMemoryCache(Context context) {
         if (null == bitmapMemoryCache) {
             int maxSize = (int) (bitmapCachePercent * getMemoryClass(context));
             bitmapMemoryCache = new BitmapMemoryCache(maxSize);
@@ -71,7 +72,7 @@ public abstract class AnCacheUtils {
      * 
      * @param size
      */
-    public static void resetObjectCache(int size) {
+    public synchronized static void resetObjectCache(int size) {
         objectCacheSize = size;
         closeObjectCache();
     }
@@ -81,7 +82,7 @@ public abstract class AnCacheUtils {
      * 
      * @param size
      */
-    public static void resetBitmapCache(int size) {
+    public synchronized static void resetBitmapCache(int size) {
         bitmapCacheSize = size;
         closeBitmapCache();
     }
@@ -91,7 +92,7 @@ public abstract class AnCacheUtils {
      * 
      * @param size
      */
-    public static void resetBitmapCache(float percent) {
+    public synchronized static void resetBitmapCache(float percent) {
         bitmapCachePercent = percent;
         closeBitmapCache();
     }
@@ -99,7 +100,7 @@ public abstract class AnCacheUtils {
     /**
      * 关闭之后，再get的时候会新初始化缓存
      */
-    public static void closeObjectCache() {
+    public synchronized static void closeObjectCache() {
         if (null != objectMemoryCache) {
             objectMemoryCache.removeAll();
             objectMemoryCache = null;
@@ -109,7 +110,7 @@ public abstract class AnCacheUtils {
     /**
      * 关闭之后，再get的时候会新初始化缓存
      */
-    public static void closeBitmapCache() {
+    public synchronized static void closeBitmapCache() {
         if (null != bitmapMemoryCache) {
             bitmapMemoryCache.removeAll();
             bitmapMemoryCache = null;
@@ -119,7 +120,7 @@ public abstract class AnCacheUtils {
     /**
      * 同时关掉了对象缓存和bitmap缓存
      */
-    public static void closeAll() {
+    public synchronized static void closeAll() {
         closeObjectCache();
         closeBitmapCache();
     }

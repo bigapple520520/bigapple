@@ -15,6 +15,21 @@ import com.winupon.andframe.bigapple.utils.log.LogUtils;
  * @version $Revision: 1.0 $, $Date: 2013-8-1 下午6:50:10 $
  */
 public abstract class BitmapDecoder {
+    /**
+     * 从资源文件中按指定规格加载图片
+     * 
+     * @param res
+     *            资源
+     * @param resId
+     *            资源图片
+     * @param reqWidth
+     *            要求最大宽
+     * @param reqHeight
+     *            要求最大高
+     * @param config
+     *            图片质量配置
+     * @return
+     */
     public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight,
             Bitmap.Config config) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -35,6 +50,19 @@ public abstract class BitmapDecoder {
         }
     }
 
+    /**
+     * 从文件中加载出图片
+     * 
+     * @param filename
+     *            图片地址
+     * @param reqWidth
+     *            要求最大宽
+     * @param reqHeight
+     *            要求最大高
+     * @param config
+     *            图片质量配置
+     * @return
+     */
     public static Bitmap decodeSampledBitmapFromFile(String filename, int reqWidth, int reqHeight, Bitmap.Config config) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -54,6 +82,19 @@ public abstract class BitmapDecoder {
         }
     }
 
+    /**
+     * 从文件描述中加载出图片
+     * 
+     * @param fileDescriptor
+     *            文件描述
+     * @param reqWidth
+     *            要求最大宽
+     * @param reqHeight
+     *            要求最大高
+     * @param config
+     *            图片质量配置
+     * @return
+     */
     public static Bitmap decodeSampledBitmapFromDescriptor(FileDescriptor fileDescriptor, int reqWidth, int reqHeight,
             Bitmap.Config config) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -74,6 +115,19 @@ public abstract class BitmapDecoder {
         }
     }
 
+    /**
+     * 从图片数据中加载出图片
+     * 
+     * @param data
+     *            图片数据
+     * @param reqWidth
+     *            要求最大宽
+     * @param reqHeight
+     *            要求最大高
+     * @param config
+     *            图片质量配置
+     * @return
+     */
     public static Bitmap decodeSampledBitmapFromByteArray(byte[] data, int reqWidth, int reqHeight, Bitmap.Config config) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -94,6 +148,17 @@ public abstract class BitmapDecoder {
         }
     }
 
+    /**
+     * 根据指定规格，计算图片缩放比例
+     * 
+     * @param options
+     *            图片质量参数
+     * @param reqWidth
+     *            要求最大宽
+     * @param reqHeight
+     *            要求最大高
+     * @return
+     */
     public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         final int height = options.outHeight;
         final int width = options.outWidth;

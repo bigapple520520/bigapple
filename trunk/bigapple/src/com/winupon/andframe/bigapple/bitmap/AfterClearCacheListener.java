@@ -16,6 +16,7 @@ public interface AfterClearCacheListener {
      * 清理缓存后调用，type参考BitmapCacheManagementTask
      * 
      * @param type
+     *            执行清理何种缓存的命令
      */
     public void afterClearCache(int type);
 

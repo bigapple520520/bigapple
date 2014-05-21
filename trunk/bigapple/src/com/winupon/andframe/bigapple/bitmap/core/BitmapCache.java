@@ -21,7 +21,7 @@ import com.winupon.andframe.bigapple.utils.Validators;
 import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
- * 图片缓存对象，打包了内存缓存和磁盘缓存
+ * 图片缓存对象，组合了内存缓存和磁盘缓存的操作。
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-8-1 下午6:20:12 $
@@ -100,12 +100,24 @@ public class BitmapCache {
     }
 
     // ////////////////////////////////////////缓存设置调整//////////////////////////////////////////////////////////
+    /**
+     * 设置内存缓存大小
+     * 
+     * @param maxSize
+     *            缓存大小。单位：字节
+     */
     public void setMemoryCacheSize(int maxSize) {
         if (mMemoryCache != null) {
             mMemoryCache.setMaxSize(maxSize);
         }
     }
 
+    /**
+     * 设置磁盘缓存大小
+     * 
+     * @param maxSize
+     *            缓存大小。单位：字节
+     */
     public void setDiskCacheSize(int maxSize) {
         if (mDiskLruCache != null) {
             mDiskLruCache.setMaxSize(maxSize);
@@ -113,6 +125,15 @@ public class BitmapCache {
     }
 
     // ////////////////////////////////////////下载图片，会保存在磁盘///////////////////////////////////////////////////
+    /**
+     * 从地址中加载图片
+     * 
+     * @param uri
+     *            图片地址，可以是网络地址或者磁盘地址（'/'开头）
+     * @param config
+     *            加载回调配置
+     * @return
+     */
     public Bitmap downloadBitmap(String uri, BitmapDisplayConfig config) {
         BitmapMeta bitmapMeta = new BitmapMeta();
 
@@ -189,8 +210,11 @@ public class BitmapCache {
      * 图片放到内存缓存里
      * 
      * @param uri
+     *            缓存图片地址
      * @param config
+     *            显示图片规格配置
      * @param bitmapMeta
+     *            图片内容
      * @return
      * @throws IOException
      */
@@ -254,7 +278,9 @@ public class BitmapCache {
      * 从内存缓存中获取图片
      * 
      * @param uri
+     *            缓存图片地址
      * @param config
+     *            显示规格配置
      * @return
      */
     public Bitmap getBitmapFromMemCache(String uri, BitmapDisplayConfig config) {
@@ -270,7 +296,9 @@ public class BitmapCache {
      * 获取硬盘缓存
      * 
      * @param uri
+     *            缓存图片地址
      * @param config
+     *            显示规格配置
      * @return
      */
     public Bitmap getBitmapFromDiskCache(String uri, BitmapDisplayConfig config) {
@@ -329,11 +357,17 @@ public class BitmapCache {
     }
 
     // ///////////////////////////////////////////清理缓存部分/////////////////////////////////////////////////////////
+    /**
+     * 清理所有缓存
+     */
     public void clearCache() {
         clearMemoryCache();
         clearDiskCache();
     }
 
+    /**
+     * 清理所有内存缓存
+     */
     public void clearMemoryCache() {
         if (mMemoryCache != null) {
             mMemoryCache.evictAll();
@@ -341,6 +375,9 @@ public class BitmapCache {
         }
     }
 
+    /**
+     * 清理所有磁盘缓存
+     */
     public void clearDiskCache() {
         synchronized (mDiskCacheLock) {
             if (mDiskLruCache != null && !mDiskLruCache.isClosed()) {
@@ -357,11 +394,23 @@ public class BitmapCache {
         initDiskCache();
     }
 
+    /**
+     * 清理指定的内存缓存和磁盘缓存
+     * 
+     * @param uri
+     *            缓存的图片地址
+     */
     public void clearCache(String uri) {
         clearMemoryCache(uri);
         clearDiskCache(uri);
     }
 
+    /**
+     * 清理指定的内存缓存
+     * 
+     * @param uri
+     *            缓存的图片地址
+     */
     public void clearMemoryCache(String uri) {
         ArrayList<String> keyList = uri2keyListMap.get(uri);
         if (Validators.isEmpty(keyList)) {
@@ -379,6 +428,12 @@ public class BitmapCache {
         uri2keyListMap.remove(uri);
     }
 
+    /**
+     * 清理指定的磁盘缓存
+     * 
+     * @param uri
+     *            缓存的图片地址
+     */
     public void clearDiskCache(String uri) {
         synchronized (mDiskCacheLock) {
             if (mDiskLruCache != null && !mDiskLruCache.isClosed()) {
@@ -392,6 +447,9 @@ public class BitmapCache {
         }
     }
 
+    /**
+     * flush磁盘缓存
+     */
     public void flush() {
         synchronized (mDiskCacheLock) {
             if (mDiskLruCache != null) {
@@ -405,6 +463,9 @@ public class BitmapCache {
         }
     }
 
+    /**
+     * 关闭内存缓存和磁盘缓存，关闭后，缓存要重新初始化，否则不可用
+     */
     public void close() {
         synchronized (mDiskCacheLock) {
             if (mDiskLruCache != null) {
@@ -422,7 +483,7 @@ public class BitmapCache {
     }
 
     /**
-     * 图片封装
+     * 图片内容封装
      * 
      * @author xuan
      * @version $Revision: 1.0 $, $Date: 2013-9-17 下午3:10:29 $

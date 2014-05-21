@@ -57,8 +57,11 @@ public abstract class FileUtils {
      * 字节写入到文件中
      * 
      * @param file
+     *            文件
      * @param data
+     *            字节数据
      * @param append
+     *            是否从文件后面添加
      * @throws IOException
      */
     public static void writeByteArrayToFile(File file, byte[] data, boolean append) throws IOException {
@@ -76,6 +79,7 @@ public abstract class FileUtils {
      * 读出文件中的字节
      * 
      * @param file
+     *            文件
      * @return
      * @throws IOException
      */
@@ -119,7 +123,9 @@ public abstract class FileUtils {
      * 从文件中以指定编码读取成字符串
      * 
      * @param file
+     *            文件
      * @param encoding
+     *            编码
      * @return
      * @throws IOException
      */
@@ -226,6 +232,17 @@ public abstract class FileUtils {
     }
 
     // /////////////////////////////////////////////////移动文件///////////////////////////////////////////////////////
+    /**
+     * 剪切文件夹到文件夹
+     * 
+     * @param src
+     *            源文件夹
+     * @param destDir
+     *            目的文件夹
+     * @param isCover
+     *            存在是否覆盖
+     * @throws IOException
+     */
     public static void moveDirectoryToDirectory(File src, File destDir, boolean isCover) throws IOException {
         if (src == null) {
             throw new NullPointerException("Source must not be null");
@@ -265,6 +282,17 @@ public abstract class FileUtils {
         }
     }
 
+    /**
+     * 剪切文件到文件夹
+     * 
+     * @param srcFile
+     *            源文件
+     * @param destDir
+     *            目的文件夹
+     * @param isCover
+     *            存在是否覆盖
+     * @throws IOException
+     */
     public static void moveFileToDirectory(File srcFile, File destDir, boolean isCover) throws IOException {
         if (srcFile == null) {
             throw new NullPointerException("Source must not be null");
@@ -288,6 +316,17 @@ public abstract class FileUtils {
         moveFile(srcFile, new File(destDir, srcFile.getName()), isCover);
     }
 
+    /**
+     * 剪切文件到文件
+     * 
+     * @param srcFile
+     *            源文件
+     * @param destFile
+     *            目的文件
+     * @param isCover
+     *            存在是否覆盖
+     * @throws IOException
+     */
     public static void moveFile(File srcFile, File destFile, boolean isCover) throws IOException {
         if (null == srcFile) {
             throw new NullPointerException("Source must not be null");
@@ -328,10 +367,30 @@ public abstract class FileUtils {
     }
 
     // /////////////////////////////////////文件夹内容拷贝到指定文件夹中////////////////////////////////////////////////
+    /**
+     * 拷贝文件夹到文件夹
+     * 
+     * @param srcDir
+     *            源文件夹
+     * @param destDir
+     *            目的文件夹
+     * @throws IOException
+     */
     public static void copyDirectoryToDirectory(File srcDir, File destDir) throws IOException {
         copyDirectoryToDirectory(srcDir, new File(destDir, srcDir.getName()), null);
     }
 
+    /**
+     * 拷贝文件夹到文件夹
+     * 
+     * @param srcDir
+     *            源文件夹
+     * @param destDir
+     *            目的文件夹
+     * @param filter
+     *            文件过滤器
+     * @throws IOException
+     */
     public static void copyDirectoryToDirectory(File srcDir, File destDir, FileFilter filter) throws IOException {
         if (srcDir == null) {
             throw new NullPointerException("Source must not be null");
@@ -409,10 +468,30 @@ public abstract class FileUtils {
     }
 
     // ////////////////////////////////////////文件拷贝到指定文件夹里////////////////////////////////////////////////////
+    /**
+     * 拷贝文件到文件夹
+     * 
+     * @param srcFile
+     *            源文件
+     * @param destDir
+     *            目的文件夹
+     * @throws IOException
+     */
     public static void copyFileToDirectory(File srcFile, File destDir) throws IOException {
         copyFileToDirectory(srcFile, destDir, true);
     }
 
+    /**
+     * 拷贝文件到文件夹
+     * 
+     * @param srcFile
+     *            源文件
+     * @param destDir
+     *            目的文件夹
+     * @param preserveFileDate
+     *            是否修改时间
+     * @throws IOException
+     */
     public static void copyFileToDirectory(File srcFile, File destDir, boolean preserveFileDate) throws IOException {
         if (null == destDir) {
             throw new NullPointerException("Destination must not be null");
@@ -425,10 +504,30 @@ public abstract class FileUtils {
     }
 
     // //////////////////////////////////////////文件拷贝到文件/////////////////////////////////////////////////////////
+    /**
+     * 拷贝文件到文件
+     * 
+     * @param srcFile
+     *            源文件
+     * @param destFile
+     *            目的文件
+     * @throws IOException
+     */
     public static void copyFile(File srcFile, File destFile) throws IOException {
         copyFile(srcFile, destFile, true);
     }
 
+    /**
+     * 拷贝文件到文件
+     * 
+     * @param srcFile
+     *            源文件
+     * @param destFile
+     *            目的文件
+     * @param preserveFileDate
+     *            是否修改时间
+     * @throws IOException
+     */
     public static void copyFile(File srcFile, File destFile, boolean preserveFileDate) throws IOException {
         if (srcFile == null) {
             throw new NullPointerException("Source must not be null");
@@ -499,6 +598,12 @@ public abstract class FileUtils {
     }
 
     // //////////////////////////////////递归删除文件夹下的所有文件/////////////////////////////////////////////////////
+    /**
+     * 删除指定目录下文件及目录，默认本身也会被删除
+     * 
+     * @param filePath
+     *            文件或者文件夹路径
+     */
     public static void deleteFileOrDirectoryQuietly(String filePath) {
         try {
             deleteFileOrDirectory(filePath, true);
@@ -544,10 +649,26 @@ public abstract class FileUtils {
     }
 
     // ////////////////////////////////////////递归获取文件夹下面的所有文件 ////////////////////////////////////////////
+    /**
+     * 获取指定路径下的所有文件
+     * 
+     * @param path
+     *            指定路径
+     * @return
+     */
     public static List<File> getFileListByPath(String path) {
         return getFileListByPath(path, null);
     }
 
+    /**
+     * 获取指定路径下的所有文件
+     * 
+     * @param path
+     *            指定路径
+     * @param filter
+     *            文件过滤器
+     * @return
+     */
     public static List<File> getFileListByPath(String path, FileFilter filter) {
         File directory = new File(path);
         if (!directory.exists() || !directory.isDirectory()) {

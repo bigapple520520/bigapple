@@ -29,6 +29,12 @@ public class PreferenceModel {
     private PreferenceModel() {
     }
 
+    /**
+     * 获取单例
+     * 
+     * @param context
+     * @return
+     */
     public static PreferenceModel instance(Context context) {
         preferenceModel.prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return preferenceModel;
@@ -60,6 +66,7 @@ public class PreferenceModel {
      * 
      * @param key
      * @param defValue
+     *            默认值，当key对应的值不存在时，就返回这个默认值
      * @param type
      * @return
      */

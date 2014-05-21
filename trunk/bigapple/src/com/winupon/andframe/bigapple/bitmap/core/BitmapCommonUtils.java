@@ -10,7 +10,7 @@ import android.os.StatFs;
 import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
- * 工具类而已
+ * 获取图片路径大小工具类
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-8-9 下午3:22:58 $
@@ -37,6 +37,7 @@ public class BitmapCommonUtils {
      * 获取bitmap的字节大小
      * 
      * @param bitmap
+     *            图片
      * @return
      */
     public static int getBitmapSize(Bitmap bitmap) {
@@ -51,6 +52,7 @@ public class BitmapCommonUtils {
      * 获取目录指定的可用空间
      * 
      * @param path
+     *            目录
      * @return
      */
     public static long getAvailableSpace(File path) {

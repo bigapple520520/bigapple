@@ -19,10 +19,12 @@ import com.winupon.andframe.bigapple.db.helper.SqlUtils;
 import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
- * 对原生数据库操作做了一层轻量级封装，主要屏蔽了显式的close操作，并且处理了多线程操作的问题，当然也可以使用原生的API
+ * 对原生数据库操作做了一层轻量级封装，主要屏蔽了显式的close操作，并且处理了多线程操作的问题，当然也可以使用原生的API<br>
+ * 废弃：请使用BasicDao2代替，BasicDao2使用了单例的DBHelper，在生成本实例时可以不用传Context。故本实例也可以保持单例。
  * 
  * @author xuan
  */
+@Deprecated
 public class BasicDao {
     public static boolean DEBUG = false;
 

@@ -22,19 +22,41 @@ public class BitmapDisplayConfig {
      * 是否显示原图,注意：图片较大叫多时，千万设置false，并控制好下面的最大宽高，不然还是不能避免OOM
      */
     private boolean showOriginal = false;
-    private int bitmapMaxWidth = 900;// showOriginal=false时才有效
-    private int bitmapMaxHeight = 900;// showOriginal=false时才有效
 
+    /**
+     * showOriginal=false时才有效，限制最大宽，默认900
+     */
+    private int bitmapMaxWidth = 900;
+
+    /**
+     * showOriginal=false时才有效，限制最大高，默认900
+     */
+    private int bitmapMaxHeight = 900;
+
+    /**
+     * 加载完成后显示动画
+     */
     private Animation animation;
 
+    /**
+     * 加载中图片
+     */
     private Bitmap loadingBitmap = TRANSPARENT_BITMAP;
+
+    /**
+     * 加载失败图片
+     */
     private Bitmap loadFailedBitmap;
 
+    /**
+     * 加载完成后回调
+     */
     private ImageLoadCallBack imageLoadCallBack = new SimpleImageLoadCallBack();
-    private DownloaderCallBack downloaderCallBack = null;
 
-    public BitmapDisplayConfig() {
-    }
+    /**
+     * 从网络中下载图片时回调，只有从网络上下载才会触发
+     */
+    private DownloaderCallBack downloaderCallBack = null;
 
     public int getBitmapMaxWidth() {
         return bitmapMaxWidth;

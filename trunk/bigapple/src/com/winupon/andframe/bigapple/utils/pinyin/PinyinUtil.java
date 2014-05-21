@@ -15,14 +15,14 @@ import android.text.TextUtils;
 import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
- * 拼音使用工具类
+ * 拼音使用工具类，可以把中文转化成拼音，如果本身是字母或者数字就不变返回
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2014-5-6 下午12:56:34 $
  */
 public abstract class PinyinUtil {
     /**
-     * 中文转拼音，如果是单个字母或者数字不变
+     * 字节中文--》拼音，原大小写
      * 
      * @param context
      * @param c
@@ -72,7 +72,7 @@ public abstract class PinyinUtil {
     }
 
     /**
-     * 首字母，原
+     * 字节中文--》拼音首字母，原大小显示
      * 
      * @param context
      * @param c
@@ -88,7 +88,7 @@ public abstract class PinyinUtil {
     }
 
     /**
-     * 字节转拼音，小写
+     * 字节中文--》拼音，转成小写
      * 
      * @param context
      * @param c
@@ -104,7 +104,7 @@ public abstract class PinyinUtil {
     }
 
     /**
-     * 取首拼，小写
+     * 字节中文--》拼音首字母，转成小写
      * 
      * @param context
      * @param c
@@ -120,7 +120,7 @@ public abstract class PinyinUtil {
     }
 
     /**
-     * 字节转拼音，大写
+     * 字节中文--》拼音，转成大写
      * 
      * @param context
      * @param c
@@ -136,7 +136,7 @@ public abstract class PinyinUtil {
     }
 
     /**
-     * 取首拼，大写
+     * 字节中文--》拼音首字母，转成大写
      * 
      * @param context
      * @param c
@@ -154,7 +154,7 @@ public abstract class PinyinUtil {
     // /////////////////////////////////////////字符串////////////////////////////////////////////////////////////
 
     /**
-     * 中文转拼音，如果是单个字母或者数字不变
+     * 字符串中文--》拼音，原大小写
      * 
      * @param context
      * @param hanzi
@@ -205,7 +205,7 @@ public abstract class PinyinUtil {
     }
 
     /**
-     * 首字母，原
+     * 字符串中文--》拼音首字母，原大小写
      * 
      * @param context
      * @param c
@@ -221,7 +221,7 @@ public abstract class PinyinUtil {
     }
 
     /**
-     * 字符串转拼音，小写
+     * 字符串中文--》拼音，转成小写
      * 
      * @param context
      * @param hanzi
@@ -237,7 +237,7 @@ public abstract class PinyinUtil {
     }
 
     /**
-     * 取首拼，小写
+     * 字符串中文--》拼音首字母，转成小写
      * 
      * @param context
      * @param hanzi
@@ -253,7 +253,7 @@ public abstract class PinyinUtil {
     }
 
     /**
-     * 字符串转拼音，大写
+     * 字符串中文--》拼音，转成大写
      * 
      * @param context
      * @param hanzi
@@ -269,7 +269,7 @@ public abstract class PinyinUtil {
     }
 
     /**
-     * 取首拼，大写
+     * 字符串中文--》拼音首字母，转成大写
      * 
      * @param context
      * @param hanzi

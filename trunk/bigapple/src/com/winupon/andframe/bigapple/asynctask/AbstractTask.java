@@ -5,9 +5,6 @@
  */
 package com.winupon.andframe.bigapple.asynctask;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.text.TextUtils;
@@ -39,24 +36,13 @@ public abstract class AbstractTask<T> extends CompatibleAsyncTask<Object, Intege
 
     private ProgressDialog progressDialog;// 提示框
 
-    /**
-     * 自定义一个动态线程池，线程数据会根据提交任务进行伸缩调整
-     */
-    public static final Executor M_THREAD_POOL_EXECUTOR = Executors.newCachedThreadPool(sThreadFactory);
-
     public AbstractTask(Context context) {
         this.context = context;
-        initThreadPoolExecutor();
     }
 
     public AbstractTask(Context context, boolean isShowProgressDialog) {
         this.context = context;
         this.isShowProgressDialog = isShowProgressDialog;
-        initThreadPoolExecutor();
-    }
-
-    private void initThreadPoolExecutor() {
-        setDefaultExecutor(M_THREAD_POOL_EXECUTOR);
     }
 
     @Override
