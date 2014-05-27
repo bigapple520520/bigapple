@@ -20,7 +20,7 @@
     <target name="jar-sources" description="Packages JAR file for sources">
         <delete dir="${build.sources.dir}" />
         <mkdir dir="${build.sources.dir}" />
-        <jar destfile="${build.sources.dir}/${project.version}.jar">
+        <jar destfile="${build.sources.dir}/${project.version}-source.jar">
             <zipfileset dir="${src.dir}" />
         </jar>
     </target>
@@ -48,7 +48,7 @@
         <mkdir dir="${build.javadoc.dir}" />
         <javadoc
             sourcepath="${src.dir}"
-            destdir="${build.javadoc.dir}/${project.version}"
+            destdir="${build.javadoc.dir}/${project.version}-doc"
             access="package"
             author="true"
             version="true"
