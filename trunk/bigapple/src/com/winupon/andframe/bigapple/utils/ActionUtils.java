@@ -78,22 +78,4 @@ public abstract class ActionUtils {
         context.startActivity(intent);
     }
 
-    /**
-     * 调转分享
-     * 
-     * @param context
-     * @param subject
-     * @param text
-     * @param title
-     */
-    public static void gotoShare(Context context, String subject, String text, String title) {
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-        intent.putExtra(Intent.EXTRA_TEXT, text);
-        intent.putExtra(Intent.EXTRA_TITLE, title);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(Intent.createChooser(intent, "请选择"));
-    }
-
 }
