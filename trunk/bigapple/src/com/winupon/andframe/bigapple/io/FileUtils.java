@@ -36,7 +36,7 @@ public abstract class FileUtils {
     private static final long FILE_COPY_BUFFER_SIZE = ONE_MB * 30;
 
     /**
-     * 取得文件的后缀名。
+     * 截取文件的后缀名，例如文件名是xuan.jpg时，返回的后缀名时jpg
      * 
      * @param fileName
      *            文件名

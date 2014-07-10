@@ -78,8 +78,7 @@ public class AnBitmapUtils {
         this.globalConfig = globalConfig;
     }
 
-    // /////////////////////////////// 加载展示图片
-    // ////////////////////////////////////////////////////////////////////
+    // /////////////////////////////// 加载展示图片/////////////////////////
 
     /**
      * 显示图片
@@ -105,7 +104,7 @@ public class AnBitmapUtils {
      */
     public void display(ImageView imageView, String uri, BitmapDisplayConfig displayConfig) {
         if (null == imageView) {
-            LogUtils.d("图片加载不处理，原因：图片显示控件imageView为空");
+            LogUtils.e("图片加载不处理，原因：图片显示控件imageView为空");
             return;
         }
 
@@ -290,7 +289,7 @@ public class AnBitmapUtils {
     }
 
     /**
-     * 从缓存中获取图片，如果没有，返回null
+     * 从缓存中获取已缓存的图片，如果没有，返回null
      * 
      * @param uri
      *            图片地址

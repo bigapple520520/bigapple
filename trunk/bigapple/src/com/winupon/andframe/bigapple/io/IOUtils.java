@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 /**
- * IO工具类
+ * IO流操作工具类
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-9-4 下午7:22:40 $
@@ -75,10 +75,12 @@ public abstract class IOUtils {
     }
 
     /**
-     * 从流中准确的读出指定字节
+     * 从流中准确的读出指定字节，读取后会严格用读取后的字节数和传入的longSize进行比较，只要相等了才返回数据，否则抛出异常
      * 
      * @param input
+     *            输入流
      * @param longSize
+     *            该输入流的期望长度
      * @return
      * @throws IOException
      */

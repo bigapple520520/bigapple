@@ -12,7 +12,8 @@ import java.io.IOException;
 import android.content.Context;
 
 /**
- * 拼音大全
+ * 拼音的资源信息，定位拼音的原理基本是这样的：<br>
+ * 先会把拼音的资源信息缓存到手机的文件中，然后再根据文件的定位算法去对应相应中文的拼音
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2014-5-6 下午12:53:31 $
@@ -20,7 +21,7 @@ import android.content.Context;
 public abstract class PinyinSource {
 
     /**
-     * 拼音资源，第一次会写到客户端文件中
+     * 拼音的资源信息
      * 
      * @return
      */
@@ -60,7 +61,8 @@ public abstract class PinyinSource {
     }
 
     /**
-     * 资源文件写入文件
+     * 把拼音的资源信息缓存到手机的文件中<br>
+     * 缓存的路劲：data/data/packageName/files/pinyin4android，其中packageName是应用程序的包名
      * 
      * @param context
      * @return
@@ -95,7 +97,8 @@ public abstract class PinyinSource {
     }
 
     /**
-     * 读取文件，如果不存在就写入
+     * 获取缓存在手机中的拼音资源文件<br>
+     * 缓存路径为：data/data/packageName/files/pinyin4android，其中packageName是应用程序的包名
      * 
      * @param context
      * @return

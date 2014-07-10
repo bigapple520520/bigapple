@@ -8,9 +8,8 @@ package com.winupon.andframe.bigapple.ioc;
 import java.lang.reflect.Field;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.View;
-
-import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
  * 自动注入xml布局中组件的工具类，一般可以在Activity中的onCreate方法中调用。<br>
@@ -21,6 +20,7 @@ import com.winupon.andframe.bigapple.utils.log.LogUtils;
  * @version $Revision: 1.0 $, $Date: 2013-10-28 下午5:35:12 $
  */
 public abstract class ViewUtils {
+    private static final String TAG = ViewUtils.class.getSimpleName();
 
     /**
      * 注解注入View
@@ -70,7 +70,7 @@ public abstract class ViewUtils {
                         }
                     }
                     catch (Exception e) {
-                        LogUtils.e(e.getMessage(), e);
+                        Log.e(TAG, "注解注入View异常，原因：" + e.getMessage(), e);
                     }
                 }
             }

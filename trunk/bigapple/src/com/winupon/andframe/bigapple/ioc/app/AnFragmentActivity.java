@@ -10,12 +10,12 @@ import java.lang.reflect.Field;
 
 import android.content.Context;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 
 import com.winupon.andframe.bigapple.ioc.InjectParamThis;
 import com.winupon.andframe.bigapple.ioc.InjectView;
-import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
  * 此类继承了FragmentActivity，继承此类后，那么在该Activity内的所有标识了注解的属性View都会被自动注入。<br>
@@ -25,6 +25,7 @@ import com.winupon.andframe.bigapple.utils.log.LogUtils;
  * @version $Revision: 33154 $, $Date: 2012-12-09 16:28:10 +0800 (周日, 09 十二月 2012) $
  */
 public class AnFragmentActivity extends FragmentActivity {
+    private final String TAG = getClass().getSimpleName();
 
     @Override
     public void setContentView(int layout) {
@@ -44,9 +45,7 @@ public class AnFragmentActivity extends FragmentActivity {
         initAn();
     }
 
-    /**
-     * 调用此方法，就可以进IOC注入
-     */
+    // 对各种注解进行注入
     private void initAn() {
         Field[] fileds = getClass().getDeclaredFields();
 
@@ -56,11 +55,7 @@ public class AnFragmentActivity extends FragmentActivity {
         }
     }
 
-    /**
-     * 注释InjectView注入
-     * 
-     * @param field
-     */
+    // 注解了InjectView的字段注入
     private void initInjectView(Field field) {
         InjectView injectView = field.getAnnotation(InjectView.class);
 
@@ -73,16 +68,12 @@ public class AnFragmentActivity extends FragmentActivity {
                 }
             }
             catch (Exception e) {
-                LogUtils.e("", e);
+                Log.e(TAG, "注解[InjectView]注入异常，原因：" + e.getMessage(), e);
             }
         }
     }
 
-    /**
-     * 在实例化时需要传入this参数
-     * 
-     * @param field
-     */
+    // 注解了InjectParamThis的字段注入
     private void initInjectParamThis(Field field) {
         InjectParamThis injectParamThis = field.getAnnotation(InjectParamThis.class);
 
@@ -93,7 +84,7 @@ public class AnFragmentActivity extends FragmentActivity {
                 field.set(this, constructor.newInstance(new Object[] { this }));
             }
             catch (Exception e) {
-                LogUtils.e("", e);
+                Log.e(TAG, "注解[InjectParamThis]注入异常，原因：" + e.getMessage(), e);
             }
         }
     }

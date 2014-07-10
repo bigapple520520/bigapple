@@ -16,7 +16,8 @@ import com.winupon.andframe.bigapple.utils.sharepreference.helper.Types;
 
 /**
  * SharedPreference存储的工具类，采用了默认文件存储。<br>
- * 默认文件保存路径：/data/data/<package name>/shared_prefs/<package name>_preferences.xml
+ * 默认文件保存路径：/data/data/<package name>/shared_prefs/<package name>_preferences.xml<br>
+ * 该类已单例模式存在，获取单例方式请调用instance方法
  * 
  * @author xuan
  * @version $Revision: 32003 $, $Date: 2012-10-31 14:00:09 +0800 (星期三, 31 十月 2012) $
@@ -41,22 +42,62 @@ public class PreferenceModel {
     }
 
     // ////////////////////////////////////获取参数部分方法/////////////////////////////////////////////////////
+    /**
+     * 获取key对应的value值，值是boolean类型
+     * 
+     * @param key
+     * @param defValue
+     *            当key对应的值不存在时，返回这个默认值
+     * @return
+     */
     public boolean getBoolean(String key, boolean defValue) {
         return (Boolean) getSystemProperties(key, defValue, Types.BOOLEAN);
     }
 
+    /**
+     * 获取key对应的value值，值是float类型
+     * 
+     * @param key
+     * @param defValue
+     *            当key对应的值不存在时，返回这个默认值
+     * @return
+     */
     public float getFloat(String key, float defValue) {
         return (Float) getSystemProperties(key, defValue, Types.FLOAT);
     }
 
+    /**
+     * 获取key对应的value值，值是int类型
+     * 
+     * @param key
+     * @param defValue
+     *            当key对应的值不存在时，返回这个默认值
+     * @return
+     */
     public int getInt(String key, int defValue) {
         return (Integer) getSystemProperties(key, defValue, Types.INTEGER);
     }
 
+    /**
+     * 获取key对应的value值，值是long类型
+     * 
+     * @param key
+     * @param defValue
+     *            当key对应的值不存在时，返回这个默认值
+     * @return
+     */
     public long getLong(String key, long defValue) {
         return (Long) getSystemProperties(key, defValue, Types.LONG);
     }
 
+    /**
+     * 获取key对应的value值，值是String类型
+     * 
+     * @param key
+     * @param defValue
+     *            当key对应的值不存在时，返回这个默认值
+     * @return
+     */
     public String getString(String key, String defValue) {
         return (String) getSystemProperties(key, defValue, Types.STRING);
     }
@@ -65,9 +106,11 @@ public class PreferenceModel {
      * 根据key得到properties配置
      * 
      * @param key
+     *            唯一key值
      * @param defValue
      *            默认值，当key对应的值不存在时，就返回这个默认值
      * @param type
+     *            获取的值的类型，详情参看：Types枚举
      * @return
      */
     public Object getSystemProperties(String key, Object defValue, Types type) {
@@ -94,7 +137,7 @@ public class PreferenceModel {
     }
 
     /**
-     * 获取所有参数的集合
+     * 获取所有存贮参数的Map集合
      * 
      * @return
      */
@@ -103,32 +146,65 @@ public class PreferenceModel {
     }
 
     // ////////////////////////////////////保存参数方法部分////////////////////////////////////////////////////////////
+    /**
+     * 以<key,value>的方式保存参数，value是boolean类型
+     * 
+     * @param key
+     * @param value
+     */
     public void putBoolean(String key, boolean value) {
         saveSystemProperties(key, value, Types.BOOLEAN);
     }
 
+    /**
+     * 以<key,value>的方式保存参数，value是float类型
+     * 
+     * @param key
+     * @param value
+     */
     public void putFloat(String key, float value) {
         saveSystemProperties(key, value, Types.FLOAT);
     }
 
+    /**
+     * 以<key,value>的方式保存参数，value是int类型
+     * 
+     * @param key
+     * @param value
+     */
     public void putInt(String key, int value) {
         saveSystemProperties(key, value, Types.INTEGER);
     }
 
+    /**
+     * 以<key,value>的方式保存参数，value是long类型
+     * 
+     * @param key
+     * @param value
+     */
     public void putLong(String key, long value) {
         saveSystemProperties(key, value, Types.LONG);
     }
 
+    /**
+     * 以<key,value>的方式保存参数，value是String类型
+     * 
+     * @param key
+     * @param value
+     */
     public void putString(String key, String value) {
         saveSystemProperties(key, value, Types.STRING);
     }
 
     /**
-     * 保存properties配置
+     * 以<key,value>的方式保存参数
      * 
      * @param key
+     *            唯一key值
      * @param value
+     *            参数的值
      * @param type
+     *            参数值的类型，对应支持的类型参看：Types枚举
      */
     public void saveSystemProperties(String key, Object value, Types type) {
         if (prefsEdit == null) {
@@ -158,12 +234,13 @@ public class PreferenceModel {
 
     // /////////////////////////////////////////////删除参数方法部分///////////////////////////////////////////////////////
     /**
-     * 删除对应key的properties参数配置
+     * 删除对应key的参数
      * 
      * @param key
+     *            唯一key值
      */
     public void removeSystemProperties(String key) {
-        if (prefsEdit == null) {
+        if (null == prefsEdit) {
             initPrefsEdit();
         }
 
@@ -171,20 +248,25 @@ public class PreferenceModel {
         commitPrefsEdit();
     }
 
+    /**
+     * 获取原始的SharedPreferences对象，当封装的方法不够用时，可以用这个对象来操作更丰富的API
+     * 
+     * @return
+     */
     public SharedPreferences getDefaultSharedPreferences() {
         return prefs;
     }
 
     // 为减少创建开销，只有当需要保存参数的时候才初始化prefsEdit
     private synchronized void initPrefsEdit() {
-        if (prefsEdit == null) {
+        if (null == prefsEdit) {
             prefsEdit = prefs.edit();
         }
     }
 
     // 保存编辑提交
     private void commitPrefsEdit() {
-        if (prefsEdit != null) {
+        if (null != prefsEdit) {
             prefsEdit.commit();
         }
     }
