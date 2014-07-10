@@ -418,12 +418,12 @@ public class AnBitmapUtils {
                 }
             }
 
-            // 从磁盘缓存获取图片
+            /* 先试图从磁盘缓存中读取图片 */
             if (!pauseTask && !this.isCancelled() && this.getTargetImageView() != null) {
                 bitmap = globalConfig.getBitmapCache().getBitmapFromDiskCache(uri, displayConfig);
             }
 
-            // 下载图片
+            /* 当磁盘缓存中的图片不存在了，就去网络上加载需要的图片 */
             if (bitmap == null && !pauseTask && !this.isCancelled() && this.getTargetImageView() != null) {
                 bitmap = globalConfig.getBitmapCache().downloadBitmap(uri, displayConfig);
             }

@@ -9,7 +9,7 @@ import android.graphics.BitmapFactory;
 import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
- * 图片解码器
+ * 图片解码器，主要从资源中按适当的比例解码出bitmap，这很重要可以很好的防止图片的OOM
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-8-1 下午6:50:10 $
@@ -45,9 +45,10 @@ public abstract class BitmapDecoder {
             return BitmapFactory.decodeResource(res, resId, options);
         }
         catch (OutOfMemoryError e) {
-            LogUtils.e(e.getMessage(), e);
-            return null;
+            LogUtils.e("图片内存异常错误，原因：" + e.getMessage(), e);
         }
+
+        return null;
     }
 
     /**
@@ -77,9 +78,10 @@ public abstract class BitmapDecoder {
             return BitmapFactory.decodeFile(filename, options);
         }
         catch (OutOfMemoryError e) {
-            LogUtils.e(e.getMessage(), e);
-            return null;
+            LogUtils.e("图片内存异常错误，原因：" + e.getMessage(), e);
         }
+
+        return null;
     }
 
     /**
@@ -110,9 +112,10 @@ public abstract class BitmapDecoder {
             return BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);
         }
         catch (OutOfMemoryError e) {
-            LogUtils.e(e.getMessage(), e);
-            return null;
+            LogUtils.e("图片内存异常错误，原因：" + e.getMessage(), e);
         }
+
+        return null;
     }
 
     /**
@@ -143,9 +146,10 @@ public abstract class BitmapDecoder {
             return BitmapFactory.decodeByteArray(data, 0, data.length, options);
         }
         catch (OutOfMemoryError e) {
-            LogUtils.e(e.getMessage(), e);
-            return null;
+            LogUtils.e("图片内存异常错误，原因：" + e.getMessage(), e);
         }
+
+        return null;
     }
 
     /**
@@ -179,6 +183,7 @@ public abstract class BitmapDecoder {
                 inSampleSize++;
             }
         }
+
         return inSampleSize;
     }
 

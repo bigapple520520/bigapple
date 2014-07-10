@@ -6,7 +6,7 @@
 package com.winupon.andframe.bigapple.bitmap;
 
 /**
- * 清空缓存后监听
+ * 清空缓存后会被回调的监听
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-9-13 下午5:19:29 $

@@ -38,7 +38,7 @@ public class BitmapDemoActivity extends AnActivity {
     // 100K
     private String url2 = "http://s1.cubexp.com/image/ec8/617a397032c8dfc5ec8054e638ed15cc.jpg";
     // 27K
-    private String url3 = "http://imgsrc.baidu.com/forum/w%3D580%3B/sign=aa9dd16572cf3bc7e800cde4e13bbba1/7a899e510fb30f248f33c16bca95d143ad4b0328.jpg";
+    private String url3 = "http://a.hiphotos.bdimg.com/album/w%3D2048/sign=95e68b0b3801213fcf3349dc60df34d1/48540923dd54564e8aae5bebb2de9c82d0584f1c.jpg";
     private String url4 = ContextUtils.getSdCardPath() + "/xuan/222.jpg";
 
     @InjectView(R.id.button)
@@ -117,6 +117,7 @@ public class BitmapDemoActivity extends AnActivity {
         multiConfig.setShowOriginal(false);
         multiConfig.setBitmapMaxHeight(100);
         multiConfig.setBitmapMaxWidth(100);
+        multiConfig.setRoundPx(40);
 
         final String[] urls = new String[20];
         for (int i = 0; i < urls.length; i++) {

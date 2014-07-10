@@ -10,7 +10,7 @@ import android.os.StatFs;
 import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
- * 获取图片路径大小工具类
+ * 通用图片工具类
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-8-9 下午3:22:58 $
@@ -61,9 +61,9 @@ public class BitmapCommonUtils {
             return (long) stats.getBlockSize() * (long) stats.getAvailableBlocks();
         }
         catch (Exception e) {
-            LogUtils.e("", e);
-            return -1;
+            LogUtils.e("获取可用空间异常，原因：" + e.getMessage(), e);
         }
+        return -1;
     }
 
 }

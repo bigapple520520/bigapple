@@ -29,6 +29,7 @@ public interface Downloader {
      * 设置图片过期时长
      * 
      * @param expiry
+     *            注意这个表示过期的那个时间点，而非过期时间间隔
      */
     void setDefaultExpiry(long expiry);
 

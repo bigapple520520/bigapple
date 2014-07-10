@@ -3,7 +3,7 @@ package com.winupon.andframe.bigapple.bitmap.cache;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 一个定制的线程安全的Map。<br>
+ * 一个定制的线程安全的Map，继承了ConcurrentHashMap。<br>
  * 用来存放超时时长。
  * 
  * @author xuan
@@ -12,19 +12,46 @@ import java.util.concurrent.ConcurrentHashMap;
 public class KeyExpiryMap<K, V> extends ConcurrentHashMap<K, Long> {
     private static final long serialVersionUID = 4935855202112325906L;
 
+    /**
+     * 构造一个Map
+     * 
+     * @param initialCapacity
+     *            Map的初始化容量
+     * @param loadFactor
+     *            扩容因子
+     * @param concurrencyLevel
+     *            估计用户并发级别
+     */
     public KeyExpiryMap(int initialCapacity, float loadFactor, int concurrencyLevel) {
         super(initialCapacity, loadFactor, concurrencyLevel);
     }
 
+    /**
+     * 构造一个Map
+     * 
+     * @param initialCapacity
+     *            Map的初始化容量
+     * @param loadFactor
+     *            扩容因子
+     */
     public KeyExpiryMap(int initialCapacity, float loadFactor) {
         // added API 9
         super(initialCapacity, loadFactor);
     }
 
+    /**
+     * 构造一个Map
+     * 
+     * @param initialCapacity
+     *            Map的初始化容量
+     */
     public KeyExpiryMap(int initialCapacity) {
         super(initialCapacity);
     }
 
+    /**
+     * 构造一个Map
+     */
     public KeyExpiryMap() {
         super();
     }

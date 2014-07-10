@@ -17,6 +17,7 @@ import com.winupon.andframe.bigapple.bitmap.BitmapGlobalConfig;
 import com.winupon.andframe.bigapple.bitmap.cache.LruDiskCache;
 import com.winupon.andframe.bigapple.bitmap.cache.LruMemoryCache;
 import com.winupon.andframe.bigapple.io.IOUtils;
+import com.winupon.andframe.bigapple.utils.BitmapUtils;
 import com.winupon.andframe.bigapple.utils.Validators;
 import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
@@ -56,7 +57,7 @@ public class BitmapCache {
                 clearMemoryCache();
             }
             catch (Exception e) {
-                // Ignore
+                LogUtils.e("清理内存缓存异常，原因：" + e.getMessage(), e);
             }
         }
         mMemoryCache = new LruMemoryCache<String, SoftReference<Bitmap>>(globalConfig.getMemoryCacheSize()) {
@@ -126,7 +127,7 @@ public class BitmapCache {
 
     // ////////////////////////////////////////下载图片，会保存在磁盘///////////////////////////////////////////////////
     /**
-     * 从地址中加载图片
+     * 从地址中加载图片，并缓存到内存或者磁盘
      * 
      * @param uri
      *            图片地址，可以是网络地址或者磁盘地址（'/'开头）
@@ -140,10 +141,10 @@ public class BitmapCache {
         OutputStream outputStream = null;
         LruDiskCache.Snapshot snapshot = null;
         try {
-            // 如果有开启磁盘缓存，下载到磁盘
+            /* 如果有开启磁盘缓存，下载到磁盘 */
             if (globalConfig.isDiskCacheEnabled()) {
                 synchronized (mDiskCacheLock) {
-                    // Wait for disk cache to initialize
+                    // 等待直到磁盘缓存被初始化完毕
                     while (!isDiskCacheReadied) {
                         try {
                             mDiskCacheLock.wait();
@@ -180,7 +181,7 @@ public class BitmapCache {
                 }
             }
 
-            // 从网络中下载，内容直接下载到内存中
+            /* 如果磁盘缓存没有开启，图片就直接下载到内存中 */
             if (!globalConfig.isDiskCacheEnabled() || mDiskLruCache == null || bitmapMeta.inputStream == null) {
                 outputStream = new ByteArrayOutputStream();
                 bitmapMeta.expiryTimestamp = globalConfig.getDownloader().downloadToStream(uri, outputStream,
@@ -207,7 +208,7 @@ public class BitmapCache {
     }
 
     /**
-     * 图片放到内存缓存里
+     * 把图片缓存到内存缓存里
      * 
      * @param uri
      *            缓存图片地址
@@ -227,7 +228,7 @@ public class BitmapCache {
         Bitmap bitmap = null;
         try {
             if (bitmapMeta.inputStream != null) {
-                // 从本地磁盘中读取图片
+                /* 表示开启了磁盘缓存，然后网络上的图片直接下载到了本地磁盘，故这里保存的是输入流 */
                 if (config.isShowOriginal()) {
                     bitmap = BitmapFactory.decodeFileDescriptor(bitmapMeta.inputStream.getFD());
                 }
@@ -237,7 +238,7 @@ public class BitmapCache {
                 }
             }
             else if (bitmapMeta.data != null) {
-                // 从内存中读取图片
+                /* 表示没有开启磁盘缓存，开启了内存缓存，所以图片直接下载到了data内存中，故图片从data内存里获取 */
                 if (config.isShowOriginal()) {
                     bitmap = BitmapFactory.decodeByteArray(bitmapMeta.data, 0, bitmapMeta.data.length);
                 }
@@ -247,20 +248,27 @@ public class BitmapCache {
                 }
             }
             else {
+                /* 表示磁盘缓存和内存缓存都没有开启，不建议这样 */
                 bitmap = null;
             }
         }
         catch (OutOfMemoryError e) {
-            LogUtils.e("读取图片内存溢出，原因：" + e);
+            LogUtils.e("读取图片内存溢出，原因：" + e.getMessage(), e);
         }
 
-        if (bitmap == null) {
+        if (null == bitmap) {
             return null;
         }
 
-        // 添加到内存缓存
+        /* 如果图片要进行圆角处理，就先进行圆角处理 */
+        if (config.getRoundPx() > 0) {
+            bitmap = BitmapUtils.getRoundedCornerBitmap(bitmap, config.getRoundPx());
+        }
+
+        /* 把图片添加到内存缓存中去 */
         String key = uri + config.toString();
-        if (globalConfig.isMemoryCacheEnabled() && mMemoryCache != null) {
+        if (globalConfig.isMemoryCacheEnabled() && null != mMemoryCache) {
+            // 保存同一下载地址的不同内存缓存key，供刷新缓存使用
             ArrayList<String> keyList = uri2keyListMap.get(uri);
             if (null == keyList) {
                 keyList = new ArrayList<String>();
@@ -293,7 +301,7 @@ public class BitmapCache {
     }
 
     /**
-     * 获取硬盘缓存
+     * 从磁盘中读取图片，注意磁盘中存放的图片都是原图，在读取到内存中时才会根据config参数进行压缩处理
      * 
      * @param uri
      *            缓存图片地址
@@ -305,6 +313,7 @@ public class BitmapCache {
         if (!globalConfig.isDiskCacheEnabled()) {
             return null;
         }
+
         synchronized (mDiskCacheLock) {
             while (!isDiskCacheReadied) {
                 try {
@@ -313,6 +322,7 @@ public class BitmapCache {
                 catch (InterruptedException e) {
                 }
             }
+
             if (mDiskLruCache != null) {
                 LruDiskCache.Snapshot snapshot = null;
                 try {
@@ -332,12 +342,22 @@ public class BitmapCache {
                             }
                         }
                         catch (OutOfMemoryError e) {
-                            LogUtils.e("解析图片内存溢出OOM错误，原因：" + e);
+                            LogUtils.e("解析图片内存溢出OOM错误，原因：" + e.getMessage(), e);
                         }
 
-                        // add to memory cache
+                        /* 图片再磁盘缓存读取不到，直接返回null */
+                        if (null == bitmap) {
+                            return null;
+                        }
+
+                        /* 如果图片显示需要圆角处理，进行圆角处理 */
+                        if (config.getRoundPx() > 0) {
+                            bitmap = BitmapUtils.getRoundedCornerBitmap(bitmap, config.getRoundPx());
+                        }
+
+                        /* 如果开启了内存缓存，读到磁盘图片时缓存到内存 */
                         String key = uri + config.toString();
-                        if (globalConfig.isMemoryCacheEnabled() && mMemoryCache != null && bitmap != null) {
+                        if (globalConfig.isMemoryCacheEnabled() && null != mMemoryCache) {
                             mMemoryCache.put(key, new SoftReference<Bitmap>(bitmap),
                                     mDiskLruCache.getExpiryTimestamp(uri));
                         }
@@ -346,7 +366,7 @@ public class BitmapCache {
                     }
                 }
                 catch (final IOException e) {
-                    LogUtils.e(e.getMessage(), e);
+                    LogUtils.e("读取磁盘缓存图片IO异常，原因：" + e.getMessage(), e);
                 }
                 finally {
                     IOUtils.closeQuietly(snapshot);
@@ -385,7 +405,7 @@ public class BitmapCache {
                     mDiskLruCache.delete();
                 }
                 catch (IOException e) {
-                    LogUtils.e(e.getMessage(), e);
+                    LogUtils.e("清理磁盘缓存异常，原因：" + e.getMessage(), e);
                 }
                 mDiskLruCache = null;
                 isDiskCacheReadied = false;
@@ -441,7 +461,7 @@ public class BitmapCache {
                     mDiskLruCache.remove(uri);
                 }
                 catch (IOException e) {
-                    LogUtils.e(e.getMessage(), e);
+                    LogUtils.e("清理[" + uri + "]磁盘缓存IO异常，原因：" + e.getMessage(), e);
                 }
             }
         }
@@ -457,7 +477,7 @@ public class BitmapCache {
                     mDiskLruCache.flush();
                 }
                 catch (IOException e) {
-                    LogUtils.e(e.getMessage(), e);
+                    LogUtils.e("flush磁盘缓存IO异常，原因：" + e.getMessage(), e);
                 }
             }
         }
@@ -476,22 +496,21 @@ public class BitmapCache {
                     }
                 }
                 catch (IOException e) {
-                    LogUtils.e(e.getMessage(), e);
+                    LogUtils.e("关闭缓存IO异常，原因：" + e.getMessage(), e);
                 }
             }
         }
     }
 
     /**
-     * 图片内容封装
+     * 图片内容封装<br>
+     * 如果启用了磁盘缓存，那么从网络上下载图片是直接下载到磁盘上的，所有保存的是inputStream<br>
+     * 如果没有启用磁盘缓存，只启用了内存缓存，那么从网络上下载图片是直接下载到内存中，所有保存的是data数据
      * 
      * @author xuan
      * @version $Revision: 1.0 $, $Date: 2013-9-17 下午3:10:29 $
      */
     private class BitmapMeta {
-        /**
-         * 图片的内容，要么从inputStream中获取（使用本地缓存），要么从data中获取（不使用缓存，直接从网络下载到内存中）
-         */
         public FileInputStream inputStream;
         public byte[] data;
         public long expiryTimestamp;

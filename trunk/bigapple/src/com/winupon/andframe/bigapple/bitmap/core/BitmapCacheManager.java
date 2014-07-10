@@ -11,7 +11,7 @@ import com.winupon.andframe.bigapple.bitmap.AfterClearCacheListener;
 import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
- * BitmapCache管理器
+ * 磁盘缓存和内存缓存的管理器，只要支持实现了缓存的清理操作
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-12-31 上午9:21:47 $
@@ -23,6 +23,12 @@ public class BitmapCacheManager {
         this.bitmapCache = bitmapCache;
     }
 
+    /**
+     * 缓存管理器是多例状态
+     * 
+     * @param bitmapCache
+     * @return
+     */
     public static BitmapCacheManager getInstance(BitmapCache bitmapCache) {
         if (null == bitmapCache) {
             throw new NullPointerException("bitmapCache不能为空！");
@@ -31,6 +37,12 @@ public class BitmapCacheManager {
         return new BitmapCacheManager(bitmapCache);
     }
 
+    /**
+     * 异步刷新缓存类
+     * 
+     * @author xuan
+     * @version $Revision: 1.0 $, $Date: 2014-7-10 下午8:01:16 $
+     */
     private class BitmapCacheManagementTask extends AsyncTask<Object, Void, Integer> {
         private AfterClearCacheListener afterClearCacheListener;// 清理缓存后回调
 

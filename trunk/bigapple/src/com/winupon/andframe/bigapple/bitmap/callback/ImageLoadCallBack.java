@@ -6,7 +6,7 @@ import android.widget.ImageView;
 import com.winupon.andframe.bigapple.bitmap.BitmapDisplayConfig;
 
 /**
- * 加载完图片后的回调方法。
+ * 加载完图片后的回调显示接口
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-8-1 下午6:15:28 $

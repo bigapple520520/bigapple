@@ -58,6 +58,11 @@ public class BitmapDisplayConfig {
      */
     private DownloaderCallBack downloaderCallBack = null;
 
+    /**
+     * 图片进行圆角处理，默认不设置值不进行处理
+     */
+    private float roundPx = 0;
+
     public int getBitmapMaxWidth() {
         return bitmapMaxWidth;
     }
@@ -130,9 +135,18 @@ public class BitmapDisplayConfig {
         this.downloaderCallBack = downloaderCallBack;
     }
 
+    public float getRoundPx() {
+        return roundPx;
+    }
+
+    public void setRoundPx(float roundPx) {
+        this.roundPx = roundPx;
+    }
+
     @Override
     public String toString() {
-        return isShowOriginal() ? "" : "-" + getBitmapMaxWidth() + "-" + getBitmapMaxHeight();
+        String temp = isShowOriginal() ? "" : "-" + getBitmapMaxWidth() + "-" + getBitmapMaxHeight();
+        return roundPx > 0 ? temp + "-" + roundPx : temp;
     }
 
 }

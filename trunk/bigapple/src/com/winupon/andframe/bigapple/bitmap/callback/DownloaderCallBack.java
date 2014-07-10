@@ -10,14 +10,15 @@ package com.winupon.andframe.bigapple.bitmap.callback;
  */
 public interface DownloaderCallBack {
     /**
-     * 开始下载
+     * 开始下载任务
      * 
      * @param url
+     *            下载地址
      */
     void onStartLoading(String url);
 
     /**
-     * 下载中
+     * 下载中回调，随时回调下载情况
      * 
      * @param total
      * @param current
