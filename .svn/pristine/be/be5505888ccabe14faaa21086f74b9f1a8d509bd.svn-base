@@ -1,0 +1,129 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /* <a name="line.1"></a>
+<FONT color="green">002</FONT>     * @(#)SdkVersionUtils.java    Created on 2013-11-12<a name="line.2"></a>
+<FONT color="green">003</FONT>     * Copyright (c) 2013 ZDSoft Networks, Inc. All rights reserved.<a name="line.3"></a>
+<FONT color="green">004</FONT>     * $Id$<a name="line.4"></a>
+<FONT color="green">005</FONT>     */<a name="line.5"></a>
+<FONT color="green">006</FONT>    package com.winupon.andframe.bigapple.utils;<a name="line.6"></a>
+<FONT color="green">007</FONT>    <a name="line.7"></a>
+<FONT color="green">008</FONT>    import android.os.Build.VERSION;<a name="line.8"></a>
+<FONT color="green">009</FONT>    <a name="line.9"></a>
+<FONT color="green">010</FONT>    /**<a name="line.10"></a>
+<FONT color="green">011</FONT>     * SDK版本判断<a name="line.11"></a>
+<FONT color="green">012</FONT>     * <a name="line.12"></a>
+<FONT color="green">013</FONT>     * @author xuan<a name="line.13"></a>
+<FONT color="green">014</FONT>     * @version $Revision: 1.0 $, $Date: 2013-11-12 下午7:28:17 $<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    public abstract class SdkVersionUtils {<a name="line.16"></a>
+<FONT color="green">017</FONT>        public static final int SDK10_API1 = 1;// BASE<a name="line.17"></a>
+<FONT color="green">018</FONT>        public static final int SDK11_API2 = 2;// BASE_1_1<a name="line.18"></a>
+<FONT color="green">019</FONT>        public static final int SDK15_API3 = 3;// CUPCAKE<a name="line.19"></a>
+<FONT color="green">020</FONT>        public static final int SDK16_API4 = 4;// CUR_DEVELOPMENT<a name="line.20"></a>
+<FONT color="green">021</FONT>        public static final int SDK20_API5 = 5;// ECLAIR<a name="line.21"></a>
+<FONT color="green">022</FONT>        public static final int SDK201_API6 = 6;// ECLAIR_0_1<a name="line.22"></a>
+<FONT color="green">023</FONT>        public static final int SDK21_API7 = 7;// ECLAIR_MR1<a name="line.23"></a>
+<FONT color="green">024</FONT>        public static final int SDK122_API8 = 8;// FROYO<a name="line.24"></a>
+<FONT color="green">025</FONT>    <a name="line.25"></a>
+<FONT color="green">026</FONT>        public static final int SDK23_API9 = 9;// GINGERBREAD<a name="line.26"></a>
+<FONT color="green">027</FONT>        public static final int SDK233_API10 = 10;// GINGERBREAD_MR1<a name="line.27"></a>
+<FONT color="green">028</FONT>    <a name="line.28"></a>
+<FONT color="green">029</FONT>        public static final int SDK30_API11 = 11;// HONEYCOMB<a name="line.29"></a>
+<FONT color="green">030</FONT>        public static final int SDK31_API12 = 12;// HONEYCOMB_MR1<a name="line.30"></a>
+<FONT color="green">031</FONT>        public static final int SDK32_API13 = 13;// HONEYCOMB_MR2<a name="line.31"></a>
+<FONT color="green">032</FONT>    <a name="line.32"></a>
+<FONT color="green">033</FONT>        public static final int SDK40_API14 = 14;// ICE_CREAM_SANDWICH<a name="line.33"></a>
+<FONT color="green">034</FONT>        public static final int SDK403_API15 = 15;// ICE_CREAM_SANDWICH_MR1<a name="line.34"></a>
+<FONT color="green">035</FONT>        public static final int SDK41_API16 = 16;// JELLY_BEAN<a name="line.35"></a>
+<FONT color="green">036</FONT>        public static final int SDK42_API17 = 17;// JELLY_BEAN_MR1<a name="line.36"></a>
+<FONT color="green">037</FONT>        public static final int SDK43_API18 = 18;// JELLY_BEAN_MR2<a name="line.37"></a>
+<FONT color="green">038</FONT>    <a name="line.38"></a>
+<FONT color="green">039</FONT>        public static int getSdkInt() {<a name="line.39"></a>
+<FONT color="green">040</FONT>            return VERSION.SDK_INT;<a name="line.40"></a>
+<FONT color="green">041</FONT>        }<a name="line.41"></a>
+<FONT color="green">042</FONT>    <a name="line.42"></a>
+<FONT color="green">043</FONT>        public static boolean isUpper(int sdkInt) {<a name="line.43"></a>
+<FONT color="green">044</FONT>            return VERSION.SDK_INT &gt; sdkInt;<a name="line.44"></a>
+<FONT color="green">045</FONT>        }<a name="line.45"></a>
+<FONT color="green">046</FONT>    <a name="line.46"></a>
+<FONT color="green">047</FONT>        public static boolean isUpperEquals(int sdkInt) {<a name="line.47"></a>
+<FONT color="green">048</FONT>            return VERSION.SDK_INT &gt;= sdkInt;<a name="line.48"></a>
+<FONT color="green">049</FONT>        }<a name="line.49"></a>
+<FONT color="green">050</FONT>    <a name="line.50"></a>
+<FONT color="green">051</FONT>        public static boolean isLower(int sdkInt) {<a name="line.51"></a>
+<FONT color="green">052</FONT>            return VERSION.SDK_INT &lt; sdkInt;<a name="line.52"></a>
+<FONT color="green">053</FONT>        }<a name="line.53"></a>
+<FONT color="green">054</FONT>    <a name="line.54"></a>
+<FONT color="green">055</FONT>        public static boolean isLowerEquals(int sdkInt) {<a name="line.55"></a>
+<FONT color="green">056</FONT>            return VERSION.SDK_INT &lt;= sdkInt;<a name="line.56"></a>
+<FONT color="green">057</FONT>        }<a name="line.57"></a>
+<FONT color="green">058</FONT>    <a name="line.58"></a>
+<FONT color="green">059</FONT>        public static boolean isEquals(int sdkInt) {<a name="line.59"></a>
+<FONT color="green">060</FONT>            return sdkInt == VERSION.SDK_INT;<a name="line.60"></a>
+<FONT color="green">061</FONT>        }<a name="line.61"></a>
+<FONT color="green">062</FONT>    <a name="line.62"></a>
+<FONT color="green">063</FONT>    }<a name="line.63"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

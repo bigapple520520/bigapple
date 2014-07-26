@@ -1,0 +1,250 @@
+/* 
+ * @(#)URLHttpClient.java    Created on 2014-1-2
+ * Copyright (c) 2014 ZDSoft Networks, Inc. All rights reserved.
+ * $Id$
+ */
+package com.winupon.andframe.bigapple.http2.urlconnection;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Map;
+
+import android.util.Log;
+
+import com.winupon.andframe.bigapple.io.IOUtils;
+
+/**
+ * 对UrlConnection客户端部分的封装
+ * 
+ * @author xuan
+ * @version $Revision: 1.0 $, $Date: 2014-1-2 下午1:02:31 $
+ */
+public class URLHttpClient {
+    private static final String TAG = "URLHttpClient";
+
+    public static final boolean DEBUG = false;
+
+    private static final int DEDAULT_BUFFER_SIZE = 8 * 1024;
+
+    private int connectionTimeout = 1000 * 60;
+    private int readTimeout = 1000 * 60;
+    private int downloadReadTimeout = 1000 * 60 * 10;
+    private String encode = "utf-8";
+
+    // //////////////////////////////////////////下载部分//////////////////////////////////////////////////////////////
+    /**
+     * 下载文件
+     * 
+     * @param downloadUrl
+     * @param file
+     * @return
+     * @throws Exception
+     */
+    public void download(String url, File file) throws Exception {
+        if (null == file) {
+            throw new IOException("file not be null!");
+        }
+
+        File parentFile = file.getParentFile();
+        if (parentFile.mkdirs()) {
+            throw new IOException("file[" + parentFile.getPath() + "] can not create it's parent dir");
+        }
+
+        InputStream in = null;
+        OutputStream out = null;
+        HttpURLConnection connection = null;
+        try {
+            connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setConnectTimeout(connectionTimeout);
+            connection.setReadTimeout(downloadReadTimeout);
+
+            in = connection.getInputStream();
+            out = new BufferedOutputStream(new FileOutputStream(file));
+            byte[] bs = new byte[DEDAULT_BUFFER_SIZE];
+            int bytesReaded = 0;
+            while ((bytesReaded = in.read(bs)) != -1) {
+                out.write(bs, 0, bytesReaded);
+            }
+        }
+        catch (Exception e) {
+            Log.e(TAG, "download file from url[" + url + "] error", e);
+            file.delete();
+            throw e;
+        }
+        finally {
+            connection.disconnect();
+            IOUtils.closeQuietly(in);
+            IOUtils.closeQuietly(out);
+        }
+    }
+
+    // /////////////////////////////////////////GET请求部分////////////////////////////////////////////////////////////
+    /**
+     * GET请求
+     * 
+     * @param url
+     * @param params
+     *            url携带参数
+     * @return
+     * @throws IOException
+     */
+    public String get(String url, Map<String, String> params) throws IOException {
+        // 拼接GET地址的参数
+        if (null != params) {
+            StringBuilder sb = new StringBuilder();
+            for (Map.Entry<String, String> e : params.entrySet()) {
+                sb.append(e.getKey()).append("=").append(e.getValue()).append("&");
+            }
+
+            if (!params.isEmpty()) {
+                sb.deleteCharAt(sb.length() - 1);
+            }
+            url += "?" + sb.toString();
+        }
+
+        if (DEBUG) {
+            Log.d(TAG, url);
+        }
+
+        String result = null;
+        BufferedReader reader = null;
+        HttpURLConnection connection = null;
+        try {
+            connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setConnectTimeout(connectionTimeout);
+            connection.setReadTimeout(readTimeout);
+
+            reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), encode), DEDAULT_BUFFER_SIZE);
+
+            StringBuilder buffer = new StringBuilder();
+            String line = reader.readLine();
+            if (line != null) {
+                buffer.append(line);
+                while ((line = reader.readLine()) != null) {
+                    buffer.append("\n" + line);
+                }
+            }
+
+            result = buffer.toString();
+        }
+        catch (IOException e) {
+            Log.e(TAG, "get url[" + url + "] error");
+            throw e;
+        }
+        finally {
+            connection.disconnect();
+            IOUtils.closeQuietly(reader);
+        }
+
+        return result;
+    }
+
+    // /////////////////////////////////////////////POST请求/////////////////////////////////////////////////////////
+    /**
+     * POST请求TODO:
+     * 
+     * @param url
+     * @param params
+     *            url携带参数
+     * @return
+     * @throws IOException
+     */
+    public String post(String url, Map<String, String> params) throws IOException {
+        // 拼接GET地址的参数
+        if (null != params) {
+            StringBuilder sb = new StringBuilder();
+            for (Map.Entry<String, String> e : params.entrySet()) {
+                sb.append(e.getKey()).append("=").append(e.getValue()).append("&");
+            }
+
+            if (!params.isEmpty()) {
+                sb.deleteCharAt(sb.length() - 1);
+            }
+            url += "?" + sb.toString();
+        }
+
+        if (DEBUG) {
+            Log.d(TAG, url);
+        }
+
+        String result = null;
+        BufferedReader reader = null;
+        HttpURLConnection connection = null;
+        try {
+            connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setConnectTimeout(connectionTimeout);
+            connection.setReadTimeout(readTimeout);
+
+            connection.setDoOutput(true);
+            connection.setRequestMethod("POST");
+            connection.setUseCaches(false);
+            connection.setInstanceFollowRedirects(true);
+
+            // 表示正文是内容是使用URLEncoder.encode进行编码
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), encode), DEDAULT_BUFFER_SIZE);
+
+            StringBuilder buffer = new StringBuilder();
+            String line = reader.readLine();
+            if (line != null) {
+                buffer.append(line);
+                while ((line = reader.readLine()) != null) {
+                    buffer.append("\n" + line);
+                }
+            }
+
+            result = buffer.toString();
+        }
+        catch (IOException e) {
+            Log.e(TAG, "get url[" + url + "] error");
+            throw e;
+        }
+        finally {
+            connection.disconnect();
+            IOUtils.closeQuietly(reader);
+        }
+
+        return result;
+    }
+
+    public int getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    public void setConnectionTimeout(int connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
+    }
+
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
+    }
+
+    public int getDownloadReadTimeout() {
+        return downloadReadTimeout;
+    }
+
+    public void setDownloadReadTimeout(int downloadReadTimeout) {
+        this.downloadReadTimeout = downloadReadTimeout;
+    }
+
+    public String getEncode() {
+        return encode;
+    }
+
+    public void setEncode(String encode) {
+        this.encode = encode;
+    }
+
+}

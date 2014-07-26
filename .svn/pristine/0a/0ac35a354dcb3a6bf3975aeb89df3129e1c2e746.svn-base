@@ -1,0 +1,131 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package com.winupon.andframe.bigapple.bitmap.core;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import java.io.File;<a name="line.3"></a>
+<FONT color="green">004</FONT>    <a name="line.4"></a>
+<FONT color="green">005</FONT>    import android.content.Context;<a name="line.5"></a>
+<FONT color="green">006</FONT>    import android.graphics.Bitmap;<a name="line.6"></a>
+<FONT color="green">007</FONT>    import android.os.Environment;<a name="line.7"></a>
+<FONT color="green">008</FONT>    import android.os.StatFs;<a name="line.8"></a>
+<FONT color="green">009</FONT>    <a name="line.9"></a>
+<FONT color="green">010</FONT>    import com.winupon.andframe.bigapple.utils.log.LogUtils;<a name="line.10"></a>
+<FONT color="green">011</FONT>    <a name="line.11"></a>
+<FONT color="green">012</FONT>    /**<a name="line.12"></a>
+<FONT color="green">013</FONT>     * 通用图片工具�? * <a name="line.13"></a>
+<FONT color="green">014</FONT>     * @author xuan<a name="line.14"></a>
+<FONT color="green">015</FONT>     * @version $Revision: 1.0 $, $Date: 2013-8-9 下午3:22:58 $<a name="line.15"></a>
+<FONT color="green">016</FONT>     */<a name="line.16"></a>
+<FONT color="green">017</FONT>    public class BitmapCommonUtils {<a name="line.17"></a>
+<FONT color="green">018</FONT>    <a name="line.18"></a>
+<FONT color="green">019</FONT>        /**<a name="line.19"></a>
+<FONT color="green">020</FONT>         * 获取可以使用的缓存目录，如果SD卡存在就获取缓存到SD，如果SD不存在，就使用内置内�?br&gt;<a name="line.20"></a>
+<FONT color="green">021</FONT>         * 默认缓存路径�?Android/data/程序包名/cache/。当应用卸载时，缓存文件会被自动清理�?     * <a name="line.21"></a>
+<FONT color="green">022</FONT>         * @param context<a name="line.22"></a>
+<FONT color="green">023</FONT>         * @param dirName<a name="line.23"></a>
+<FONT color="green">024</FONT>         *            目录名称<a name="line.24"></a>
+<FONT color="green">025</FONT>         * @return<a name="line.25"></a>
+<FONT color="green">026</FONT>         */<a name="line.26"></a>
+<FONT color="green">027</FONT>        public static String getDiskCacheDir(Context context, String dirName) {<a name="line.27"></a>
+<FONT color="green">028</FONT>            final String cachePath = Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) ? context<a name="line.28"></a>
+<FONT color="green">029</FONT>                    .getExternalCacheDir().getPath() : context.getCacheDir().getPath();<a name="line.29"></a>
+<FONT color="green">030</FONT>    <a name="line.30"></a>
+<FONT color="green">031</FONT>            return cachePath + File.separator + dirName;<a name="line.31"></a>
+<FONT color="green">032</FONT>        }<a name="line.32"></a>
+<FONT color="green">033</FONT>    <a name="line.33"></a>
+<FONT color="green">034</FONT>        /**<a name="line.34"></a>
+<FONT color="green">035</FONT>         * 获取bitmap的字节大�?     * <a name="line.35"></a>
+<FONT color="green">036</FONT>         * @param bitmap<a name="line.36"></a>
+<FONT color="green">037</FONT>         *            图片<a name="line.37"></a>
+<FONT color="green">038</FONT>         * @return<a name="line.38"></a>
+<FONT color="green">039</FONT>         */<a name="line.39"></a>
+<FONT color="green">040</FONT>        public static int getBitmapSize(Bitmap bitmap) {<a name="line.40"></a>
+<FONT color="green">041</FONT>            if (null == bitmap) {<a name="line.41"></a>
+<FONT color="green">042</FONT>                return 0;<a name="line.42"></a>
+<FONT color="green">043</FONT>            }<a name="line.43"></a>
+<FONT color="green">044</FONT>    <a name="line.44"></a>
+<FONT color="green">045</FONT>            return bitmap.getRowBytes() * bitmap.getHeight();<a name="line.45"></a>
+<FONT color="green">046</FONT>        }<a name="line.46"></a>
+<FONT color="green">047</FONT>    <a name="line.47"></a>
+<FONT color="green">048</FONT>        /**<a name="line.48"></a>
+<FONT color="green">049</FONT>         * 获取目录指定的可用空�?     * <a name="line.49"></a>
+<FONT color="green">050</FONT>         * @param path<a name="line.50"></a>
+<FONT color="green">051</FONT>         *            目录<a name="line.51"></a>
+<FONT color="green">052</FONT>         * @return<a name="line.52"></a>
+<FONT color="green">053</FONT>         */<a name="line.53"></a>
+<FONT color="green">054</FONT>        public static long getAvailableSpace(File path) {<a name="line.54"></a>
+<FONT color="green">055</FONT>            try {<a name="line.55"></a>
+<FONT color="green">056</FONT>                final StatFs stats = new StatFs(path.getPath());<a name="line.56"></a>
+<FONT color="green">057</FONT>                return (long) stats.getBlockSize() * (long) stats.getAvailableBlocks();<a name="line.57"></a>
+<FONT color="green">058</FONT>            }<a name="line.58"></a>
+<FONT color="green">059</FONT>            catch (Exception e) {<a name="line.59"></a>
+<FONT color="green">060</FONT>                LogUtils.e("获取可用空间异常，原因：" + e.getMessage(), e);<a name="line.60"></a>
+<FONT color="green">061</FONT>            }<a name="line.61"></a>
+<FONT color="green">062</FONT>            return -1;<a name="line.62"></a>
+<FONT color="green">063</FONT>        }<a name="line.63"></a>
+<FONT color="green">064</FONT>    <a name="line.64"></a>
+<FONT color="green">065</FONT>    }<a name="line.65"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

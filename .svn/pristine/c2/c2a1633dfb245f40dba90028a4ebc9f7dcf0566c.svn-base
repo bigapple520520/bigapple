@@ -1,0 +1,166 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /* <a name="line.1"></a>
+<FONT color="green">002</FONT>     * @(#)AnActivity.java    Created on 2012-11-29<a name="line.2"></a>
+<FONT color="green">003</FONT>     * Copyright (c) 2012 ZDSoft Networks, Inc. All rights reserved.<a name="line.3"></a>
+<FONT color="green">004</FONT>     * $Id: AnActivity.java 33154 2012-12-09 08:28:10Z xuan $<a name="line.4"></a>
+<FONT color="green">005</FONT>     */<a name="line.5"></a>
+<FONT color="green">006</FONT>    package com.winupon.andframe.bigapple.ioc;<a name="line.6"></a>
+<FONT color="green">007</FONT>    <a name="line.7"></a>
+<FONT color="green">008</FONT>    import java.lang.reflect.Constructor;<a name="line.8"></a>
+<FONT color="green">009</FONT>    import java.lang.reflect.Field;<a name="line.9"></a>
+<FONT color="green">010</FONT>    <a name="line.10"></a>
+<FONT color="green">011</FONT>    import android.app.Activity;<a name="line.11"></a>
+<FONT color="green">012</FONT>    import android.content.Context;<a name="line.12"></a>
+<FONT color="green">013</FONT>    import android.view.View;<a name="line.13"></a>
+<FONT color="green">014</FONT>    import android.view.ViewGroup.LayoutParams;<a name="line.14"></a>
+<FONT color="green">015</FONT>    <a name="line.15"></a>
+<FONT color="green">016</FONT>    import com.winupon.andframe.bigapple.utils.log.LogUtils;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    /**<a name="line.18"></a>
+<FONT color="green">019</FONT>     * 安卓IOC框架使用继承该类，或者使用ViewUtils，进行手动inject注入，但是使用ViewUtils便不支持InjectParamThis注解�?br&gt;<a name="line.19"></a>
+<FONT color="green">020</FONT>     * 移动到app下的AnActivity�?<a name="line.20"></a>
+<FONT color="green">021</FONT>     * <a name="line.21"></a>
+<FONT color="green">022</FONT>     * @author xuan<a name="line.22"></a>
+<FONT color="green">023</FONT>     * @version $Revision: 33154 $, $Date: 2012-12-09 16:28:10 +0800 (周日, 09 十二�?2012) $<a name="line.23"></a>
+<FONT color="green">024</FONT>     */<a name="line.24"></a>
+<FONT color="green">025</FONT>    @Deprecated<a name="line.25"></a>
+<FONT color="green">026</FONT>    public class AnActivity extends Activity {<a name="line.26"></a>
+<FONT color="green">027</FONT>    <a name="line.27"></a>
+<FONT color="green">028</FONT>        @Override<a name="line.28"></a>
+<FONT color="green">029</FONT>        public void setContentView(int layout) {<a name="line.29"></a>
+<FONT color="green">030</FONT>            super.setContentView(layout);<a name="line.30"></a>
+<FONT color="green">031</FONT>            initAn();<a name="line.31"></a>
+<FONT color="green">032</FONT>        }<a name="line.32"></a>
+<FONT color="green">033</FONT>    <a name="line.33"></a>
+<FONT color="green">034</FONT>        @Override<a name="line.34"></a>
+<FONT color="green">035</FONT>        public void setContentView(View view, LayoutParams params) {<a name="line.35"></a>
+<FONT color="green">036</FONT>            super.setContentView(view, params);<a name="line.36"></a>
+<FONT color="green">037</FONT>            initAn();<a name="line.37"></a>
+<FONT color="green">038</FONT>        }<a name="line.38"></a>
+<FONT color="green">039</FONT>    <a name="line.39"></a>
+<FONT color="green">040</FONT>        @Override<a name="line.40"></a>
+<FONT color="green">041</FONT>        public void setContentView(View view) {<a name="line.41"></a>
+<FONT color="green">042</FONT>            super.setContentView(view);<a name="line.42"></a>
+<FONT color="green">043</FONT>            initAn();<a name="line.43"></a>
+<FONT color="green">044</FONT>        }<a name="line.44"></a>
+<FONT color="green">045</FONT>    <a name="line.45"></a>
+<FONT color="green">046</FONT>        /**<a name="line.46"></a>
+<FONT color="green">047</FONT>         * 调用此方法，就可以进IOC注入<a name="line.47"></a>
+<FONT color="green">048</FONT>         */<a name="line.48"></a>
+<FONT color="green">049</FONT>        private void initAn() {<a name="line.49"></a>
+<FONT color="green">050</FONT>            Field[] fileds = getClass().getDeclaredFields();<a name="line.50"></a>
+<FONT color="green">051</FONT>    <a name="line.51"></a>
+<FONT color="green">052</FONT>            for (int i = 0; i &lt; fileds.length; i++) {<a name="line.52"></a>
+<FONT color="green">053</FONT>                initInjectView(fileds[i]);<a name="line.53"></a>
+<FONT color="green">054</FONT>                initInjectParamThis(fileds[i]);<a name="line.54"></a>
+<FONT color="green">055</FONT>            }<a name="line.55"></a>
+<FONT color="green">056</FONT>        }<a name="line.56"></a>
+<FONT color="green">057</FONT>    <a name="line.57"></a>
+<FONT color="green">058</FONT>        /**<a name="line.58"></a>
+<FONT color="green">059</FONT>         * 注释InjectView注入<a name="line.59"></a>
+<FONT color="green">060</FONT>         * <a name="line.60"></a>
+<FONT color="green">061</FONT>         * @param field<a name="line.61"></a>
+<FONT color="green">062</FONT>         */<a name="line.62"></a>
+<FONT color="green">063</FONT>        private void initInjectView(Field field) {<a name="line.63"></a>
+<FONT color="green">064</FONT>            InjectView injectView = field.getAnnotation(InjectView.class);<a name="line.64"></a>
+<FONT color="green">065</FONT>    <a name="line.65"></a>
+<FONT color="green">066</FONT>            if (null != injectView) {<a name="line.66"></a>
+<FONT color="green">067</FONT>                try {<a name="line.67"></a>
+<FONT color="green">068</FONT>                    View view = this.findViewById(injectView.value());<a name="line.68"></a>
+<FONT color="green">069</FONT>                    if (null != view) {<a name="line.69"></a>
+<FONT color="green">070</FONT>                        field.setAccessible(true);<a name="line.70"></a>
+<FONT color="green">071</FONT>                        field.set(this, view);<a name="line.71"></a>
+<FONT color="green">072</FONT>                    }<a name="line.72"></a>
+<FONT color="green">073</FONT>                }<a name="line.73"></a>
+<FONT color="green">074</FONT>                catch (Exception e) {<a name="line.74"></a>
+<FONT color="green">075</FONT>                    LogUtils.e("", e);<a name="line.75"></a>
+<FONT color="green">076</FONT>                }<a name="line.76"></a>
+<FONT color="green">077</FONT>            }<a name="line.77"></a>
+<FONT color="green">078</FONT>        }<a name="line.78"></a>
+<FONT color="green">079</FONT>    <a name="line.79"></a>
+<FONT color="green">080</FONT>        /**<a name="line.80"></a>
+<FONT color="green">081</FONT>         * 在实例化时需要传入this参数<a name="line.81"></a>
+<FONT color="green">082</FONT>         * <a name="line.82"></a>
+<FONT color="green">083</FONT>         * @param field<a name="line.83"></a>
+<FONT color="green">084</FONT>         */<a name="line.84"></a>
+<FONT color="green">085</FONT>        private void initInjectParamThis(Field field) {<a name="line.85"></a>
+<FONT color="green">086</FONT>            InjectParamThis injectParamThis = field.getAnnotation(InjectParamThis.class);<a name="line.86"></a>
+<FONT color="green">087</FONT>    <a name="line.87"></a>
+<FONT color="green">088</FONT>            if (null != injectParamThis) {<a name="line.88"></a>
+<FONT color="green">089</FONT>                try {<a name="line.89"></a>
+<FONT color="green">090</FONT>                    field.setAccessible(true);<a name="line.90"></a>
+<FONT color="green">091</FONT>                    Constructor&lt;?&gt; constructor = injectParamThis.value().getConstructor(new Class[] { Context.class });<a name="line.91"></a>
+<FONT color="green">092</FONT>                    field.set(this, constructor.newInstance(new Object[] { this }));<a name="line.92"></a>
+<FONT color="green">093</FONT>                }<a name="line.93"></a>
+<FONT color="green">094</FONT>                catch (Exception e) {<a name="line.94"></a>
+<FONT color="green">095</FONT>                    LogUtils.e("", e);<a name="line.95"></a>
+<FONT color="green">096</FONT>                }<a name="line.96"></a>
+<FONT color="green">097</FONT>            }<a name="line.97"></a>
+<FONT color="green">098</FONT>        }<a name="line.98"></a>
+<FONT color="green">099</FONT>    <a name="line.99"></a>
+<FONT color="green">100</FONT>    }<a name="line.100"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

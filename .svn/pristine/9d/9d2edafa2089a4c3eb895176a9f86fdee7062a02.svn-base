@@ -1,0 +1,113 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package com.winupon.andframe.bigapple.io;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import java.nio.charset.Charset;<a name="line.3"></a>
+<FONT color="green">004</FONT>    <a name="line.4"></a>
+<FONT color="green">005</FONT>    /**<a name="line.5"></a>
+<FONT color="green">006</FONT>     * 常用编码工具<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * @author xuan<a name="line.8"></a>
+<FONT color="green">009</FONT>     * @version $Revision: 1.0 $, $Date: 2013-9-4 下午7:32:50 $<a name="line.9"></a>
+<FONT color="green">010</FONT>     */<a name="line.10"></a>
+<FONT color="green">011</FONT>    public class Charsets {<a name="line.11"></a>
+<FONT color="green">012</FONT>    <a name="line.12"></a>
+<FONT color="green">013</FONT>        /**<a name="line.13"></a>
+<FONT color="green">014</FONT>         * 获取字符编码对象<a name="line.14"></a>
+<FONT color="green">015</FONT>         * <a name="line.15"></a>
+<FONT color="green">016</FONT>         * @param charset<a name="line.16"></a>
+<FONT color="green">017</FONT>         * @return<a name="line.17"></a>
+<FONT color="green">018</FONT>         */<a name="line.18"></a>
+<FONT color="green">019</FONT>        public static Charset toCharset(Charset charset) {<a name="line.19"></a>
+<FONT color="green">020</FONT>            return charset == null ? Charset.defaultCharset() : charset;<a name="line.20"></a>
+<FONT color="green">021</FONT>        }<a name="line.21"></a>
+<FONT color="green">022</FONT>    <a name="line.22"></a>
+<FONT color="green">023</FONT>        /**<a name="line.23"></a>
+<FONT color="green">024</FONT>         * 获取字符编码对象<a name="line.24"></a>
+<FONT color="green">025</FONT>         * <a name="line.25"></a>
+<FONT color="green">026</FONT>         * @param charset<a name="line.26"></a>
+<FONT color="green">027</FONT>         * @return<a name="line.27"></a>
+<FONT color="green">028</FONT>         */<a name="line.28"></a>
+<FONT color="green">029</FONT>        public static Charset toCharset(String charset) {<a name="line.29"></a>
+<FONT color="green">030</FONT>            return charset == null ? Charset.defaultCharset() : Charset.forName(charset);<a name="line.30"></a>
+<FONT color="green">031</FONT>        }<a name="line.31"></a>
+<FONT color="green">032</FONT>    <a name="line.32"></a>
+<FONT color="green">033</FONT>        public static final String UTF8 = "UTF-8";<a name="line.33"></a>
+<FONT color="green">034</FONT>        public static final String ISO88591 = "ISO-8859-1";<a name="line.34"></a>
+<FONT color="green">035</FONT>        public static final String USASCII = "US-ASCII";<a name="line.35"></a>
+<FONT color="green">036</FONT>        public static final String UTF16 = "UTF-16";<a name="line.36"></a>
+<FONT color="green">037</FONT>        public static final String UTF16BE = "UTF-16BE";<a name="line.37"></a>
+<FONT color="green">038</FONT>        public static final String UTF16LE = "UTF-16LE";<a name="line.38"></a>
+<FONT color="green">039</FONT>    <a name="line.39"></a>
+<FONT color="green">040</FONT>        public static final Charset UTF_8 = Charset.forName(UTF8);<a name="line.40"></a>
+<FONT color="green">041</FONT>        public static final Charset ISO_8859_1 = Charset.forName(ISO88591);<a name="line.41"></a>
+<FONT color="green">042</FONT>        public static final Charset US_ASCII = Charset.forName(USASCII);<a name="line.42"></a>
+<FONT color="green">043</FONT>        public static final Charset UTF_16 = Charset.forName(UTF16);<a name="line.43"></a>
+<FONT color="green">044</FONT>        public static final Charset UTF_16BE = Charset.forName(UTF16BE);<a name="line.44"></a>
+<FONT color="green">045</FONT>        public static final Charset UTF_16LE = Charset.forName(UTF16LE);<a name="line.45"></a>
+<FONT color="green">046</FONT>    <a name="line.46"></a>
+<FONT color="green">047</FONT>    }<a name="line.47"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

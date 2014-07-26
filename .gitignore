@@ -3,17 +3,14 @@
 #################
 
 *.pydevproject
-.project
 .metadata
+.svn/
 bin/
 tmp/
 *.tmp
 *.bak
 *.swp
 *~.nib
-*.class
-*.svn-base
-.svn
 local.properties
 .classpath
 .settings/

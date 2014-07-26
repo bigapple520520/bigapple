@@ -1,0 +1,90 @@
+					<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang='zh-CN' xml:lang='zh-CN' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta http-equiv="Content-Language" content="zh-CN"/>
+  <title>bigapple520520的博客</title>
+  <style>
+  body {font:12px/21px Tahoma,"Microsoft Yahei",Geneva,sans-serif;}
+  h1 a {color:#40AA53;}
+  h1 a,h2 a{text-decoration:none;}
+  .backupDesc em {font-style:normal;}
+  .blog {margin:0 0 20px 0;border:1px solid #ccc;background:#ffc;padding:10px;}
+  .blog h2 {border-bottom:1px solid #ccc;padding:0 0 10px 0;}
+  .blog h2 a.top {float:right;font-weight:normal;font-size:9pt;}
+  .blog .outline {background:#fff;border:1px solid #eee;padding:10px;color:#666;}
+  
+  .commentList {margin:20px 0 0 0;}
+  .comment {margin:0 0 10px 0; border:1px solid #ddd; background:#ffe;padding:5px;}
+  .comment .author {float:left;font-weight:bold;}
+  .comment .date {float:left;margin:0 0 0 10px;}
+  .comment .content {clear:left;margin:5px 0 0 0;}
+  </style>
+</head>
+<body>
+  <h1><a name='top' href="http://my.oschina.net/u/1271235/blog">bigapple520520的博客@OSCHINA</a></h1>
+  <p class='backupDesc'>共有<em>2</em>篇文章，备份时间：2013-09-26 10:00:03</p>
+  <ol>
+		<li><a href="#blog_164268">bigapple之utils-LogUtils使用</a></li>
+		<li><a href="#blog_163932">bigapple之utils-update部分apk自动下载安装</a></li>
+	  </ol>
+  <div class='blogList'>
+        <div class='blog'>
+      <h2><a href="#top" class='top'>回到顶部</a><a name="blog_164268" href="http://my.oschina.net/u/1271235/blog/164268">bigapple之utils-LogUtils使用</a></h2>
+	  <div class='outline'>
+	  <div class='date'>时间：2013-09-26 09:29:11</div>
+	  <div class='catalog'>分类：工作日志</div>
+	  	  	  	  	  </div>
+      <div class='content'><p> 1、简说 </p> 
+<p> 关于日志记录部分。安卓中有自带的日志记录工具。Log类。使用这个类，每次都要我们传入一个TAG，用来标记当前日志。例如这样：<span style="line-height:1.5;font-size:10pt;">Log.d(Constants.TAG, &quot;debug test&quot;);其中</span><span style="line-height:1.5;font-size:10pt;">Constants.TAG就是我们自己定义的一个字符串。</span> </p> 
+<p> LogUtils，就是在Log类基础上封装的，他可以免去每次都传入一个TAG，会自动生成一个TAG。<span style="line-height:1.5;font-size:10pt;">这个TAG可以准确的定位记录日志的行数。格式如：类名[方法名， 调用行数]</span> </p> 
+<p> 2、使用例如下： </p> 
+<span></span> 
+<pre class="brush:java; toolbar: true; auto-links: false;">LogUtils.d(&quot;debug test&quot;);</pre> 上面那句在Logcat打印出来的内容是： 
+<p> 09-26 09:26:37.659: D/MainActivity[onCreate, 15](12489): dug test </p> 
+<p> 其中<span>MainActivity就是我记录日志的当前类，</span><span>onCreate就是当前方法。15就是我记录的行数。这样就很容易定位日志的当前位置了。</span> </p> 
+<p> 当然在发布的时候，如果你不想打印debug类日志，你可以这样设置就可以了： </p> 
+<pre class="brush:java; toolbar: true; auto-links: false;">LogUtils.allowD = false;</pre> 
+<p> 所有级别的日志，都是默认true开启的。只有你显示的设置false，那么对应的日志级别就不会记录输出。顺便说下，LogUtils的所有日志记录级别分类和方法签名都和原生Log类保持一致的。 </p> 
+<p> <br /> </p> 
+<p> <span style="color:#333333;font-family:微软雅黑, Verdana, sans-serif, 宋体;font-size:14px;line-height:25px;background-color:#FFFFFF;">源码在github上有：</span><a href="https://github.com/bigapple520520/bigapple" rel="nofollow">https://github.com/bigapple520520/bigapple</a><span style="color:#333333;font-family:微软雅黑, Verdana, sans-serif, 宋体;font-size:14px;line-height:25px;background-color:#FFFFFF;">&nbsp; &nbsp; &nbsp;有什么问题可以留言。也可以加QQ群：159392353不过里面没人。意思一下。</span> </p></div>
+	      </div>
+        <div class='blog'>
+      <h2><a href="#top" class='top'>回到顶部</a><a name="blog_163932" href="http://my.oschina.net/u/1271235/blog/163932">bigapple之utils-update部分apk自动下载安装</a></h2>
+	  <div class='outline'>
+	  <div class='date'>时间：2013-09-24 20:36:23</div>
+	  <div class='catalog'>分类：工作日志</div>
+	  	  	  	  	  </div>
+      <div class='content'><p> 1、前奏 </p> 
+<p> 经常有这样一个需求，就是开发安卓项目时，要升级后续版本。实现方式有很多种，大多的实现步骤就是放一份版本信息在服务器端，然后需要检测的时候，就拿本地apk的版本跟服务器的版本对比，如果不是最新的，就提示用户进行升级操作。需求来了，升级操作就需要我们先下载apk，然后调用安卓API进行自动替换安装。我们的这个update模块就是提供给你自动下载和安装一步到位。当然是否需要升级的版本比较，还是得你自己做。 </p> 
+<p> 2、废话少说先贴上使用方法 </p> 
+<pre class="brush:java; toolbar: true; auto-links: false;">UpdateManager updateManager = new UpdateManager(Main.this);
+updateManager.setUpdateCancelListener(new UpdateCancelListener() {
+    @Override
+    public void updateCancel(CancelEvent cancelEvent) {
+        notifyCanGotoLoginActivity();
+    }
+});
+updateManager.setUpdateOkListener(new UpdateOkListener() {
+    @Override
+    public boolean updateOk() {
+        return true;//表示操作更新
+    }
+});
+updateManager.doUpdate(downloadUrl, Constants.UPDATE_APK_PATH + Constants.APK_NAME, updateText);</pre> 
+<p> 对，就是这么简单。那个doUpdate方法的第一参数表示你要下载的apk网络地址。第二个参数表示你下载下来的apk的保存路径。第三个参数，顾名思义，就是在提示用户下载的提示用语。 </p> 
+<p> 其中上面的执行结果是，跳出一个对象选择框，这个选择框会提示用户是否进行更新。如果用户选择取消，就会被UpdateCancelListener事件监听到，上面就是跳转去登录界面，这里逻辑自己写。如果用户点击了确定，就会被UpdateOkListener事件监听到。<span>UpdateOkListener中的updateOk方法有个返回结果需要你返回。你可以在这个事件里做些判断收尾操作。如果你返回true，那么就系统就会执行更新操作。接下来的事情就不用你管了。如果你返回false，系统就不会去执行更新操作。那你就可以自己跳转到相应界面去即可。</span> </p> 
+<p> <span>3、上面的<span>doUpdate方法调用会提示用户是否下载安装。如果不想跳出对话框提示用户是否进行下载安装。而直接去下载安装，就可以直接这样调用：</span></span> </p> 
+<p> <span><span> </span></span></p> 
+<pre class="brush:java; toolbar: true; auto-links: false;">UpdateManager updateManager = new UpdateManager(Main.this);
+updateManager.doDownloadInstall(downloadUrl, Constants.UPDATE_APK_PATH + Constants.APK_NAME, updateText);</pre> 两个参数跟上面的一样。顺便说一句，想使用更详细的配置，可以使用UpdateConfig对象作为参数传入。 
+<p></p> 
+<p> 4、特别注意 </p> 
+<p> 这个更新工具中使用了Handler的消息机制。而安卓默认除开UI线程，其他线程是不开启这个消息机制的。所以，在是使用前后开启一下。Looper.prepare();...中间的代码就是上面的代码...Looper.loop();你懂的吧。Looper.loop();后面的代码不会被马上执行这个你应该知道的吧，所以要小心哈。 </p> 
+<p> <br /> </p> 
+<p> 源码在github上有：<a href="https://github.com/bigapple520520/bigapple" rel="nofollow">https://github.com/bigapple520520/bigapple</a>&nbsp; &nbsp; &nbsp;也可以加QQ群：159392353不过我也是个苦逼的程序员，现在群里没人，就算加了我也只是偶尔回复一下，上班时间没有过多时间啊。当然有好的建议我们还是可以交流一下。非诚勿扰哈。 </p></div>
+	      </div>
+      </div>
+</body>
+</html>
+	

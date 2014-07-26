@@ -1,0 +1,85 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /* <a name="line.1"></a>
+<FONT color="green">002</FONT>     * @(#)AsyncTaskResultNullCallback.java    Created on 2014-1-13<a name="line.2"></a>
+<FONT color="green">003</FONT>     * Copyright (c) 2014 ZDSoft Networks, Inc. All rights reserved.<a name="line.3"></a>
+<FONT color="green">004</FONT>     * $Id$<a name="line.4"></a>
+<FONT color="green">005</FONT>     */<a name="line.5"></a>
+<FONT color="green">006</FONT>    package com.winupon.andframe.bigapple.asynctask.callback;<a name="line.6"></a>
+<FONT color="green">007</FONT>    <a name="line.7"></a>
+<FONT color="green">008</FONT>    /**<a name="line.8"></a>
+<FONT color="green">009</FONT>     * 当继承的doHttpRequest返回null结果回调的接口，�?��在网络判断时候可以用到，当判断网络不存在的时候，就直接返回null，这个事件就是捕捉这个效�?<a name="line.9"></a>
+<FONT color="green">010</FONT>     * <a name="line.10"></a>
+<FONT color="green">011</FONT>     * @author xuan<a name="line.11"></a>
+<FONT color="green">012</FONT>     * @version $Revision: 1.0 $, $Date: 2014-1-13 上午11:02:05 $<a name="line.12"></a>
+<FONT color="green">013</FONT>     */<a name="line.13"></a>
+<FONT color="green">014</FONT>    public interface AsyncTaskResultNullCallback {<a name="line.14"></a>
+<FONT color="green">015</FONT>        /**<a name="line.15"></a>
+<FONT color="green">016</FONT>         * 回调<a name="line.16"></a>
+<FONT color="green">017</FONT>         */<a name="line.17"></a>
+<FONT color="green">018</FONT>        public void resultNullCallback();<a name="line.18"></a>
+<FONT color="green">019</FONT>    }<a name="line.19"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>
