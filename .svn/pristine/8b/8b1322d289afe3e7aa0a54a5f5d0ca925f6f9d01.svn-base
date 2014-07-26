@@ -1,8 +1,0 @@
-<resources>
-
-    <string name="app_name">bigapple_demo</string>
-    <string name="hello_world">bigapple_demo</string>
-    <string name="menu_settings">bigapple_demo</string>
-    <string name="title_activity_main">bigapple_demo</string>
-
-</resources>
