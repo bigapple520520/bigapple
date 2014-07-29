@@ -6,7 +6,7 @@
 package com.winupon.andframe.bigapple.utils.update;
 
 /**
- * UpdateCancelListener取消事件
+ * UpdateCancelListener取消监听中的取消事件情况
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-9-12 下午7:10:52 $

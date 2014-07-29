@@ -8,30 +8,36 @@ package com.winupon.andframe.bigapple.utils.update.helper;
 import android.os.Environment;
 
 /**
- * 下载更新的一些参数
+ * 下载apk的一些参数配置
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-5-2 下午12:26:39 $
  */
 public class UpdateConfig {
-    public static final String DEFAULT_SAVE_FILENAME = Environment.getExternalStorageDirectory().getPath()
+    /**
+     * 下载成功后apk存放的地址
+     */
+    private String saveFileName = Environment.getExternalStorageDirectory().getPath()
             + "/bigapple/bigapple-default.apk";
-    public static final String DEFAULT_UPDATE_TITLE = "提示";
-    public static final String DEFAULT_UPDATE_TEXT = "软件版本更新";
-    public static final String DEFAULT_POSTIVE_BTN_TEXT = "确定";
-    public static final String DEFAULT_NEGATIVE_BTN_TEXT = "取消";
-    public static final String DEFAULT_PROGRESS_TEXT = "请稍后...";
 
-    // apk存放目录和下载地址
-    private String saveFileName = DEFAULT_SAVE_FILENAME;
+    /**
+     * 需要下载的apk的网络地址
+     */
     private String apkUrl;
 
-    // 更新提示语
-    private String updateTitle = DEFAULT_UPDATE_TITLE;
-    private String updateText = DEFAULT_UPDATE_TEXT;
-    private String positiveBtnText = DEFAULT_POSTIVE_BTN_TEXT;
-    private String negativeBtnText = DEFAULT_NEGATIVE_BTN_TEXT;
-    private String progressText = DEFAULT_PROGRESS_TEXT;
+    /**
+     * 更新提示语,主要用在点击后单出确认框，让用户确认操作
+     */
+    private String updateTitle = "提示";
+    private String updateText = "软件版本更新";
+    private String positiveBtnText = "确定";
+    private String negativeBtnText = "取消";
+    private String progressText = "请稍后...";
+
+    /**
+     * 下载完成后是否自动安装，如果设置成false，那么只会加载到你指定的文件目录不会自动安装
+     */
+    private boolean autoInstall = true;
 
     public String getSaveFileName() {
         return saveFileName;
@@ -87,6 +93,14 @@ public class UpdateConfig {
 
     public void setProgressText(String progressText) {
         this.progressText = progressText;
+    }
+
+    public boolean isAutoInstall() {
+        return autoInstall;
+    }
+
+    public void setAutoInstall(boolean autoInstall) {
+        this.autoInstall = autoInstall;
     }
 
 }

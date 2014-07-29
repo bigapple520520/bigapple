@@ -49,6 +49,8 @@ public class UpdateManager {
 
     private UpdateOkListener updateOkListener;// 确定更新事件
     private UpdateCancelListener updateCancelListener;// 取消更新事件
+    private DownloadProgressListener downloadProgressListener;
+    private DownloadFinishListener downloadFinishListener;
 
     private static final int DOWN_UPDATE = 1;// 正在下载标识
     private static final int DOWN_OVER = 2;// 下载完成标识
@@ -68,10 +70,19 @@ public class UpdateManager {
             switch (msg.what) {
             case DOWN_UPDATE:
                 updateProgress.setProgress(progress);
+                if (null != downloadProgressListener) {
+                    downloadProgressListener.onProgress(progress);
+                }
                 break;
             case DOWN_OVER:
                 updateProgress.dismiss();
-                installApk();
+                if (null != downloadFinishListener) {
+                    downloadFinishListener.downloadFinish(updateConfig.getSaveFileName());
+                }
+
+                if (updateConfig.isAutoInstall()) {
+                    installApk();
+                }
                 break;
             case DOWN_CANCEL:
                 updateProgress.dismiss();
@@ -153,6 +164,23 @@ public class UpdateManager {
     @Deprecated
     public void doUpdate() {
         showNoticeDialog();
+    }
+
+    // /////////////////////////////////////////直接下载不用安装//////////////////////////////////////////
+    public void doDownload(String apkUrl, String saveFileName) {
+        if (TextUtils.isEmpty(apkUrl)) {
+            return;
+        }
+
+        UpdateConfig updateConfig = new UpdateConfig();
+        updateConfig.setApkUrl(apkUrl);
+        updateConfig.setAutoInstall(false);
+
+        if (!TextUtils.isEmpty(saveFileName)) {
+            updateConfig.setSaveFileName(saveFileName);
+        }
+
+        doDownloadInstall(updateConfig);
     }
 
     // /////////////////////////////////////////直接下载安装/////////////////////////////////////////////////
@@ -369,6 +397,7 @@ public class UpdateManager {
         }).start();
     }
 
+    // 安装apk
     private void installApk() {
         File apkfile = new File(updateConfig.getSaveFileName());
         if (!apkfile.exists()) {
@@ -404,6 +433,14 @@ public class UpdateManager {
 
     public void setUpdateCancelListener(UpdateCancelListener updateCancelListener) {
         this.updateCancelListener = updateCancelListener;
+    }
+
+    public void setDownloadProgressListener(DownloadProgressListener downloadProgressListener) {
+        this.downloadProgressListener = downloadProgressListener;
+    }
+
+    public void setDownloadFinishListener(DownloadFinishListener downloadFinishListener) {
+        this.downloadFinishListener = downloadFinishListener;
     }
 
 }
