@@ -303,7 +303,7 @@ public class UpdateManager {
         updateProgress = new ProgressDialog(context);
         updateProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         updateProgress.setTitle(updateConfig.getProgressText());
-        updateProgress.setCancelable(true);
+        updateProgress.setCancelable(updateConfig.isCanCancel());
         updateProgress.setOnCancelListener(new OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {

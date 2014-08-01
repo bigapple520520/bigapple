@@ -35,9 +35,14 @@ public class UpdateConfig {
     private String progressText = "请稍后...";
 
     /**
-     * 下载完成后是否自动安装，如果设置成false，那么只会加载到你指定的文件目录不会自动安装
+     * 下载完成后是否自动安装，如果设置成false，那么只会加载到你指定的文件目录不会自动安装，默认自动安装
      */
     private boolean autoInstall = true;
+
+    /**
+     * 下载时apk,是否允许被取消，默认允许
+     */
+    private boolean canCancel = true;
 
     public String getSaveFileName() {
         return saveFileName;
@@ -101,6 +106,14 @@ public class UpdateConfig {
 
     public void setAutoInstall(boolean autoInstall) {
         this.autoInstall = autoInstall;
+    }
+
+    public boolean isCanCancel() {
+        return canCancel;
+    }
+
+    public void setCanCancel(boolean canCancel) {
+        this.canCancel = canCancel;
     }
 
 }
