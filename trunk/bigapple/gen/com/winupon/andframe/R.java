@@ -27,19 +27,24 @@ public final class R {
         public static final int button4=0x7f07000a;
         public static final int button5=0x7f07000b;
         public static final int button6=0x7f07000c;
-        public static final int buttonDownload=0x7f070010;
-        public static final int buttonGet=0x7f07000e;
-        public static final int buttonGetHttps=0x7f070012;
-        public static final int buttonPost=0x7f07000f;
-        public static final int buttonUpload=0x7f070011;
+        public static final int button7=0x7f07000d;
+        public static final int buttonDownload=0x7f070011;
+        public static final int buttonGet=0x7f07000f;
+        public static final int buttonGetHttps=0x7f070013;
+        public static final int buttonPost=0x7f070010;
+        public static final int buttonUpload=0x7f070012;
         public static final int content=0x7f070000;
-        public static final int editText=0x7f070013;
+        public static final int editText=0x7f070014;
         public static final int gridView=0x7f070006;
         public static final int imageView=0x7f070002;
+        public static final int text1=0x7f070015;
+        public static final int text2=0x7f070016;
+        public static final int text3=0x7f070017;
+        public static final int text4=0x7f070018;
         public static final int textView=0x7f070003;
         public static final int textView2=0x7f070004;
         public static final int textView3=0x7f070005;
-        public static final int tips=0x7f07000d;
+        public static final int tips=0x7f07000e;
     }
     public static final class layout {
         public static final int bigapple_main=0x7f030000;
@@ -48,6 +53,7 @@ public final class R {
         public static final int demo_http2_main=0x7f030003;
         public static final int demo_ioc_main=0x7f030004;
         public static final int demo_utils_pinyin_main=0x7f030005;
+        public static final int demo_utils_textviewhtml_main=0x7f030006;
     }
     public static final class string {
         public static final int app_name=0x7f050000;

@@ -31,5 +31,6 @@
         <activity android:name="com.winupon.andframe.zzdemo.db.DbDemoActivity" />
         <activity android:name="com.winupon.andframe.zzdemo.bitmap.BitmapDemoActivity" />
         <activity android:name="com.winupon.andframe.zzdemo.utils.PinyinDemoActivity" />
+        <activity android:name="com.winupon.andframe.zzdemo.utils.TextViewHtmlDemoActivity" />
     </application>
 </manifest>

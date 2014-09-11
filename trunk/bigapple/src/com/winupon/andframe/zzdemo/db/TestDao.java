@@ -17,6 +17,7 @@ import com.winupon.andframe.bigapple.db.BasicDao;
 import com.winupon.andframe.bigapple.db.callback.MultiRowMapper;
 import com.winupon.andframe.bigapple.utils.DateUtils;
 import com.winupon.andframe.bigapple.utils.uuid.UUIDUtils;
+import com.winupon.andframe.zzdemo.db.entity.User;
 
 /**
  * db部分demo的dao
@@ -48,10 +49,11 @@ public class TestDao extends BasicDao {
     public void insertBatchTest() {
         List<Object[]> data = new ArrayList<Object[]>();
 
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 1; i++) {
             Object[] d = new Object[3];
             d[0] = UUIDUtils.createId();
-            d[1] = String.valueOf(i);
+            // d[1] = String.valueOf(i);
+            d[1] = null;
             d[2] = DateUtils.date2StringBySecond(new Date());
             data.add(d);
         }

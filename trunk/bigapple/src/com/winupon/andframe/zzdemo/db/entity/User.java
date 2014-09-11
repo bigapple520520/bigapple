@@ -1,4 +1,4 @@
-package com.winupon.andframe.zzdemo.db;
+package com.winupon.andframe.zzdemo.db.entity;
 
 import java.util.Date;
 

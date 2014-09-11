@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
 import android.content.ContentValues;
@@ -14,7 +15,9 @@ import android.text.TextUtils;
 import com.winupon.andframe.bigapple.db.callback.MapRowMapper;
 import com.winupon.andframe.bigapple.db.callback.MultiRowMapper;
 import com.winupon.andframe.bigapple.db.callback.SingleRowMapper;
+import com.winupon.andframe.bigapple.db.helper.DbUtils;
 import com.winupon.andframe.bigapple.db.helper.SqlUtils;
+import com.winupon.andframe.bigapple.utils.Validators;
 import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
@@ -41,13 +44,39 @@ public class BasicDao2 {
     }
 
     /**
-     * 使用完后请Close数据库连接，dbHelper的close其实内部就是sqliteDatabase的close
+     * 使用完后请Close数据库连接，dbHelper的close其实内部就是sqliteDatabase的close，并且源码内部会判断null和open的状态
      */
     public void closeSQLiteDatabase() {
         DBHelper.getInstance().close();
     }
 
     // ///////////////////////////////////////////////android的sqlite原生api///////////////////////////////////////////
+    /**
+     * 用原生的sqlite执行语法
+     * 
+     * @param doGrammar
+     */
+    protected Object execute(DoGrammarInterface doGrammar) {
+        if (null == doGrammar) {
+            return null;
+        }
+
+        Object retObj = null;
+        lock.lock();
+        try {
+            SQLiteDatabase sqliteDatabase = openSQLiteDatabase();
+            retObj = doGrammar.doGrammar(sqliteDatabase);
+        }
+        catch (Exception e) {
+            LogUtils.e(e.getMessage(), e);
+        }
+        finally {
+            closeSQLiteDatabase();
+            lock.unlock();
+        }
+        return retObj;
+    }
+
     /**
      * 插入
      * 
@@ -65,7 +94,7 @@ public class BasicDao2 {
             updateCount = openSQLiteDatabase().insert(table, nullColumnHack, values);
         }
         catch (Exception e) {
-            LogUtils.e("", e);
+            LogUtils.e(e.getMessage(), e);
         }
         finally {
             closeSQLiteDatabase();
@@ -87,8 +116,9 @@ public class BasicDao2 {
         long updateCount = 0;
 
         lock.lock();
-        SQLiteDatabase sqliteDatabase = openSQLiteDatabase();
+        SQLiteDatabase sqliteDatabase = null;
         try {
+            sqliteDatabase = openSQLiteDatabase();
             sqliteDatabase.beginTransaction();
 
             for (int i = 0, n = valuesList.size(); i < n; i++) {
@@ -99,10 +129,13 @@ public class BasicDao2 {
             sqliteDatabase.setTransactionSuccessful();
         }
         catch (Exception e) {
-            LogUtils.e("", e);
+            LogUtils.e(e.getMessage(), e);
         }
         finally {
-            sqliteDatabase.endTransaction();
+            if (null != sqliteDatabase) {
+                sqliteDatabase.endTransaction();
+            }
+
             closeSQLiteDatabase();
             lock.unlock();
         }
@@ -127,7 +160,7 @@ public class BasicDao2 {
             updateCount = openSQLiteDatabase().update(table, values, whereClause, whereArgs);
         }
         catch (Exception e) {
-            LogUtils.e("", e);
+            LogUtils.e(e.getMessage(), e);
         }
         finally {
             closeSQLiteDatabase();
@@ -151,8 +184,9 @@ public class BasicDao2 {
         int updateCount = 0;
 
         lock.lock();
-        SQLiteDatabase sqliteDatabase = openSQLiteDatabase();
+        SQLiteDatabase sqliteDatabase = null;
         try {
+            sqliteDatabase = openSQLiteDatabase();
             sqliteDatabase.beginTransaction();
 
             for (int i = 0, n = valuesList.size(); i < n; i++) {
@@ -163,10 +197,12 @@ public class BasicDao2 {
             sqliteDatabase.setTransactionSuccessful();
         }
         catch (Exception e) {
-            LogUtils.e("", e);
+            LogUtils.e(e.getMessage(), e);
         }
         finally {
-            sqliteDatabase.endTransaction();
+            if (null != sqliteDatabase) {
+                sqliteDatabase.endTransaction();
+            }
             closeSQLiteDatabase();
             lock.unlock();
         }
@@ -190,7 +226,7 @@ public class BasicDao2 {
             updateCount = openSQLiteDatabase().delete(table, whereClause, whereArgs);
         }
         catch (Exception e) {
-            LogUtils.e("", e);
+            LogUtils.e(e.getMessage(), e);
         }
         finally {
             closeSQLiteDatabase();
@@ -212,8 +248,9 @@ public class BasicDao2 {
         int updateCount = 0;
 
         lock.lock();
-        SQLiteDatabase sqliteDatabase = openSQLiteDatabase();
+        SQLiteDatabase sqliteDatabase = null;
         try {
+            sqliteDatabase = openSQLiteDatabase();
             sqliteDatabase.beginTransaction();
 
             for (int i = 0, n = whereArgsList.size(); i < n; i++) {
@@ -224,10 +261,12 @@ public class BasicDao2 {
             sqliteDatabase.setTransactionSuccessful();
         }
         catch (Exception e) {
-            LogUtils.e("", e);
+            LogUtils.e(e.getMessage(), e);
         }
         finally {
-            sqliteDatabase.endTransaction();
+            if (null != sqliteDatabase) {
+                sqliteDatabase.endTransaction();
+            }
             closeSQLiteDatabase();
             lock.unlock();
         }
@@ -247,7 +286,7 @@ public class BasicDao2 {
             openSQLiteDatabase().execSQL(sql);
         }
         catch (Exception e) {
-            LogUtils.e("", e);
+            LogUtils.e(e.getMessage(), e);
         }
         finally {
             closeSQLiteDatabase();
@@ -268,7 +307,7 @@ public class BasicDao2 {
             openSQLiteDatabase().execSQL(sql, bindArgs);
         }
         catch (Exception e) {
-            LogUtils.e("", e);
+            LogUtils.e(e.getMessage(), e);
         }
         finally {
             closeSQLiteDatabase();
@@ -284,8 +323,9 @@ public class BasicDao2 {
      */
     protected void execSQLBatch(String sql, List<Object[]> bindArgsList) {
         lock.lock();
-        SQLiteDatabase sqliteDatabase = openSQLiteDatabase();
+        SQLiteDatabase sqliteDatabase = null;
         try {
+            sqliteDatabase = openSQLiteDatabase();
             sqliteDatabase.beginTransaction();
 
             for (int i = 0, n = bindArgsList.size(); i < n; i++) {
@@ -297,10 +337,12 @@ public class BasicDao2 {
             sqliteDatabase.setTransactionSuccessful();
         }
         catch (Exception e) {
-            LogUtils.e("", e);
+            LogUtils.e(e.getMessage(), e);
         }
         finally {
-            sqliteDatabase.endTransaction();
+            if (null != sqliteDatabase) {
+                sqliteDatabase.endTransaction();
+            }
             closeSQLiteDatabase();
             lock.unlock();
         }
@@ -324,8 +366,9 @@ public class BasicDao2 {
         List<T> ret = new ArrayList<T>();
 
         lock.lock();
-        Cursor cursor = openSQLiteDatabase().query(table, columns, selection, selectionArgs, groupBy, having, orderBy);
+        Cursor cursor = null;
         try {
+            cursor = openSQLiteDatabase().query(table, columns, selection, selectionArgs, groupBy, having, orderBy);
             int i = 0;
             while (cursor.moveToNext()) {
                 T t = multiRowMapper.mapRow(cursor, i);
@@ -334,10 +377,10 @@ public class BasicDao2 {
             }
         }
         catch (Exception e) {
-            LogUtils.e("", e);
+            LogUtils.e(e.getMessage(), e);
         }
         finally {
-            cursor.close();
+            closeCursor(cursor);
             closeSQLiteDatabase();
             lock.unlock();
         }
@@ -364,9 +407,10 @@ public class BasicDao2 {
         List<T> ret = new ArrayList<T>();
 
         lock.lock();
-        Cursor cursor = openSQLiteDatabase().query(table, columns, selection, selectionArgs, groupBy, having, orderBy,
-                limit);
+        Cursor cursor = null;
         try {
+            cursor = openSQLiteDatabase().query(table, columns, selection, selectionArgs, groupBy, having, orderBy,
+                    limit);
             int i = 0;
             while (cursor.moveToNext()) {
                 T t = multiRowMapper.mapRow(cursor, i);
@@ -375,10 +419,10 @@ public class BasicDao2 {
             }
         }
         catch (Exception e) {
-            LogUtils.e("", e);
+            LogUtils.e(e.getMessage(), e);
         }
         finally {
-            cursor.close();
+            closeCursor(cursor);
             closeSQLiteDatabase();
             lock.unlock();
         }
@@ -407,9 +451,10 @@ public class BasicDao2 {
         List<T> ret = new ArrayList<T>();
 
         lock.lock();
-        Cursor cursor = openSQLiteDatabase().query(distinct, table, columns, selection, selectionArgs, groupBy, having,
-                orderBy, limit);
+        Cursor cursor = null;
         try {
+            cursor = openSQLiteDatabase().query(distinct, table, columns, selection, selectionArgs, groupBy, having,
+                    orderBy, limit);
             int i = 0;
             while (cursor.moveToNext()) {
                 T t = multiRowMapper.mapRow(cursor, i);
@@ -418,10 +463,10 @@ public class BasicDao2 {
             }
         }
         catch (Exception e) {
-            LogUtils.e("", e);
+            LogUtils.e(e.getMessage(), e);
         }
         finally {
-            cursor.close();
+            closeCursor(cursor);
             closeSQLiteDatabase();
             lock.unlock();
         }
@@ -443,7 +488,7 @@ public class BasicDao2 {
             openSQLiteDatabase().execSQL(sql);
         }
         catch (Exception e) {
-            LogUtils.e("", e);
+            LogUtils.e(e.getMessage(), e);
         }
         finally {
             closeSQLiteDatabase();
@@ -468,7 +513,7 @@ public class BasicDao2 {
                 openSQLiteDatabase().execSQL(sql, args);
             }
             catch (Exception e) {
-                LogUtils.e("", e);
+                LogUtils.e(e.getMessage(), e);
             }
             finally {
                 closeSQLiteDatabase();
@@ -489,8 +534,9 @@ public class BasicDao2 {
         }
 
         lock.lock();
-        SQLiteDatabase sqliteDatabase = openSQLiteDatabase();
+        SQLiteDatabase sqliteDatabase = null;
         try {
+            sqliteDatabase = openSQLiteDatabase();
             sqliteDatabase.beginTransaction();
             for (Object[] args : argsList) {
                 debugSql(sql, args);
@@ -499,10 +545,12 @@ public class BasicDao2 {
             sqliteDatabase.setTransactionSuccessful();
         }
         catch (Exception e) {
-            LogUtils.e("", e);
+            LogUtils.e(e.getMessage(), e);
         }
         finally {
-            sqliteDatabase.endTransaction();
+            if (null != sqliteDatabase) {
+                sqliteDatabase.endTransaction();
+            }
             closeSQLiteDatabase();
             lock.unlock();
         }
@@ -522,8 +570,9 @@ public class BasicDao2 {
 
         lock.lock();
         debugSql(sql, args);
-        Cursor cursor = openSQLiteDatabase().rawQuery(sql, args);
+        Cursor cursor = null;
         try {
+            cursor = openSQLiteDatabase().rawQuery(sql, args);
             int i = 0;
             while (cursor.moveToNext()) {
                 T t = multiRowMapper.mapRow(cursor, i);
@@ -532,10 +581,10 @@ public class BasicDao2 {
             }
         }
         catch (Exception e) {
-            LogUtils.e("", e);
+            LogUtils.e(e.getMessage(), e);
         }
         finally {
-            cursor.close();
+            closeCursor(cursor);
             closeSQLiteDatabase();
             lock.unlock();
         }
@@ -556,17 +605,18 @@ public class BasicDao2 {
 
         lock.lock();
         debugSql(sql, args);
-        Cursor cursor = openSQLiteDatabase().rawQuery(sql, args);
+        Cursor cursor = null;
         try {
+            cursor = openSQLiteDatabase().rawQuery(sql, args);
             if (cursor.moveToNext()) {
                 ret = singleRowMapper.mapRow(cursor);
             }
         }
         catch (Exception e) {
-            LogUtils.e("", e);
+            LogUtils.e(e.getMessage(), e);
         }
         finally {
-            cursor.close();
+            closeCursor(cursor);
             closeSQLiteDatabase();
             lock.unlock();
         }
@@ -587,8 +637,9 @@ public class BasicDao2 {
 
         lock.lock();
         debugSql(sql, args);
-        Cursor cursor = openSQLiteDatabase().rawQuery(sql, args);
+        Cursor cursor = null;
         try {
+            cursor = openSQLiteDatabase().rawQuery(sql, args);
             int i = 0;
             while (cursor.moveToNext()) {
                 K k = mapRowMapper.mapRowKey(cursor, i);
@@ -598,10 +649,10 @@ public class BasicDao2 {
             }
         }
         catch (Exception e) {
-            LogUtils.e("", e);
+            LogUtils.e(e.getMessage(), e);
         }
         finally {
-            cursor.close();
+            closeCursor(cursor);
             closeSQLiteDatabase();
             lock.unlock();
         }
@@ -671,6 +722,68 @@ public class BasicDao2 {
         if (DEBUG) {
             LogUtils.d(SqlUtils.getSQL(sql, args));
         }
+    }
+
+    // 关闭cursor
+    private void closeCursor(Cursor cursor) {
+        if (null != cursor && !cursor.isClosed()) {
+            cursor.close();
+        }
+    }
+
+    /**
+     * 执行语法回调接口
+     * 
+     * @author xuan
+     * @version $Revision: 1.0 $, $Date: 2014-8-18 上午10:35:17 $
+     */
+    public interface DoGrammarInterface {
+        Object doGrammar(SQLiteDatabase sqliteDatabase);
+    }
+
+    // ----------------------------------利用反射操作数据API----------------------------------------------------------
+    /**
+     * 插入数据到数据库，支持批量插入
+     * 
+     * @param tableName
+     *            数据库表名
+     * @param entitys
+     *            需要插入的数据对象
+     * @return
+     */
+    public long insert(String tableName, Object... entitys) {
+        if (Validators.isEmpty(tableName) || Validators.isEmpty(entitys)) {
+            return 0;
+        }
+
+        lock.lock();
+        SQLiteDatabase sqliteDatabase = null;
+        long insertCount = 0;
+        try {
+            sqliteDatabase = openSQLiteDatabase();
+            Set<String> columnSet = DbUtils.getTableAllColumns(sqliteDatabase, tableName);
+
+            sqliteDatabase.beginTransaction();
+            for (Object entity : entitys) {
+                ContentValues values = DbUtils.getWantToInsertValues(entity, columnSet);
+                insertCount = sqliteDatabase.insert(tableName, null, values);
+            }
+
+            sqliteDatabase.setTransactionSuccessful();
+        }
+        catch (Exception e) {
+            LogUtils.e(e.getMessage(), e);
+        }
+        finally {
+            if (null != sqliteDatabase) {
+                sqliteDatabase.endTransaction();
+            }
+
+            closeSQLiteDatabase();
+            lock.unlock();
+        }
+
+        return insertCount;
     }
 
 }

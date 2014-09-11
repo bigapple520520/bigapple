@@ -18,12 +18,12 @@ import com.winupon.andframe.bigapple.bitmap.BitmapDisplayConfig;
  * @version $Revision: 1.0 $, $Date: 2013-8-1 下午6:16:04 $
  */
 public class SimpleImageLoadCallBack implements ImageLoadCallBack {
-
     @Override
     public void loadCompleted(ImageView imageView, Bitmap bitmap, BitmapDisplayConfig config) {
         Animation animation = config.getAnimation();
         if (animation == null) {
-            fadeInDisplay(imageView, bitmap);
+            // fadeInDisplay(imageView, bitmap);
+            imageView.setImageBitmap(bitmap);// 默认就不加动画了
         }
         else {
             animationDisplay(imageView, bitmap, animation);

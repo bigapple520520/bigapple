@@ -9,7 +9,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -19,8 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.winupon.andframe.R;
+import com.winupon.andframe.bigapple.bitmap.AnBitmapUtilsFace;
 import com.winupon.andframe.bigapple.bitmap.BitmapDisplayConfig;
-import com.winupon.andframe.bigapple.bitmap.callback.DownloaderCallBack;
 import com.winupon.andframe.bigapple.bitmap.callback.ImageLoadCallBack;
 import com.winupon.andframe.bigapple.ioc.InjectView;
 import com.winupon.andframe.bigapple.ioc.app.AnActivity;
@@ -59,60 +58,27 @@ public class BitmapDemoActivity extends AnActivity {
     @InjectView(R.id.gridView)
     private GridView gridView;
 
-    private final Handler handler = new Handler();
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.demo_bitmap_main);
 
+        AnBitmapUtilsFace.init(this);// 只需要初始化一次即可
+
         // ///////////////////////////////////////////清理缓存///////////////////////////////////////////////////
         button.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                AnBitmapUtilsFace.clearCache();
+                AnBitmapUtilsFace.getInstance().clearCacheAll();
             }
         });
 
         // //////////////////////////////////////////加载单个图片/////////////////////////////////////////////////////////////
-        final long start = System.currentTimeMillis();
-        final BitmapDisplayConfig singleConfig = new BitmapDisplayConfig();
-
-        // 显示时加载的进度
-        singleConfig.setDownloaderCallBack(new DownloaderCallBack() {
-            @Override
-            public void onStartLoading(String url) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        textView.setText("开始下载\n");
-                    }
-                });
-            }
-
-            @Override
-            public void onLoading(final int total, final int current) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        textView2.setText("下载进度：" + current + "/" + total);
-                    }
-                });
-            }
-
-            @Override
-            public void onEndLoading() {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        textView.setText(textView.getText() + "下载结束");
-                    }
-                });
-            }
-        });
-        AnBitmapUtilsFace.display(imageView, url3, singleConfig);
+        AnBitmapUtilsFace.getInstance().display(imageView, url3);
 
         // ////////////////////////////////////多图显示/////////////////////////////////////////////////////
+        final long start = System.currentTimeMillis();
+
         final BitmapDisplayConfig multiConfig = new BitmapDisplayConfig();
         multiConfig.setShowOriginal(false);
         multiConfig.setBitmapMaxHeight(100);
@@ -146,7 +112,7 @@ public class BitmapDemoActivity extends AnActivity {
                 ImageView imageView = new ImageView(BitmapDemoActivity.this);
                 imageView.setLayoutParams(new GridView.LayoutParams(60, 60));
                 imageView.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_launcher));
-                AnBitmapUtilsFace.display(imageView, urls[position], multiConfig);
+                AnBitmapUtilsFace.getInstance().display(imageView, urls[position], multiConfig);
                 return imageView;
             }
 
@@ -166,5 +132,4 @@ public class BitmapDemoActivity extends AnActivity {
             }
         });
     }
-
 }

@@ -24,6 +24,7 @@ import com.winupon.andframe.zzdemo.db.DbDemoActivity;
 import com.winupon.andframe.zzdemo.http2.UrlHttpClientDemoActivity;
 import com.winupon.andframe.zzdemo.ioc.IocDemoActivity;
 import com.winupon.andframe.zzdemo.utils.PinyinDemoActivity;
+import com.winupon.andframe.zzdemo.utils.TextViewHtmlDemoActivity;
 
 public class BigappleMainActivity extends AnActivity {
 
@@ -67,6 +68,7 @@ public class BigappleMainActivity extends AnActivity {
                         .getPath() + "/xuan1/bigapple-default.apk");
             }
         });
+        addButton("utils只htmlviewhtml模块测试", TextViewHtmlDemoActivity.class);
     }
 
     private void addButton(String text, final Class<?> clazz) {

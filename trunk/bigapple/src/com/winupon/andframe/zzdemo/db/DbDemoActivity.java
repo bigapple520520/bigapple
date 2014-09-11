@@ -12,6 +12,8 @@ import com.winupon.andframe.R;
 import com.winupon.andframe.bigapple.ioc.InjectView;
 import com.winupon.andframe.bigapple.ioc.app.AnActivity;
 import com.winupon.andframe.bigapple.utils.DateUtils;
+import com.winupon.andframe.zzdemo.db.entity.LoginUser;
+import com.winupon.andframe.zzdemo.db.entity.User;
 
 /**
  * 本地数据库操作，记得去MyApplication初始化数据库
@@ -37,6 +39,9 @@ public class DbDemoActivity extends AnActivity {
 
     @InjectView(R.id.button6)
     private Button button6;
+
+    @InjectView(R.id.button7)
+    private Button button7;
 
     @InjectView(R.id.tips)
     private TextView tips;
@@ -103,6 +108,24 @@ public class DbDemoActivity extends AnActivity {
                 testDao2Muti();
             }
         });
+
+        // 反射插入
+        button7.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Object[] users = new LoginUser[4];
+                users[0] = new LoginUser();
+                users[1] = new LoginUser();
+                users[2] = new LoginUser();
+                users[3] = new LoginUser();
+
+                new TestDao2().insert(users);
+            }
+        });
+    }
+
+    public void testInsert() {
+
     }
 
     private void testDao2Muti() {
@@ -180,7 +203,7 @@ public class DbDemoActivity extends AnActivity {
         long start1 = System.currentTimeMillis();
         TestDao testDao = new TestDao(DbDemoActivity.this);
         testDao.insertBatchTest();
-        tips.setText("批量插入1000条数据花费的时间：" + (System.currentTimeMillis() - start1) + "ms");
+        tips.setText("批量插入1条数据花费的时间：" + (System.currentTimeMillis() - start1) + "ms");
     }
 
     private void deleteTest() {

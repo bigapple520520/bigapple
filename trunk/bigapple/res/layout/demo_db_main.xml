@@ -37,6 +37,11 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="basicDao2多线程插入测试"/>
+    <Button 
+        android:id="@+id/button7"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="反射插入"/>
     <TextView 
         android:id="@+id/tips"
         android:layout_width="fill_parent"

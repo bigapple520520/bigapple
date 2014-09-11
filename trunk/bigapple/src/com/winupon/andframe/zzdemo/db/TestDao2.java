@@ -16,6 +16,7 @@ import com.winupon.andframe.bigapple.db.BasicDao2;
 import com.winupon.andframe.bigapple.db.callback.MultiRowMapper;
 import com.winupon.andframe.bigapple.utils.DateUtils;
 import com.winupon.andframe.bigapple.utils.uuid.UUIDUtils;
+import com.winupon.andframe.zzdemo.db.entity.User;
 
 /**
  * 可保持单例的数据库操作
@@ -84,6 +85,16 @@ public class TestDao2 extends BasicDao2 {
             user.setCretaionTime(DateUtils.string2DateTime(cs.getString(cs.getColumnIndex("creation_time"))));
             return user;
         }
+    }
+
+    /**
+     * 反射插入
+     * 
+     * @param user
+     * @return
+     */
+    public long insert(Object... users) {
+        return insert("login_user", users);
     }
 
 }
