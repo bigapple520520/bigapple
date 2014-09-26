@@ -5,7 +5,7 @@ import java.io.OutputStream;
 import com.winupon.andframe.bigapple.bitmap.callback.DownloaderCallBack;
 
 /**
- * 图片下载器接口
+ * 加载图片接口
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-8-1 下午5:30:16 $

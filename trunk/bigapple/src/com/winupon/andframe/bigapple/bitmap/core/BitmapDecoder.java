@@ -9,7 +9,8 @@ import android.graphics.BitmapFactory;
 import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
- * 图片解码器，主要从资源中按适当的比例解码出bitmap，这很重要可以很好的防止图片的OOM
+ * 图片解码器，主要从资源中按适当的比例解码出bitmap <br />
+ * 会根据设置要求大小进行调整，这很重要可以很好的防止图片的OOM
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-8-1 下午6:50:10 $
@@ -21,7 +22,7 @@ public abstract class BitmapDecoder {
      * @param res
      *            资源
      * @param resId
-     *            资源图片
+     *            资源图片id
      * @param reqWidth
      *            要求最大宽
      * @param reqHeight
@@ -33,14 +34,16 @@ public abstract class BitmapDecoder {
     public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight,
             Bitmap.Config config) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
+        options.inJustDecodeBounds = true;// 设置后只会加载图片参数信息，不会加载图片本身
         options.inPurgeable = true;
         BitmapFactory.decodeResource(res, resId, options);
+
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
         options.inJustDecodeBounds = false;
-        if (config != null) {
+        if (null != config) {
             options.inPreferredConfig = config;
         }
+
         try {
             return BitmapFactory.decodeResource(res, resId, options);
         }

@@ -34,7 +34,7 @@ import android.widget.Toast;
 import com.winupon.andframe.bigapple.utils.update.helper.UpdateConfig;
 
 /**
- * 更新应用的工具类
+ * 更新应用的工具类，注意这个工具只能在主线程中new哦
  * 
  * @author xuan
  * @version $Revision: 1.0 $, $Date: 2013-3-25 上午9:28:20 $
@@ -43,9 +43,6 @@ public class UpdateManager {
     private static final String TAG = "bigapple.UpdateManager";
 
     private static final int BUFFER_SIZE = 1024;
-
-    @Deprecated
-    private NotifyCanGotoListener notifyCanGotoListener;
 
     private UpdateOkListener updateOkListener;// 确定更新事件
     private UpdateCancelListener updateCancelListener;// 取消更新事件
@@ -69,23 +66,28 @@ public class UpdateManager {
         public void handleMessage(Message msg) {
             switch (msg.what) {
             case DOWN_UPDATE:
-                updateProgress.setProgress(progress);
+                if (null != updateProgress) {
+                    updateProgress.setProgress(progress);
+                }
                 if (null != downloadProgressListener) {
                     downloadProgressListener.onProgress(progress);
                 }
                 break;
             case DOWN_OVER:
-                updateProgress.dismiss();
+                if (null != updateProgress) {
+                    updateProgress.dismiss();
+                }
                 if (null != downloadFinishListener) {
                     downloadFinishListener.downloadFinish(updateConfig.getSaveFileName());
                 }
-
                 if (updateConfig.isAutoInstall()) {
                     installApk();
                 }
                 break;
             case DOWN_CANCEL:
-                updateProgress.dismiss();
+                if (null != updateProgress) {
+                    updateProgress.dismiss();
+                }
                 if (null != updateCancelListener) {
                     updateCancelListener.updateCancel(new CancelEvent(CancelEvent.DOWNLOAD_ING_CANCEL));
                 }
@@ -166,7 +168,7 @@ public class UpdateManager {
         showNoticeDialog();
     }
 
-    // /////////////////////////////////////////直接下载不用安装//////////////////////////////////////////
+    // /////////////////////////////////////////直接下载不安装//////////////////////////////////////////
     public void doDownload(String apkUrl, String saveFileName) {
         if (TextUtils.isEmpty(apkUrl)) {
             return;
@@ -234,8 +236,10 @@ public class UpdateManager {
         interceptFlag = true;
     }
 
-    // //////////////////////////////////////内部辅助方法////////////////////////////////////////////////////////////////
-    private void showNoticeDialog() {
+    /**
+     * 弹出对话框，提示用户是否进行下载安装操作
+     */
+    public void showNoticeDialog() {
         AlertDialog.Builder builder = new Builder(context);
         builder.setTitle(updateConfig.getUpdateTitle());
         builder.setMessage(updateConfig.getUpdateText());
@@ -285,8 +289,10 @@ public class UpdateManager {
         builder.create().show();
     }
 
-    // 实际的更新操作
-    public void update() {
+    /**
+     * 进度提示并进行下载，各种配置在updateConfig中进行配置
+     */
+    private void update() {
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             Toast.makeText(context, "SD卡不可用，无法下载，请安装SD卡后再试。", Toast.LENGTH_SHORT).show();
             if (null != notifyCanGotoListener) {
@@ -315,7 +321,9 @@ public class UpdateManager {
         downloadApk();
     }
 
-    // 启动线程下载apk
+    /**
+     * 下载apk，各种参数在updateConfig中进行配置
+     */
     private void downloadApk() {
         new Thread(new Runnable() {
             @Override
@@ -397,7 +405,89 @@ public class UpdateManager {
         }).start();
     }
 
-    // 安装apk
+    /**
+     * 下载apk，各种参数在updateConfig中进行配置
+     */
+    // private void downloadApk2() {
+    // new Thread(new Runnable() {
+    // @Override
+    // public void run() {
+    // HttpResponse httpResponse = null;
+    // try {
+    // // 创建件文件夹
+    // File apkFile = new File(updateConfig.getSaveFileName());
+    // File parentFile = apkFile.getParentFile();
+    // if (!parentFile.exists()) {
+    // boolean success = parentFile.mkdirs();
+    // if (!success) {
+    // Log.e(TAG, "mkdirs failed");
+    // if (null != updateCancelListener) {
+    // updateCancelListener.updateCancel(new CancelEvent(CancelEvent.MAKE_DIR_FAIL));
+    // }
+    // return;
+    // }
+    // }
+    //
+    // // 创建文件
+    // if (!apkFile.exists()) {
+    // apkFile.createNewFile();
+    // }
+    //
+    // final EntityToFile entityToFile = new EntityToFile();
+    // HttpClient client = new HttpClient();
+    // httpResponse = client.excute(new HttpGet(updateConfig.getApkUrl()), new HttpParams());
+    // if (HttpURLConnection.HTTP_OK == httpResponse.getResponseCode()) {
+    // entityToFile.toFile(httpResponse.getHttpURLConnection(), new HandlerCallBack() {
+    // @Override
+    // public void callBack(long count, long current, boolean isFinish) {
+    // progress = (int) (((float) current / count) * 100);
+    // handler.sendEmptyMessage(DOWN_UPDATE);
+    //
+    // if (interceptFlag) {
+    // entityToFile.setStop(true);
+    // }
+    // }
+    // }, updateConfig.getSaveFileName());
+    //
+    // if (!interceptFlag) {
+    // handler.sendEmptyMessage(DOWN_OVER);
+    // }
+    // else {
+    // handler.sendEmptyMessage(DOWN_CANCEL);
+    // interceptFlag = false;
+    // }
+    // }
+    // }
+    // catch (Exception e) {
+    // Log.e(TAG, "", e);
+    // handler.post(new Runnable() {
+    // @Override
+    // public void run() {
+    // Toast.makeText(context, "下载包时发生错误。", Toast.LENGTH_SHORT).show();
+    // updateProgress.dismiss();
+    // if (null != notifyCanGotoListener) {
+    // notifyCanGotoListener.notifyCanGoto();
+    // }
+    //
+    // // 因外力因素而无法下载更新
+    // if (null != updateCancelListener) {
+    // updateCancelListener.updateCancel(new CancelEvent(CancelEvent.DOWNLOAD_FAIL));
+    // }
+    // }
+    // });
+    // }
+    // finally {
+    // if (null != httpResponse) {
+    // httpResponse.getHttpURLConnection().disconnect();
+    // }
+    // }
+    // }
+    // }).start();
+    // }
+
+    /**
+     * 安装apk，地址采用UpdateConfig，进行配置
+     */
     private void installApk() {
         File apkfile = new File(updateConfig.getSaveFileName());
         if (!apkfile.exists()) {
@@ -410,21 +500,6 @@ public class UpdateManager {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.parse("file://" + apkfile.toString()), "application/vnd.android.package-archive");
         context.startActivity(intent);
-    }
-
-    @Deprecated
-    public interface NotifyCanGotoListener {
-
-        /**
-         * 可以进行跳转
-         */
-        @Deprecated
-        public void notifyCanGoto();
-    }
-
-    @Deprecated
-    public void setNotifyCanGotoListener(NotifyCanGotoListener notifyCanGotoListener) {
-        this.notifyCanGotoListener = notifyCanGotoListener;
     }
 
     public void setUpdateOkListener(UpdateOkListener updateOkListener) {
@@ -441,6 +516,24 @@ public class UpdateManager {
 
     public void setDownloadFinishListener(DownloadFinishListener downloadFinishListener) {
         this.downloadFinishListener = downloadFinishListener;
+    }
+
+    // /////////////////////////////////////以下下废弃的方法不要再用了择日删除之////////////////////////////////
+    @Deprecated
+    private NotifyCanGotoListener notifyCanGotoListener;
+
+    @Deprecated
+    public interface NotifyCanGotoListener {
+        /**
+         * 可以进行跳转
+         */
+        @Deprecated
+        public void notifyCanGoto();
+    }
+
+    @Deprecated
+    public void setNotifyCanGotoListener(NotifyCanGotoListener notifyCanGotoListener) {
+        this.notifyCanGotoListener = notifyCanGotoListener;
     }
 
 }

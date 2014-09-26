@@ -23,6 +23,8 @@ import com.winupon.andframe.bigapple.utils.log.LogUtils;
  * @version $Revision: 1.0 $, $Date: 2013-8-9 下午4:48:21 $
  */
 public class AnBitmapUtils {
+    public static boolean DUBEG = false;
+
     private boolean pauseTask = false;
     private final Object pauseTaskLock = new Object();
 
@@ -121,6 +123,10 @@ public class AnBitmapUtils {
         Bitmap bitmap = globalConfig.getBitmapCache().getBitmapFromMemCache(uri, displayConfig);
 
         if (null != bitmap) {
+            if (DUBEG) {
+                LogUtils.d("-----------------memory cache yes!!!");
+            }
+
             // 内存缓存命中
             displayConfig.getImageLoadCallBack().loadCompleted(imageView, bitmap, displayConfig);
         }
@@ -425,7 +431,15 @@ public class AnBitmapUtils {
 
             /* 当磁盘缓存中的图片不存在了，就去网络上加载需要的图片 */
             if (bitmap == null && !pauseTask && !this.isCancelled() && this.getTargetImageView() != null) {
+                if (DUBEG) {
+                    LogUtils.d("-----------------o no!!! cache not exist!!!");
+                }
                 bitmap = globalConfig.getBitmapCache().downloadBitmap(uri, displayConfig);
+            }
+            else {
+                if (DUBEG) {
+                    LogUtils.d("-----------------disk cache yes!!!");
+                }
             }
 
             return bitmap;

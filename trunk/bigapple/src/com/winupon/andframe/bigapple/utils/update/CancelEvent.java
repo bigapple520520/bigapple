@@ -17,6 +17,7 @@ public class CancelEvent {
     public static final int DOWNLOAD_FAIL = 3;// 下载失败
     public static final int DOWNLOAD_ING_CANCEL = 4;// 下载中用户取消
     public static final int INSTALL_FAIL = 5;// 安装失败
+    public static final int MAKE_DIR_FAIL = 6;// 创建文件失败
 
     public CancelEvent(int event) {
         this.event = event;

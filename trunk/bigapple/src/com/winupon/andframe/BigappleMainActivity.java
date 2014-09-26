@@ -64,8 +64,10 @@ public class BigappleMainActivity extends AnActivity {
                         ToastUtils.displayTextShort(BigappleMainActivity.this, "我被取消喽：" + cancelEvent.getEvent());
                     }
                 });
-                updateManager.doDownload("http://res.wpstatic.cn/m/wpjy.apk", Environment.getExternalStorageDirectory()
-                        .getPath() + "/xuan1/bigapple-default.apk");
+                // updateManager.doDownload("http://res.wpstatic.cn/m/weike-test.apk", Environment
+                // .getExternalStorageDirectory().getPath() + "/xuan1/bigapple-default.apk");
+                updateManager.doDownload("http://file.wanpeng.com/appstore/apkap/weike.apk", Environment
+                        .getExternalStorageDirectory().getPath() + "/xuan1/bigapple-default.apk");
             }
         });
         addButton("utils只htmlviewhtml模块测试", TextViewHtmlDemoActivity.class);

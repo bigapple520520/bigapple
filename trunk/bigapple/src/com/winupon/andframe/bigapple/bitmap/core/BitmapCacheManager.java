@@ -31,7 +31,7 @@ public class BitmapCacheManager {
      */
     public static BitmapCacheManager getInstance(BitmapCache bitmapCache) {
         if (null == bitmapCache) {
-            throw new NullPointerException("bitmapCache不能为空！");
+            throw new NullPointerException("bitmapCache == null");
         }
 
         return new BitmapCacheManager(bitmapCache);
