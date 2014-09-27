@@ -310,7 +310,7 @@ public class BitmapCache {
      * @return
      */
     public Bitmap getBitmapFromDiskCache(String uri, BitmapDisplayConfig config) {
-        if (!globalConfig.isDiskCacheEnabled()) {
+    	if (!globalConfig.isDiskCacheEnabled()) {
             return null;
         }
 

@@ -121,10 +121,9 @@ public class AnBitmapUtils {
 
         // 内存缓存中取
         Bitmap bitmap = globalConfig.getBitmapCache().getBitmapFromMemCache(uri, displayConfig);
-
         if (null != bitmap) {
             if (DUBEG) {
-                LogUtils.d("-----------------memory cache yes!!!");
+                LogUtils.d("-----------------yes!!! memory cache shot!!!");
             }
 
             // 内存缓存命中
@@ -133,11 +132,9 @@ public class AnBitmapUtils {
         else if (!bitmapLoadTaskExist(imageView, uri)) {
             // 启动任务类：从网络下载或者从磁盘中获取
             final BitmapLoadTask loadTask = new BitmapLoadTask(imageView, displayConfig);
-
             final AsyncBitmapDrawable asyncBitmapDrawable = new AsyncBitmapDrawable(application.getResources(),
                     displayConfig.getLoadingBitmap(), loadTask);
             imageView.setImageDrawable(asyncBitmapDrawable);// 设置下载任务资源
-
             loadTask.executeOnExecutor(globalConfig.getBitmapLoadExecutor(), uri);
         }
     }
@@ -341,27 +338,28 @@ public class AnBitmapUtils {
     }
 
     // ///////////////////////////////判断获取ImageView的下载任务///////////////////////////////////////////////////////
+    //获取ImageView控配置的下载任务类，第一次肯定不存在，不过设置过一次后就会存在
     private static BitmapLoadTask getBitmapTaskFromImageView(ImageView imageView) {
-        if (imageView != null) {
+        if (null != imageView) {
             final Drawable drawable = imageView.getDrawable();
             if (drawable instanceof AsyncBitmapDrawable) {
                 final AsyncBitmapDrawable asyncBitmapDrawable = (AsyncBitmapDrawable) drawable;
-                return asyncBitmapDrawable.getBitmapWorkerTask();
+                return asyncBitmapDrawable.getBitmapLoadTask();
             }
         }
         return null;
     }
 
+    //判断ImageView针对uri这个地址是否已存在下载任务类，如果已存在了，那就不用处理了
     private static boolean bitmapLoadTaskExist(ImageView imageView, String uri) {
         final BitmapLoadTask oldLoadTask = getBitmapTaskFromImageView(imageView);
 
-        if (oldLoadTask != null) {
+        if (null != oldLoadTask) {
             final String oldUri = oldLoadTask.uri;
             if (TextUtils.isEmpty(oldUri) || !oldUri.equals(uri)) {
-                oldLoadTask.cancel(true);
+                oldLoadTask.cancel(true);//取消原先在下载的地址任务
             }
             else {
-                // 同一个线程已经在执行
                 return true;
             }
         }
@@ -376,15 +374,15 @@ public class AnBitmapUtils {
      * @version $Revision: 1.0 $, $Date: 2013-9-17 下午2:44:24 $
      */
     private class AsyncBitmapDrawable extends BitmapDrawable {
-        private final WeakReference<BitmapLoadTask> bitmapLoadTaskReference;
+        private final WeakReference<BitmapLoadTask> bitmapLoadTask;
 
-        public AsyncBitmapDrawable(Resources res, Bitmap bitmap, BitmapLoadTask bitmapWorkerTask) {
+        public AsyncBitmapDrawable(Resources res, Bitmap bitmap, BitmapLoadTask loadTask) {
             super(res, bitmap);
-            bitmapLoadTaskReference = new WeakReference<BitmapLoadTask>(bitmapWorkerTask);
+            bitmapLoadTask = new WeakReference<BitmapLoadTask>(loadTask);
         }
 
-        public BitmapLoadTask getBitmapWorkerTask() {
-            return bitmapLoadTaskReference.get();
+        public BitmapLoadTask getBitmapLoadTask() {
+            return bitmapLoadTask.get();
         }
     }
 
@@ -406,7 +404,7 @@ public class AnBitmapUtils {
 
         @Override
         protected Bitmap doInBackground(Object... params) {
-            if (params != null && params.length > 0) {
+            if (null != params && params.length > 0) {
                 uri = (String) params[0];
             }
             else {
@@ -417,6 +415,7 @@ public class AnBitmapUtils {
             synchronized (pauseTaskLock) {
                 while (pauseTask && !this.isCancelled()) {
                     try {
+                    	//这里是如果调用者设置了暂定，并这个任务没有被取消，那么就停留在这里等待
                         pauseTaskLock.wait();
                     }
                     catch (InterruptedException e) {
@@ -425,20 +424,27 @@ public class AnBitmapUtils {
             }
 
             /* 先试图从磁盘缓存中读取图片 */
-            if (!pauseTask && !this.isCancelled() && this.getTargetImageView() != null) {
+            if (!pauseTask && !this.isCancelled() && null != this.getTargetImageView()) {
                 bitmap = globalConfig.getBitmapCache().getBitmapFromDiskCache(uri, displayConfig);
+                if(null != bitmap && DUBEG){
+                	LogUtils.d("-----------------yes!!! disk cache shot!!!");
+                }
+            }else{
+            	if (DUBEG) {
+                    LogUtils.d("-----------------o god!!! i want disk cache,but you not need me anymore!!!");
+                }
             }
 
             /* 当磁盘缓存中的图片不存在了，就去网络上加载需要的图片 */
-            if (bitmap == null && !pauseTask && !this.isCancelled() && this.getTargetImageView() != null) {
+            if (null == bitmap && !pauseTask && !this.isCancelled() && null != this.getTargetImageView()) {
                 if (DUBEG) {
-                    LogUtils.d("-----------------o no!!! cache not exist!!!");
+                    LogUtils.d("-----------------no!!! cache not shot,i need download!!!");
                 }
                 bitmap = globalConfig.getBitmapCache().downloadBitmap(uri, displayConfig);
             }
             else {
                 if (DUBEG) {
-                    LogUtils.d("-----------------disk cache yes!!!");
+                    LogUtils.d("-----------------o god!!! i want download,but you not need me anymore!!!");
                 }
             }
 
@@ -473,11 +479,7 @@ public class AnBitmapUtils {
             }
         }
 
-        /**
-         * 获取线程匹配的imageView,防止出现闪动的现象
-         * 
-         * @return
-         */
+        //获取线程匹配的imageView,防止出现闪动的现象
         private ImageView getTargetImageView() {
             final ImageView imageView = targetImageViewReference.get();
             final BitmapLoadTask bitmapWorkerTask = getBitmapTaskFromImageView(imageView);

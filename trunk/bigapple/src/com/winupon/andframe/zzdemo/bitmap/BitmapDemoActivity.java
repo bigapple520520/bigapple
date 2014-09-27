@@ -7,6 +7,7 @@ package com.winupon.andframe.zzdemo.bitmap;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
@@ -44,6 +45,9 @@ public class BitmapDemoActivity extends AnActivity {
 
     @InjectView(R.id.button)
     private Button button;
+    
+    @InjectView(R.id.gotoOther)
+    private Button gotoOther;
 
     @InjectView(R.id.imageView)
     private ImageView imageView;
@@ -87,6 +91,15 @@ public class BitmapDemoActivity extends AnActivity {
 
         AnBitmapUtilsFace.init(this);// 只需要初始化一次即可
 
+        
+        gotoOther.setOnClickListener(new Button.OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				Intent intent = new Intent();
+				intent.setClass(BitmapDemoActivity.this, BitmapDemoActivity2.class);
+				startActivity(intent);
+			}
+		});
         // ///////////////////////////////////////////清理缓存///////////////////////////////////////////////////
         button.setOnClickListener(new Button.OnClickListener() {
             @Override
