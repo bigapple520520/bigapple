@@ -23,7 +23,7 @@ import com.winupon.andframe.bigapple.utils.log.LogUtils;
  * @version $Revision: 1.0 $, $Date: 2013-8-9 下午4:48:21 $
  */
 public class AnBitmapUtils {
-    public static boolean DUBEG = false;
+    public boolean DUBEG = false;
 
     private boolean pauseTask = false;
     private final Object pauseTaskLock = new Object();
