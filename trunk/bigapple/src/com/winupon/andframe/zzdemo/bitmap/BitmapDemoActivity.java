@@ -45,7 +45,7 @@ public class BitmapDemoActivity extends AnActivity {
 
     @InjectView(R.id.button)
     private Button button;
-    
+
     @InjectView(R.id.gotoOther)
     private Button gotoOther;
 
@@ -91,15 +91,14 @@ public class BitmapDemoActivity extends AnActivity {
 
         AnBitmapUtilsFace.init(this);// 只需要初始化一次即可
 
-        
         gotoOther.setOnClickListener(new Button.OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				Intent intent = new Intent();
-				intent.setClass(BitmapDemoActivity.this, BitmapDemoActivity2.class);
-				startActivity(intent);
-			}
-		});
+            @Override
+            public void onClick(View arg0) {
+                Intent intent = new Intent();
+                intent.setClass(BitmapDemoActivity.this, BitmapDemoActivity2.class);
+                startActivity(intent);
+            }
+        });
         // ///////////////////////////////////////////清理缓存///////////////////////////////////////////////////
         button.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -128,7 +127,7 @@ public class BitmapDemoActivity extends AnActivity {
         final AtomicInteger count = new AtomicInteger(urls.length);
         multiConfig.setImageLoadCallBack(new ImageLoadCallBack() {
             @Override
-            public void loadFailed(ImageView imageView, Bitmap bitmap) {
+            public void loadFailed(ImageView imageView, BitmapDisplayConfig config) {
             }
 
             @Override

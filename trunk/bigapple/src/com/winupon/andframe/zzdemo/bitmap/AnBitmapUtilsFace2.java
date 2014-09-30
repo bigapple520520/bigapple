@@ -9,13 +9,11 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.view.animation.Animation;
 import android.widget.ImageView;
 
 import com.winupon.andframe.bigapple.bitmap.AnBitmapUtils;
 import com.winupon.andframe.bigapple.bitmap.BitmapDisplayConfig;
 import com.winupon.andframe.bigapple.bitmap.callback.ImageLoadCallBack;
-import com.winupon.andframe.bigapple.bitmap.download.Downloader;
 
 /**
  * 加载本地图片使用配置建议
@@ -26,29 +24,28 @@ import com.winupon.andframe.bigapple.bitmap.download.Downloader;
 public class AnBitmapUtilsFace2 {
     private AnBitmapUtils anBitmapUtils;
     private static AnBitmapUtilsFace2 instance;// 单例模式
-    
+
     private static BitmapDisplayConfig displayConfig;
 
     private AnBitmapUtilsFace2(Context application) {
-    	anBitmapUtils = new AnBitmapUtils(application);
-    	anBitmapUtils.DUBEG = true;
-        anBitmapUtils.getGlobalConfig().setDiskCacheEnabled(false);//不开启磁盘缓存
+        anBitmapUtils = new AnBitmapUtils(application);
+        anBitmapUtils.DUBEG = true;
+        anBitmapUtils.getGlobalConfig().setDiskCacheEnabled(false);// 不开启磁盘缓存
         anBitmapUtils.getGlobalConfig().setMemoryCacheEnabled(true);
-        anBitmapUtils.getGlobalConfig().setDiskCacheSize(1024*1024*8);
-        
+        anBitmapUtils.getGlobalConfig().setDiskCacheSize(1024 * 1024 * 8);
+
         displayConfig = new BitmapDisplayConfig();
         displayConfig.setImageLoadCallBack(new ImageLoadCallBack() {
-			@Override
-			public void loadFailed(ImageView imageView, Bitmap bitmap) {
-				imageView.setImageBitmap(bitmap);
-			}
-			
-			@Override
-			public void loadCompleted(ImageView imageView, Bitmap bitmap,
-					BitmapDisplayConfig config) {
-				imageView.setImageBitmap(bitmap);
-			}
-		});
+            @Override
+            public void loadFailed(ImageView imageView, BitmapDisplayConfig config) {
+                imageView.setImageBitmap(config.getLoadFailedBitmap());
+            }
+
+            @Override
+            public void loadCompleted(ImageView imageView, Bitmap bitmap, BitmapDisplayConfig config) {
+                imageView.setImageBitmap(bitmap);
+            }
+        });
     }
 
     /**
@@ -60,7 +57,7 @@ public class AnBitmapUtilsFace2 {
         if (null == context) {
             throw new NullPointerException("初始化context不能为空");
         }
-        
+
         Application application = null;
         if (context instanceof Activity) {
             application = ((Activity) context).getApplication();
@@ -71,8 +68,8 @@ public class AnBitmapUtilsFace2 {
 
         if (null == instance) {
             instance = new AnBitmapUtilsFace2(application);
-            //displayConfig.setBitmapMaxHeight(100);
-            //displayConfig.setBitmapMaxWidth(100);
+            // displayConfig.setBitmapMaxHeight(100);
+            // displayConfig.setBitmapMaxWidth(100);
         }
 
         return instance;
@@ -102,7 +99,7 @@ public class AnBitmapUtilsFace2 {
      * @param uri
      */
     public void display(ImageView imageView, String uri) {
-    	anBitmapUtils.display(imageView, uri,displayConfig);
+        anBitmapUtils.display(imageView, uri, displayConfig);
     }
 
     /**
@@ -112,7 +109,7 @@ public class AnBitmapUtilsFace2 {
      *            缓存清理成功后的回调，如果不想处理，设置成null也可
      */
     public void clearCacheAll() {
-    	anBitmapUtils.clearCache();
+        anBitmapUtils.clearCache();
     }
 
 }

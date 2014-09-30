@@ -31,8 +31,13 @@ public class SimpleImageLoadCallBack implements ImageLoadCallBack {
     }
 
     @Override
-    public void loadFailed(ImageView imageView, Bitmap bitmap) {
-        imageView.setImageBitmap(bitmap);
+    public void loadFailed(ImageView imageView, BitmapDisplayConfig config) {
+        if (0 != config.getLoadFailedBitmapResid()) {
+            imageView.setImageResource(config.getLoadFailedBitmapResid());
+        }
+        else {
+            imageView.setImageBitmap(config.getLoadFailedBitmap());
+        }
     }
 
     // 默认效果渐入展示

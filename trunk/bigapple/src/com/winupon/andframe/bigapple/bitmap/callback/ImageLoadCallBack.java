@@ -33,6 +33,6 @@ public interface ImageLoadCallBack {
      * @param bitmap
      *            失败要显示的图片
      */
-    void loadFailed(ImageView imageView, Bitmap bitmap);
+    void loadFailed(ImageView imageView, BitmapDisplayConfig config);
 
 }
