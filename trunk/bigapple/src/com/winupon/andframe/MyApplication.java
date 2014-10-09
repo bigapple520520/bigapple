@@ -7,7 +7,6 @@ package com.winupon.andframe;
 
 import android.app.Application;
 
-import com.winupon.andframe.bigapple.bitmap.AnBitmapUtils;
 import com.winupon.andframe.bigapple.db.DBHelper;
 import com.winupon.andframe.zzdemo.bitmap.AnBitmapUtilsFace2;
 
@@ -27,8 +26,8 @@ public class MyApplication extends Application {
 
         // 图片加载器初始化
         // AnBitmapUtilsFace.init(this);
-        
-        //AnBitmapUtilsFace2.init(this);
+
+        AnBitmapUtilsFace2.init(this);
     }
 
 }

@@ -17,6 +17,8 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.winupon.andframe.bigapple.utils.Validators;
+
 /**
  * 文件操作工具类
  * 
@@ -625,7 +627,7 @@ public abstract class FileUtils {
      * @return
      */
     public static void deleteFileOrDirectory(String filePath, boolean deleteThisPath) throws IOException {
-        if (null != filePath) {
+        if (!Validators.isEmpty(filePath)) {
             File file = new File(filePath);
 
             if (file.isDirectory()) {// 处理目录
