@@ -1,11 +1,15 @@
 package com.winupon.andframe.bigapple.bitmap.core;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileDescriptor;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
+import com.winupon.andframe.bigapple.utils.BitmapUtils;
 import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**

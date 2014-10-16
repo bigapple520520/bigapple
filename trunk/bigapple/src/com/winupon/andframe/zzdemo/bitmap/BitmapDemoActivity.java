@@ -22,8 +22,10 @@ import com.winupon.andframe.R;
 import com.winupon.andframe.bigapple.bitmap.AnBitmapUtilsFace;
 import com.winupon.andframe.bigapple.bitmap.BitmapDisplayConfig;
 import com.winupon.andframe.bigapple.bitmap.callback.ImageLoadCallBack;
+import com.winupon.andframe.bigapple.bitmap.core.BitmapDecoder;
 import com.winupon.andframe.bigapple.ioc.InjectView;
 import com.winupon.andframe.bigapple.ioc.app.AnActivity;
+import com.winupon.andframe.bigapple.utils.BitmapUtils;
 import com.winupon.andframe.bigapple.utils.ContextUtils;
 
 /**
@@ -48,6 +50,9 @@ public class BitmapDemoActivity extends AnActivity {
 
     @InjectView(R.id.gotoOther)
     private Button gotoOther;
+    
+    @InjectView(R.id.compressBtn)
+    private Button compressBtn;
 
     @InjectView(R.id.imageView)
     private ImageView imageView;
@@ -99,6 +104,18 @@ public class BitmapDemoActivity extends AnActivity {
                 startActivity(intent);
             }
         });
+        
+        compressBtn.setOnClickListener(new Button.OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				String fromBitmapPath = ContextUtils.getSdCardPath()+"/xuan/t.jpg";
+				String toBitmapPath = ContextUtils.getSdCardPath()+"/xuan/tt.jpg";
+				//BitmapUtils.compressBitmap(fromBitmapPath, toBitmapPath, 300*1024);
+				Bitmap b = BitmapDecoder.decodeSampledBitmapFromFile(fromBitmapPath, 800, 800, null);
+				//Bitmap t = BitmapUtils.compressBitmap(b, 100 * 1024);
+				BitmapUtils.saveBitmapToFile(b, toBitmapPath, 70);
+			}
+		});
         // ///////////////////////////////////////////清理缓存///////////////////////////////////////////////////
         button.setOnClickListener(new Button.OnClickListener() {
             @Override
