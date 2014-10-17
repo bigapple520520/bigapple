@@ -255,15 +255,18 @@ public class BitmapCache {
         catch (OutOfMemoryError e) {
             LogUtils.e("读取图片内存溢出，原因：" + e.getMessage(), e);
         }
+        catch (Exception e) {
+            LogUtils.e(e.getMessage(), e);
+        }
 
         if (null == bitmap) {
             return null;
         }
 
         /* 如果图片要进行圆角处理，就先进行圆角处理 */
-        if (config.getRoundPx() > 0) {
-            bitmap = BitmapUtils.getRoundedCornerBitmap(bitmap, config.getRoundPx());
-        }
+        // if (config.getRoundPx() > 0) {
+        // bitmap = BitmapUtils.getRoundedCornerBitmap(bitmap, config.getRoundPx());
+        // }
 
         /* 把图片添加到内存缓存中去 */
         String key = uri + config.toString();
@@ -310,7 +313,7 @@ public class BitmapCache {
      * @return
      */
     public Bitmap getBitmapFromDiskCache(String uri, BitmapDisplayConfig config) {
-    	if (!globalConfig.isDiskCacheEnabled()) {
+        if (!globalConfig.isDiskCacheEnabled()) {
             return null;
         }
 

@@ -14,9 +14,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
 
-import com.dazzle.bigappleui.view.roundedimageview.RoundedImageView;
 import com.winupon.andframe.R;
+import com.winupon.andframe.bigapple.bitmap.local.LocalImageLoaderFace;
 import com.winupon.andframe.bigapple.ioc.InjectView;
 import com.winupon.andframe.bigapple.ioc.app.AnActivity;
 import com.winupon.andframe.bigapple.utils.ContextUtils;
@@ -45,7 +46,8 @@ public class BitmapDemoActivity2 extends AnActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.demo_bitmap_main2);
-        AnBitmapUtilsFace2.init(this);
+        // AnBitmapUtilsFace2.init(this);
+        LocalImageLoaderFace.init(this);
         initPicUrl();
 
         // 清理缓存
@@ -53,10 +55,11 @@ public class BitmapDemoActivity2 extends AnActivity {
             @Override
             public void onClick(View arg0) {
                 AnBitmapUtilsFace2.getInstance().clearCacheAll();
+                LocalImageLoaderFace.clearCacheAll();
             }
         });
 
-        // 刷新缓存
+        // 刷新设配器
         refreshListBtn.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View arg0) {
@@ -94,17 +97,18 @@ public class BitmapDemoActivity2 extends AnActivity {
 
         @Override
         public View getView(final int position, View arg1, ViewGroup arg2) {
-            RoundedImageView image = new RoundedImageView(BitmapDemoActivity2.this);
+            ImageView image = new ImageView(BitmapDemoActivity2.this);
             image.setLayoutParams(new GridView.LayoutParams(100, 100));
-            AnBitmapUtilsFace2.getInstance().display(image, picUrlList.get(position));
+            // AnBitmapUtilsFace2.getInstance().display(image, picUrlList.get(position));
+            LocalImageLoaderFace.display(image, picUrlList.get(position));
 
-            image.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View arg0) {
-                    picUrlList.remove(position);
-                    gridViewAdapter.notifyDataSetChanged();
-                }
-            });
+            // image.setOnClickListener(new View.OnClickListener() {
+            // @Override
+            // public void onClick(View arg0) {
+            // picUrlList.remove(position);
+            // gridViewAdapter.notifyDataSetChanged();
+            // }
+            // });
             return image;
         }
     }

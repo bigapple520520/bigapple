@@ -42,13 +42,11 @@ public class BitmapDisplayConfig {
      * 加载中图片
      */
     private Bitmap loadingBitmap = TRANSPARENT_BITMAP;
-    private int loadingBitmapResid;
 
     /**
      * 加载失败图片
      */
     private Bitmap loadFailedBitmap;
-    private int loadFailedBitmapResid;
 
     /**
      * 加载完成后回调
@@ -64,6 +62,8 @@ public class BitmapDisplayConfig {
      * 图片进行圆角处理，默认不设置值不进行处理
      */
     private float roundPx = 0;
+
+    private Object tag;
 
     public int getBitmapMaxWidth() {
         return bitmapMaxWidth;
@@ -137,28 +137,20 @@ public class BitmapDisplayConfig {
         this.downloaderCallBack = downloaderCallBack;
     }
 
+    public Object getTag() {
+        return tag;
+    }
+
+    public void setTag(Object tag) {
+        this.tag = tag;
+    }
+
     public float getRoundPx() {
         return roundPx;
     }
 
     public void setRoundPx(float roundPx) {
         this.roundPx = roundPx;
-    }
-
-    public int getLoadingBitmapResid() {
-        return loadingBitmapResid;
-    }
-
-    public void setLoadingBitmapResid(int loadingBitmapResid) {
-        this.loadingBitmapResid = loadingBitmapResid;
-    }
-
-    public int getLoadFailedBitmapResid() {
-        return loadFailedBitmapResid;
-    }
-
-    public void setLoadFailedBitmapResid(int loadFailedBitmapResid) {
-        this.loadFailedBitmapResid = loadFailedBitmapResid;
     }
 
     @Override
