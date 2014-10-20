@@ -1,0 +1,183 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package com.winupon.andframe.bigapple.io;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import java.io.Closeable;<a name="line.3"></a>
+<FONT color="green">004</FONT>    import java.io.IOException;<a name="line.4"></a>
+<FONT color="green">005</FONT>    import java.io.InputStream;<a name="line.5"></a>
+<FONT color="green">006</FONT>    import java.io.InputStreamReader;<a name="line.6"></a>
+<FONT color="green">007</FONT>    import java.io.OutputStream;<a name="line.7"></a>
+<FONT color="green">008</FONT>    <a name="line.8"></a>
+<FONT color="green">009</FONT>    /**<a name="line.9"></a>
+<FONT color="green">010</FONT>     * IO流操作工具类<a name="line.10"></a>
+<FONT color="green">011</FONT>     * <a name="line.11"></a>
+<FONT color="green">012</FONT>     * @author xuan<a name="line.12"></a>
+<FONT color="green">013</FONT>     * @version $Revision: 1.0 $, $Date: 2013-9-4 下午7:22:40 $<a name="line.13"></a>
+<FONT color="green">014</FONT>     */<a name="line.14"></a>
+<FONT color="green">015</FONT>    public abstract class IOUtils {<a name="line.15"></a>
+<FONT color="green">016</FONT>        private static final int EOF = -1;<a name="line.16"></a>
+<FONT color="green">017</FONT>        private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;<a name="line.17"></a>
+<FONT color="green">018</FONT>    <a name="line.18"></a>
+<FONT color="green">019</FONT>        /**<a name="line.19"></a>
+<FONT color="green">020</FONT>         * 默默的关闭可关闭�?<a name="line.20"></a>
+<FONT color="green">021</FONT>         * <a name="line.21"></a>
+<FONT color="green">022</FONT>         * @param closeable<a name="line.22"></a>
+<FONT color="green">023</FONT>         */<a name="line.23"></a>
+<FONT color="green">024</FONT>        public static void closeQuietly(Closeable closeable) {<a name="line.24"></a>
+<FONT color="green">025</FONT>            try {<a name="line.25"></a>
+<FONT color="green">026</FONT>                if (closeable != null) {<a name="line.26"></a>
+<FONT color="green">027</FONT>                    closeable.close();<a name="line.27"></a>
+<FONT color="green">028</FONT>                }<a name="line.28"></a>
+<FONT color="green">029</FONT>            }<a name="line.29"></a>
+<FONT color="green">030</FONT>            catch (IOException ioe) {<a name="line.30"></a>
+<FONT color="green">031</FONT>                // ignore<a name="line.31"></a>
+<FONT color="green">032</FONT>            }<a name="line.32"></a>
+<FONT color="green">033</FONT>        }<a name="line.33"></a>
+<FONT color="green">034</FONT>    <a name="line.34"></a>
+<FONT color="green">035</FONT>        /**<a name="line.35"></a>
+<FONT color="green">036</FONT>         * 把数据以指定编码写入输出流中<a name="line.36"></a>
+<FONT color="green">037</FONT>         * <a name="line.37"></a>
+<FONT color="green">038</FONT>         * @param data<a name="line.38"></a>
+<FONT color="green">039</FONT>         *            字符串数�?<a name="line.39"></a>
+<FONT color="green">040</FONT>         * @param output<a name="line.40"></a>
+<FONT color="green">041</FONT>         *            输出�?<a name="line.41"></a>
+<FONT color="green">042</FONT>         * @param encoding<a name="line.42"></a>
+<FONT color="green">043</FONT>         *            编码<a name="line.43"></a>
+<FONT color="green">044</FONT>         * @throws IOException<a name="line.44"></a>
+<FONT color="green">045</FONT>         */<a name="line.45"></a>
+<FONT color="green">046</FONT>        public static void write(String data, OutputStream output, String encoding) throws IOException {<a name="line.46"></a>
+<FONT color="green">047</FONT>            if (data != null) {<a name="line.47"></a>
+<FONT color="green">048</FONT>                output.write(data.getBytes(Charsets.toCharset(encoding)));<a name="line.48"></a>
+<FONT color="green">049</FONT>            }<a name="line.49"></a>
+<FONT color="green">050</FONT>        }<a name="line.50"></a>
+<FONT color="green">051</FONT>    <a name="line.51"></a>
+<FONT color="green">052</FONT>        /**<a name="line.52"></a>
+<FONT color="green">053</FONT>         * 把字节流按指定编码组成字符串<a name="line.53"></a>
+<FONT color="green">054</FONT>         * <a name="line.54"></a>
+<FONT color="green">055</FONT>         * @param input<a name="line.55"></a>
+<FONT color="green">056</FONT>         *            输入�?<a name="line.56"></a>
+<FONT color="green">057</FONT>         * @param encoding<a name="line.57"></a>
+<FONT color="green">058</FONT>         *            编码<a name="line.58"></a>
+<FONT color="green">059</FONT>         * @return<a name="line.59"></a>
+<FONT color="green">060</FONT>         * @throws IOException<a name="line.60"></a>
+<FONT color="green">061</FONT>         */<a name="line.61"></a>
+<FONT color="green">062</FONT>        public static String toString(InputStream input, String encoding) throws IOException {<a name="line.62"></a>
+<FONT color="green">063</FONT>            InputStreamReader in = new InputStreamReader(input, Charsets.toCharset(encoding));// 把字节流转成字符�?<a name="line.63"></a>
+<FONT color="green">064</FONT>    <a name="line.64"></a>
+<FONT color="green">065</FONT>            int n = 0;<a name="line.65"></a>
+<FONT color="green">066</FONT>            StringBuilder builder = new StringBuilder();<a name="line.66"></a>
+<FONT color="green">067</FONT>            char[] buffer = new char[DEFAULT_BUFFER_SIZE];<a name="line.67"></a>
+<FONT color="green">068</FONT>            while (EOF != (n = in.read(buffer))) {<a name="line.68"></a>
+<FONT color="green">069</FONT>                if (null != buffer) {<a name="line.69"></a>
+<FONT color="green">070</FONT>                    builder.append(buffer, 0, n);<a name="line.70"></a>
+<FONT color="green">071</FONT>                }<a name="line.71"></a>
+<FONT color="green">072</FONT>            }<a name="line.72"></a>
+<FONT color="green">073</FONT>    <a name="line.73"></a>
+<FONT color="green">074</FONT>            return builder.toString();<a name="line.74"></a>
+<FONT color="green">075</FONT>        }<a name="line.75"></a>
+<FONT color="green">076</FONT>    <a name="line.76"></a>
+<FONT color="green">077</FONT>        /**<a name="line.77"></a>
+<FONT color="green">078</FONT>         * 从流中准确的读出指定字节，读取后会严格用读取后的字节数和传入的longSize进行比较，只要相等了才返回数据，否则抛出异常<a name="line.78"></a>
+<FONT color="green">079</FONT>         * <a name="line.79"></a>
+<FONT color="green">080</FONT>         * @param input<a name="line.80"></a>
+<FONT color="green">081</FONT>         *            输入�?<a name="line.81"></a>
+<FONT color="green">082</FONT>         * @param longSize<a name="line.82"></a>
+<FONT color="green">083</FONT>         *            该输入流的期望长�?<a name="line.83"></a>
+<FONT color="green">084</FONT>         * @return<a name="line.84"></a>
+<FONT color="green">085</FONT>         * @throws IOException<a name="line.85"></a>
+<FONT color="green">086</FONT>         */<a name="line.86"></a>
+<FONT color="green">087</FONT>        public static byte[] toByteArray(InputStream input, long longSize) throws IOException {<a name="line.87"></a>
+<FONT color="green">088</FONT>            if (longSize &gt; Integer.MAX_VALUE) {<a name="line.88"></a>
+<FONT color="green">089</FONT>                throw new IllegalArgumentException("流的期望长度不能超过int能表示的范围，当前长度： " + longSize);<a name="line.89"></a>
+<FONT color="green">090</FONT>            }<a name="line.90"></a>
+<FONT color="green">091</FONT>    <a name="line.91"></a>
+<FONT color="green">092</FONT>            int size = (int) longSize;// 转成int<a name="line.92"></a>
+<FONT color="green">093</FONT>    <a name="line.93"></a>
+<FONT color="green">094</FONT>            if (size &lt; 0) {<a name="line.94"></a>
+<FONT color="green">095</FONT>                throw new IllegalArgumentException("流的期望长度必须大于等于0，当前长度： " + size);<a name="line.95"></a>
+<FONT color="green">096</FONT>            }<a name="line.96"></a>
+<FONT color="green">097</FONT>    <a name="line.97"></a>
+<FONT color="green">098</FONT>            if (size == 0) {<a name="line.98"></a>
+<FONT color="green">099</FONT>                return new byte[0];<a name="line.99"></a>
+<FONT color="green">100</FONT>            }<a name="line.100"></a>
+<FONT color="green">101</FONT>    <a name="line.101"></a>
+<FONT color="green">102</FONT>            byte[] data = new byte[size];<a name="line.102"></a>
+<FONT color="green">103</FONT>            int offset = 0;<a name="line.103"></a>
+<FONT color="green">104</FONT>            int readed;<a name="line.104"></a>
+<FONT color="green">105</FONT>    <a name="line.105"></a>
+<FONT color="green">106</FONT>            while (offset &lt; size &amp;&amp; (readed = input.read(data, offset, size - offset)) != EOF) {<a name="line.106"></a>
+<FONT color="green">107</FONT>                offset += readed;<a name="line.107"></a>
+<FONT color="green">108</FONT>            }<a name="line.108"></a>
+<FONT color="green">109</FONT>    <a name="line.109"></a>
+<FONT color="green">110</FONT>            if (offset != size) {<a name="line.110"></a>
+<FONT color="green">111</FONT>                throw new IOException("实际读取的流的长度和期望的长度不�?��，实际读取长度：" + offset + ", 期望长度: " + size);<a name="line.111"></a>
+<FONT color="green">112</FONT>            }<a name="line.112"></a>
+<FONT color="green">113</FONT>    <a name="line.113"></a>
+<FONT color="green">114</FONT>            return data;<a name="line.114"></a>
+<FONT color="green">115</FONT>        }<a name="line.115"></a>
+<FONT color="green">116</FONT>    <a name="line.116"></a>
+<FONT color="green">117</FONT>    }<a name="line.117"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

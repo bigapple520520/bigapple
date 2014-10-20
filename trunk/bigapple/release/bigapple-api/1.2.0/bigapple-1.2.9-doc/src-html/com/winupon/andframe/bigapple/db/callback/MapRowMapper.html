@@ -1,0 +1,110 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * @(#)MapRowMapper.java  1.0 2004-12-13<a name="line.2"></a>
+<FONT color="green">003</FONT>     * Copyright (c) 2004 ZDSoft.net, Inc. All rights reserved.<a name="line.3"></a>
+<FONT color="green">004</FONT>     * $Id: MapRowMapper.java 15839 2011-05-11 12:56:57Z huangwj $<a name="line.4"></a>
+<FONT color="green">005</FONT>     */<a name="line.5"></a>
+<FONT color="green">006</FONT>    package com.winupon.andframe.bigapple.db.callback;<a name="line.6"></a>
+<FONT color="green">007</FONT>    <a name="line.7"></a>
+<FONT color="green">008</FONT>    import java.sql.ResultSet;<a name="line.8"></a>
+<FONT color="green">009</FONT>    import java.sql.SQLException;<a name="line.9"></a>
+<FONT color="green">010</FONT>    <a name="line.10"></a>
+<FONT color="green">011</FONT>    import android.database.Cursor;<a name="line.11"></a>
+<FONT color="green">012</FONT>    <a name="line.12"></a>
+<FONT color="green">013</FONT>    /**<a name="line.13"></a>
+<FONT color="green">014</FONT>     * 此接口用于要将结果集�?Map 的形式存放的情况<a name="line.14"></a>
+<FONT color="green">015</FONT>     * <a name="line.15"></a>
+<FONT color="green">016</FONT>     * @author xuan<a name="line.16"></a>
+<FONT color="green">017</FONT>     * @version $Revision: 1.0 $, $Date: 2013-4-9 下午6:47:44 $<a name="line.17"></a>
+<FONT color="green">018</FONT>     */<a name="line.18"></a>
+<FONT color="green">019</FONT>    public interface MapRowMapper&lt;K, V&gt; {<a name="line.19"></a>
+<FONT color="green">020</FONT>    <a name="line.20"></a>
+<FONT color="green">021</FONT>        /**<a name="line.21"></a>
+<FONT color="green">022</FONT>         * 产生要放�?Map 中的可以标识这条记录的某�?key�?例如可以以这条记录中的某个字段的值作�?key�?<a name="line.22"></a>
+<FONT color="green">023</FONT>         * <a name="line.23"></a>
+<FONT color="green">024</FONT>         * @param rs<a name="line.24"></a>
+<FONT color="green">025</FONT>         *            结果�?<a name="line.25"></a>
+<FONT color="green">026</FONT>         * @param rowNum<a name="line.26"></a>
+<FONT color="green">027</FONT>         *            当前记录行号<a name="line.27"></a>
+<FONT color="green">028</FONT>         * @return 放入 Map 的键<a name="line.28"></a>
+<FONT color="green">029</FONT>         */<a name="line.29"></a>
+<FONT color="green">030</FONT>        K mapRowKey(Cursor rs, int rowNum) throws SQLException;<a name="line.30"></a>
+<FONT color="green">031</FONT>    <a name="line.31"></a>
+<FONT color="green">032</FONT>        /**<a name="line.32"></a>
+<FONT color="green">033</FONT>         * 产生要放�?Map 中的�?{@link #mapRowKey(ResultSet, int)} 方法的返回�?�?key 的某�?value�?br&gt;<a name="line.33"></a>
+<FONT color="green">034</FONT>         * 例如可以以这条记录中的某个字段的值作�?value，或者一个�?对象等�?<a name="line.34"></a>
+<FONT color="green">035</FONT>         * <a name="line.35"></a>
+<FONT color="green">036</FONT>         * @param rs<a name="line.36"></a>
+<FONT color="green">037</FONT>         *            结果�?<a name="line.37"></a>
+<FONT color="green">038</FONT>         * @param rowNum<a name="line.38"></a>
+<FONT color="green">039</FONT>         *            当前记录行号<a name="line.39"></a>
+<FONT color="green">040</FONT>         * @return 放入 Map 的�?<a name="line.40"></a>
+<FONT color="green">041</FONT>         */<a name="line.41"></a>
+<FONT color="green">042</FONT>        V mapRowValue(Cursor rs, int rowNum) throws SQLException;<a name="line.42"></a>
+<FONT color="green">043</FONT>    <a name="line.43"></a>
+<FONT color="green">044</FONT>    }<a name="line.44"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>
