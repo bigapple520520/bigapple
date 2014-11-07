@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,6 +15,7 @@ import com.winupon.andframe.bigapple.bitmap.BitmapDisplayConfig;
 import com.winupon.andframe.bigapple.bitmap.BitmapGlobalConfig;
 import com.winupon.andframe.bigapple.bitmap.cache.LruDiskCache;
 import com.winupon.andframe.bigapple.bitmap.cache.LruMemoryCache;
+import com.winupon.andframe.bigapple.bitmap.local.CacheBean;
 import com.winupon.andframe.bigapple.io.IOUtils;
 import com.winupon.andframe.bigapple.utils.BitmapUtils;
 import com.winupon.andframe.bigapple.utils.Validators;
@@ -31,7 +31,7 @@ public class BitmapCache {
     private static final int DISK_CACHE_INDEX = 0;
 
     private static LruDiskCache mDiskLruCache;
-    private static LruMemoryCache<String, SoftReference<Bitmap>> mMemoryCache;
+    private static LruMemoryCache<String, CacheBean> mMemoryCache;
     private static HashMap<String, ArrayList<String>> uri2keyListMap = new HashMap<String, ArrayList<String>>();// 辅助内存缓存
 
     private final Object mDiskCacheLock = new Object();// 操作磁盘缓存锁
@@ -60,10 +60,10 @@ public class BitmapCache {
                 LogUtils.e("清理内存缓存异常，原因：" + e.getMessage(), e);
             }
         }
-        mMemoryCache = new LruMemoryCache<String, SoftReference<Bitmap>>(globalConfig.getMemoryCacheSize()) {
+        mMemoryCache = new LruMemoryCache<String, CacheBean>(globalConfig.getMemoryCacheSize()) {
             @Override
-            protected int sizeOf(String key, SoftReference<Bitmap> bitmapRef) {
-                return BitmapCommonUtils.getBitmapSize(bitmapRef.get());
+            protected int sizeOf(String key, CacheBean cacheBean) {
+                return BitmapCommonUtils.getBitmapSize(cacheBean.getBitmap());
             }
         };
     }
@@ -181,7 +181,7 @@ public class BitmapCache {
                 }
             }
 
-            /* 如果磁盘缓存没有开启，图片就直接下载到内存中 */
+            /* 如果磁盘缓存没有开启，图片就直接下载到内存中，直接下载到内存中这样其实很危险的 */
             if (!globalConfig.isDiskCacheEnabled() || mDiskLruCache == null || bitmapMeta.inputStream == null) {
                 outputStream = new ByteArrayOutputStream();
                 bitmapMeta.expiryTimestamp = globalConfig.getDownloader().downloadToStream(uri, outputStream,
@@ -279,7 +279,9 @@ public class BitmapCache {
             }
             keyList.add(key);
 
-            mMemoryCache.put(key, new SoftReference<Bitmap>(bitmap), bitmapMeta.expiryTimestamp);
+            CacheBean cacheBean = globalConfig.getGlobalPolicy().makeCacheBean();
+            cacheBean.setBitmap(bitmap);
+            mMemoryCache.put(key, cacheBean, bitmapMeta.expiryTimestamp);
         }
 
         return bitmap;
@@ -297,8 +299,8 @@ public class BitmapCache {
     public Bitmap getBitmapFromMemCache(String uri, BitmapDisplayConfig config) {
         String key = uri + config.toString();
         if (mMemoryCache != null) {
-            SoftReference<Bitmap> softRef = mMemoryCache.get(key);
-            return softRef == null ? null : softRef.get();
+            CacheBean cacheBean = mMemoryCache.get(key);
+            return null == cacheBean ? null : cacheBean.getBitmap();
         }
         return null;
     }
@@ -361,8 +363,10 @@ public class BitmapCache {
                         /* 如果开启了内存缓存，读到磁盘图片时缓存到内存 */
                         String key = uri + config.toString();
                         if (globalConfig.isMemoryCacheEnabled() && null != mMemoryCache) {
-                            mMemoryCache.put(key, new SoftReference<Bitmap>(bitmap),
-                                    mDiskLruCache.getExpiryTimestamp(uri));
+
+                            CacheBean cacheBean = globalConfig.getGlobalPolicy().makeCacheBean();
+                            cacheBean.setBitmap(bitmap);
+                            mMemoryCache.put(key, cacheBean, mDiskLruCache.getExpiryTimestamp(uri));
                         }
 
                         return bitmap;

@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import com.winupon.andframe.bigapple.bitmap.core.BitmapCache;
 import com.winupon.andframe.bigapple.bitmap.core.BitmapCacheManager;
 import com.winupon.andframe.bigapple.bitmap.core.BitmapCommonUtils;
+import com.winupon.andframe.bigapple.bitmap.core.GlobalPolicy;
 import com.winupon.andframe.bigapple.bitmap.download.Downloader;
 import com.winupon.andframe.bigapple.bitmap.download.SimpleDownloader;
 
@@ -32,6 +33,7 @@ public class BitmapGlobalConfig {
 
     private Downloader downloader;
     private BitmapCache bitmapCache;
+    private GlobalPolicy globalPolicy;
 
     private int threadPoolSize = 5;
     private boolean _dirty_params_bitmapLoadExecutor = true;
@@ -272,6 +274,19 @@ public class BitmapGlobalConfig {
      */
     public void setDiskCacheEnabled(boolean diskCacheEnabled) {
         this.diskCacheEnabled = diskCacheEnabled;
+    }
+
+    // //////////////////////////////////////////全局策略////////////////////////////////////////////////
+    public GlobalPolicy getGlobalPolicy() {
+        if (null == globalPolicy) {
+            globalPolicy = new GlobalPolicy();
+        }
+
+        return globalPolicy;
+    }
+
+    public void setGlobalPolicy(GlobalPolicy globalPolicy) {
+        this.globalPolicy = globalPolicy;
     }
 
     // ////////////////////////////////////////////内存信息查看//////////////////////////////////////

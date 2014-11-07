@@ -38,7 +38,7 @@ public class BitmapDemoActivity extends AnActivity {
     private String[] pics = new String[20];
 
     // 2M
-    private String url1 = "http://img.wallba.com/data/Image/2013pq/3yue/26hao/6/8/2013326105911734.jpg";
+    private String url1 = "http://d.hiphotos.baidu.com/baike/pic/item/37d12f2eb9389b50dcbf3a028735e5dde7116e1a.jpg";
     // 100K
     private String url2 = "http://s1.cubexp.com/image/ec8/617a397032c8dfc5ec8054e638ed15cc.jpg";
     // 27K
@@ -50,7 +50,7 @@ public class BitmapDemoActivity extends AnActivity {
 
     @InjectView(R.id.gotoOther)
     private Button gotoOther;
-    
+
     @InjectView(R.id.compressBtn)
     private Button compressBtn;
 
@@ -104,18 +104,18 @@ public class BitmapDemoActivity extends AnActivity {
                 startActivity(intent);
             }
         });
-        
+
         compressBtn.setOnClickListener(new Button.OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				String fromBitmapPath = ContextUtils.getSdCardPath()+"/xuan/t.jpg";
-				String toBitmapPath = ContextUtils.getSdCardPath()+"/xuan/tt.jpg";
-				//BitmapUtils.compressBitmap(fromBitmapPath, toBitmapPath, 300*1024);
-				Bitmap b = BitmapDecoder.decodeSampledBitmapFromFile(fromBitmapPath, 800, 800, null);
-				//Bitmap t = BitmapUtils.compressBitmap(b, 100 * 1024);
-				BitmapUtils.saveBitmapToFile(b, toBitmapPath, 70);
-			}
-		});
+            @Override
+            public void onClick(View arg0) {
+                String fromBitmapPath = ContextUtils.getSdCardPath() + "/xuan/t.jpg";
+                String toBitmapPath = ContextUtils.getSdCardPath() + "/xuan/tt.jpg";
+                // BitmapUtils.compressBitmap(fromBitmapPath, toBitmapPath, 300*1024);
+                Bitmap b = BitmapDecoder.decodeSampledBitmapFromFile(fromBitmapPath, 800, 800, null);
+                // Bitmap t = BitmapUtils.compressBitmap(b, 100 * 1024);
+                BitmapUtils.saveBitmapToFile(b, toBitmapPath, 70);
+            }
+        });
         // ///////////////////////////////////////////清理缓存///////////////////////////////////////////////////
         button.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -163,7 +163,7 @@ public class BitmapDemoActivity extends AnActivity {
                 ImageView imageView = new ImageView(BitmapDemoActivity.this);
                 imageView.setLayoutParams(new GridView.LayoutParams(60, 60));
                 imageView.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_launcher));
-                AnBitmapUtilsFace.getInstance().display(imageView, urls[position], multiConfig);
+                AnBitmapUtilsFace.getInstance().display(imageView, url1, multiConfig);
                 return imageView;
             }
 

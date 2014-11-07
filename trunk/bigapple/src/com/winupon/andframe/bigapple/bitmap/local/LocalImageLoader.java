@@ -5,7 +5,6 @@
  */
 package com.winupon.andframe.bigapple.bitmap.local;
 
-import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 
 import android.content.Context;
@@ -271,19 +270,7 @@ public class LocalImageLoader {
      * @return
      */
     protected CacheBean makeCacheBean() {
-        return new CacheBean() {
-            private SoftReference<Bitmap> bitmapReference;
-
-            @Override
-            public void setBitmap(Bitmap bm) {
-                bitmapReference = new SoftReference<Bitmap>(bm);
-            }
-
-            @Override
-            public Bitmap getBitmap() {
-                return bitmapReference.get();
-            }
-        };
+        return new SoftReferenceCacheBean();
     }
 
     /**

@@ -13,7 +13,10 @@ import android.view.animation.Animation;
 import android.widget.ImageView;
 
 import com.winupon.andframe.bigapple.bitmap.callback.ImageLoadCallBack;
+import com.winupon.andframe.bigapple.bitmap.core.GlobalPolicy;
 import com.winupon.andframe.bigapple.bitmap.download.Downloader;
+import com.winupon.andframe.bigapple.bitmap.local.BitmapCacheBean;
+import com.winupon.andframe.bigapple.bitmap.local.CacheBean;
 
 /**
  * AnBitmapUtils接口门面，使其保持单例，谢谢，提供给使用者，使用更加方便
@@ -25,7 +28,14 @@ public class AnBitmapUtilsFace {
     private AnBitmapUtils anBitmapUtils;
     private static AnBitmapUtilsFace instance;// 单例模式
 
-    private AnBitmapUtilsFace() {
+    private AnBitmapUtilsFace(Context application) {
+        anBitmapUtils = new AnBitmapUtils(application);
+        anBitmapUtils.getGlobalConfig().setGlobalPolicy(new GlobalPolicy() {
+            @Override
+            public CacheBean makeCacheBean() {
+                return new BitmapCacheBean();
+            }
+        });
     }
 
     /**
@@ -51,8 +61,7 @@ public class AnBitmapUtilsFace {
         }
 
         if (null == instance) {
-            instance = new AnBitmapUtilsFace();
-            instance.anBitmapUtils = new AnBitmapUtils(application);
+            instance = new AnBitmapUtilsFace(application);
         }
 
         return instance;
