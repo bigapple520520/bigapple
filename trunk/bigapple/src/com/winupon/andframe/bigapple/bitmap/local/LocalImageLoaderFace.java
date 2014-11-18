@@ -8,6 +8,8 @@ package com.winupon.andframe.bigapple.bitmap.local;
 import android.content.Context;
 import android.widget.ImageView;
 
+import com.winupon.andframe.bigapple.bitmap.BitmapDisplayConfig;
+
 /**
  * LocalImageLoader的单例封装
  * 
@@ -16,6 +18,15 @@ import android.widget.ImageView;
  */
 public abstract class LocalImageLoaderFace {
     private static LocalImageLoader instance;
+
+    /**
+     * 返回单例
+     * 
+     * @return
+     */
+    public static LocalImageLoader instance() {
+        return instance;
+    }
 
     /**
      * 初始化单例
@@ -36,6 +47,16 @@ public abstract class LocalImageLoaderFace {
      */
     public static void display(ImageView imageView, String filePath) {
         instance.display(imageView, filePath, null);
+    }
+
+    /**
+     * 显示
+     * 
+     * @param imageView
+     * @param filePath
+     */
+    public static void display(ImageView imageView, String filePath, BitmapDisplayConfig config) {
+        instance.display(imageView, filePath, config);
     }
 
     /**
