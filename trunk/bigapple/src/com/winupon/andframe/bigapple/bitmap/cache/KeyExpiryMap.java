@@ -77,13 +77,16 @@ public class KeyExpiryMap<K, V> extends ConcurrentHashMap<K, Long> {
     @Override
     public synchronized boolean containsKey(Object key) {
         boolean result = false;
-        if (super.containsKey(key)) {
-            if (System.currentTimeMillis() < super.get(key)) {
-                result = true;
-            }
-            else {
-                this.remove(key);
-            }
+        /**
+         * 这里注意一下：Android5.0中的ConcurrentHashMap中的containsKey被重写了，<br>
+         * 里面会调用get方法 所以这里不能调用super.containsKey方法，不然会产生调用死循环
+         */
+        Long expiryTimestamp = super.get(key);
+        if (null != expiryTimestamp && System.currentTimeMillis() < expiryTimestamp) {
+            result = true;
+        }
+        else {
+            this.remove(key);
         }
         return result;
     }

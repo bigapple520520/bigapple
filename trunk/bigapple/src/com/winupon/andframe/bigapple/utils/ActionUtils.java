@@ -5,10 +5,13 @@
  */
 package com.winupon.andframe.bigapple.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
+
+import com.winupon.andframe.bigapple.utils.log.LogUtils;
 
 /**
  * 调用本地的一些操作，例如：发短信，打电话等
@@ -76,6 +79,30 @@ public abstract class ActionUtils {
 
         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
         context.startActivity(intent);
+    }
+
+    // ////////////////////////////////////调用系统自带的文件选择器////////////////////////////////////////////////
+    /**
+     * 打开文件选择器
+     * 
+     * @param activity
+     *            Activity实例
+     * @param requestCode
+     *            onActivityResult返回的操作识别
+     * @return true成功false失败
+     */
+    public static boolean showFileChooser(Activity activity, int requestCode) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        try {
+            activity.startActivityForResult(Intent.createChooser(intent, "文件选择"), requestCode);
+            return true;
+        }
+        catch (Throwable e) {
+            LogUtils.e(e.getMessage(), e);
+            return false;
+        }
     }
 
 }

@@ -23,6 +23,7 @@ import com.winupon.andframe.zzdemo.bitmap.BitmapDemoActivity;
 import com.winupon.andframe.zzdemo.db.DbDemoActivity;
 import com.winupon.andframe.zzdemo.http2.UrlHttpClientDemoActivity;
 import com.winupon.andframe.zzdemo.ioc.IocDemoActivity;
+import com.winupon.andframe.zzdemo.utils.ActionDemoActivity;
 import com.winupon.andframe.zzdemo.utils.PinyinDemoActivity;
 import com.winupon.andframe.zzdemo.utils.TextViewHtmlDemoActivity;
 
@@ -40,15 +41,15 @@ public class BigappleMainActivity extends AnActivity {
         addButton("http2部分模块测试", UrlHttpClientDemoActivity.class);
         addButton("ioc部分模块测试", IocDemoActivity.class);
         addButton("db部分模块测试", DbDemoActivity.class);
-        addButton("utils只pinyin模块测试", PinyinDemoActivity.class);
-        addButton("utils只一键分享测试", new Button.OnClickListener() {
+        addButton("utils之pinyin模块测试", PinyinDemoActivity.class);
+        addButton("utils之一键分享测试", new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ShareUtils.share(BigappleMainActivity.this, "不好意思我在测试android的一键分享功能",
                         Uri.fromFile(new File(ContextUtils.getSdCardPath() + "/xuan/1.jpg")));
             }
         });
-        addButton("utils只update模块测试", new Button.OnClickListener() {
+        addButton("utils之update模块测试", new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
                 UpdateManager updateManager = new UpdateManager(BigappleMainActivity.this);
@@ -70,7 +71,8 @@ public class BigappleMainActivity extends AnActivity {
                         .getExternalStorageDirectory().getPath() + "/xuan1/bigapple-default.apk");
             }
         });
-        addButton("utils只htmlviewhtml模块测试", TextViewHtmlDemoActivity.class);
+        addButton("utils之htmlviewhtml模块测试", TextViewHtmlDemoActivity.class);
+        addButton("utils之ActionUtils工具类测试", ActionDemoActivity.class);
     }
 
     private void addButton(String text, final Class<?> clazz) {

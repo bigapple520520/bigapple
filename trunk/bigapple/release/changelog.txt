@@ -232,7 +232,8 @@ version = 1.3.4(2014-10-14)
 3、去掉了上一个版本的默认图片用resid。（主要是有一些问题没法一下子解决）
 4、BitmapMemoryCache去掉了软引用
 ========================================================================================================================
-version = 1.3.5(...)
+version = 1.3.5(2014-12-05)
 1、在bitmap模块中的BitmapGlobalConfig参数中添加一个GlobalPolicy全局策略，复写这个策略，可以改变缓存持有方式。（2014-10-31）
+2、修复Android5.0中KeyExpiryMap的StackOverflowError的BUG，主要原因是5.0中的ConcurrentHashMap中的containsKey方法被重写了（2014-12-05）
 
 

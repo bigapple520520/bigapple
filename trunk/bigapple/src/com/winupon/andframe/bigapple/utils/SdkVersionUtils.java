@@ -5,6 +5,8 @@
  */
 package com.winupon.andframe.bigapple.utils;
 
+import java.util.HashMap;
+
 import android.os.Build.VERSION;
 
 /**
@@ -36,26 +38,108 @@ public abstract class SdkVersionUtils {
     public static final int SDK42_API17 = 17;// JELLY_BEAN_MR1
     public static final int SDK43_API18 = 18;// JELLY_BEAN_MR2
 
+    public static final int SDK44_API19 = 19;// KitKat
+
+    private static HashMap<Integer, String> sdkInt2DescriptionMap = new HashMap<Integer, String>();
+    static {
+        sdkInt2DescriptionMap.put(SDK10_API1, "BASE");
+        sdkInt2DescriptionMap.put(SDK11_API2, "BASE_1_1");
+        sdkInt2DescriptionMap.put(SDK15_API3, "CUPCAKE");
+        sdkInt2DescriptionMap.put(SDK16_API4, "CUR_DEVELOPMENT");
+        sdkInt2DescriptionMap.put(SDK20_API5, "ECLAIR");
+        sdkInt2DescriptionMap.put(SDK201_API6, "ECLAIR_0_1");
+        sdkInt2DescriptionMap.put(SDK21_API7, "ECLAIR_MR1");
+        sdkInt2DescriptionMap.put(SDK122_API8, "FROYO");
+
+        sdkInt2DescriptionMap.put(SDK23_API9, "GINGERBREAD");
+        sdkInt2DescriptionMap.put(SDK233_API10, "GINGERBREAD_MR1");
+
+        sdkInt2DescriptionMap.put(SDK30_API11, "HONEYCOMB");
+        sdkInt2DescriptionMap.put(SDK31_API12, "HONEYCOMB_MR1");
+        sdkInt2DescriptionMap.put(SDK32_API13, "HONEYCOMB_MR2");
+
+        sdkInt2DescriptionMap.put(SDK40_API14, "ICE_CREAM_SANDWICH");
+        sdkInt2DescriptionMap.put(SDK403_API15, "ICE_CREAM_SANDWICH_MR1");
+        sdkInt2DescriptionMap.put(SDK41_API16, "JELLY_BEAN");
+        sdkInt2DescriptionMap.put(SDK42_API17, "JELLY_BEAN_MR1");
+        sdkInt2DescriptionMap.put(SDK43_API18, "JELLY_BEAN_MR2");
+
+        sdkInt2DescriptionMap.put(SDK44_API19, "KitKat");
+    }
+
+    /**
+     * 获取当前SDK的数字版本号
+     * 
+     * @return 当前SDK数字版本号
+     */
     public static int getSdkInt() {
         return VERSION.SDK_INT;
     }
 
+    /**
+     * 获取当前SDK的版本描述
+     * 
+     * @return
+     */
+    public static String getSdkDescription() {
+        String description = sdkInt2DescriptionMap.get(VERSION.SDK_INT);
+        if (null == description) {
+            return "unknown";
+        }
+        return description;
+    }
+
+    /**
+     * 判断当前SDK数字版本号是否大于待比较版本号
+     * 
+     * @param sdkInt
+     *            待比较版本号
+     * @return 返回true表示是false表示不是
+     */
     public static boolean isUpper(int sdkInt) {
         return VERSION.SDK_INT > sdkInt;
     }
 
+    /**
+     * 判断当前SDK数字版本号是否大于等于待比较版本号
+     * 
+     * @param sdkInt
+     *            待比较版本号
+     * @return 返回true表示是false表示不是
+     */
     public static boolean isUpperEquals(int sdkInt) {
         return VERSION.SDK_INT >= sdkInt;
     }
 
+    /**
+     * 判断当前SDK数字版本号是否小于待比较版本号
+     * 
+     * @param sdkInt
+     *            待比较版本号
+     * @return 返回true表示是false表示不是
+     */
     public static boolean isLower(int sdkInt) {
         return VERSION.SDK_INT < sdkInt;
     }
 
+    /**
+     * 判断当前SDK数字版本号是否小于等于待比较版本号
+     * 
+     * @param sdkInt
+     *            待比较版本号
+     * @return 返回true表示是false表示不是
+     */
     public static boolean isLowerEquals(int sdkInt) {
         return VERSION.SDK_INT <= sdkInt;
     }
 
+    /**
+     * 判断当前SDK数字版本号是否等于待比较版本号
+     * 
+     * @param sdkInt
+     *            待比较版本号
+     * @return 返回true表示是false表示不是
+     */
     public static boolean isEquals(int sdkInt) {
         return sdkInt == VERSION.SDK_INT;
     }
