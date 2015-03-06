@@ -67,8 +67,8 @@ public class BigappleMainActivity extends AnActivity {
                 });
                 // updateManager.doDownload("http://res.wpstatic.cn/m/weike-test.apk", Environment
                 // .getExternalStorageDirectory().getPath() + "/xuan1/bigapple-default.apk");
-                updateManager.doDownload("http://file.wanpeng.com/appstore/apkap/weike.apk", Environment
-                        .getExternalStorageDirectory().getPath() + "/xuan1/bigapple-default.apk");
+                updateManager.doDownload("http://gdown.baidu.com/data/wisegame/a279c52cd4acedb7/xiangji360_606.apk",
+                        Environment.getExternalStorageDirectory().getPath() + "/xuan1/bigapple-default.apk");
             }
         });
         addButton("utils之htmlviewhtml模块测试", TextViewHtmlDemoActivity.class);

@@ -236,6 +236,7 @@ version = 1.3.5(2014-12-05)
 1、在bitmap模块中的BitmapGlobalConfig参数中添加一个GlobalPolicy全局策略，复写这个策略，可以改变缓存持有方式。（2014-10-31）
 2、修复Android5.0中KeyExpiryMap的StackOverflowError的BUG，主要原因是5.0中的ConcurrentHashMap中的containsKey方法被重写了（2014-12-05）
 ========================================================================================================================
-version = 1.3.6(...)
+version = 1.3.6(2015-03-06)
 1、修改ToastUtils工具类，使其可以在任意线程中调用（2014-12-10）
+2、HttpUtils类中添加post方法，使发生异常时往外抛（2015-03-06）
 

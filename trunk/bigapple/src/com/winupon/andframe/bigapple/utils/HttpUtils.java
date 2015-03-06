@@ -135,6 +135,44 @@ public abstract class HttpUtils {
     }
 
     /**
+     * POST请求，异常有外部自己处理
+     * 
+     * @param url
+     * @param paramsMap
+     * @param md5Key
+     * @return
+     */
+    public static String post(String url, Map<String, String> paramsMap) throws Exception {
+        LogUtils.d("Post url is：" + url + paramsMap.toString());
+
+        String result = "";
+        try {
+            LinkedList<BasicNameValuePair> params = new LinkedList<BasicNameValuePair>();
+            for (Map.Entry<String, String> entry : paramsMap.entrySet()) {
+                params.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+            }
+
+            HttpClient client = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(url);
+            httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODE));
+            HttpResponse response = client.execute(httpPost);
+
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                result = EntityUtils.toString(response.getEntity(), DEFAULT_ENCODE);
+            }
+            else {
+                throw new Exception(String.valueOf(response.getStatusLine().getStatusCode()), new Throwable(
+                        "Post return error. The statusCode is not HttpStatus.SC_OK"));
+            }
+        }
+        catch (Exception e) {
+            throw new Exception(e);
+        }
+
+        return result;
+    }
+
+    /**
      * POST请求
      * 
      * @param url
