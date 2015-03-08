@@ -13,16 +13,33 @@ package com.winupon.andframe.bigapple.utils.updater;
  */
 public interface ApkUpdaterListener {
 
-    public void downloadProgress(int progress, StateEnum stateEnum);
-
+	/**
+	 * 下载过程进度
+	 * 
+	 * @param progress
+	 */
+    public void downloadProgress(int progress);
+    
     /**
-     * 下载状态枚举
+     * 发送错误时的回调
      * 
-     * @author xuan
-     * @version $Revision: 1.0 $, $Date: 2015-3-6 下午5:37:18 $
+     * @param e
+     * @param message
      */
-    public enum StateEnum {
-        DOWNLOAD_ING, DOWNLOAD_FINISH, DOWNLOAD_STOP, DOWNLOAD_ERROR;
-    }
-
+    public void downloadError(Throwable e, String message);
+    
+    /**
+     * 下载被终止
+     * 
+     * @param saveFilename
+     */
+    public void downloadStop(String saveFilename);
+    
+    /**
+     * 下载完成
+     * 
+     * @param saveFilename
+     */
+    public void downloadFinish(String saveFilename);
+    
 }
