@@ -15,12 +15,15 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import com.winupon.andframe.bigapple.utils.Validators;
+
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
-
-import com.winupon.andframe.bigapple.utils.updater.ApkUpdaterListener.StateEnum;
 
 /**
  * 下载更新APK工具类
@@ -34,8 +37,8 @@ public class ApkUpdaterHelper {
     private static final int BUFFER_SIZE = 1024;
 
     private volatile boolean stopFlag = false;// 停止下载标记
-    private volatile boolean pauseFlag = false;// 暂停下载标记
-
+    private Handler handler = new Handler(Looper.getMainLooper());
+    
     /**
      * 安装Apk
      * 
@@ -66,7 +69,7 @@ public class ApkUpdaterHelper {
      * @param apkUpdaterListener
      *            下载监听
      */
-    public void downloadApk(final String apkUrl, final String saveFileName, final ApkUpdaterListener apkUpdaterListener) {
+    public void downloadApk(final String apkUrl, final String saveFilename, final ApkUpdaterListener apkUpdaterListener) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -79,39 +82,64 @@ public class ApkUpdaterHelper {
                     long length = httpEntity.getContentLength();
 
                     // 创建件文件夹
-                    File apkFile = new File(saveFileName);
+                    File apkFile = new File(saveFilename);
                     File parentFile = apkFile.getParentFile();
                     if (!parentFile.exists()) {
                         boolean success = parentFile.mkdirs();
                         if (!success) {
                             if (DEBUG) {
                                 Log.e(TAG, "Mkdirs failed");
+                                postUI(new Runnable() {
+									@Override
+									public void run() {
+										apkUpdaterListener.downloadError(null, "Mkdirs failed");
+									}
+								});
                             }
                         }
                     }
 
                     // 创建文件
                     if (!apkFile.exists()) {
-                        apkFile.createNewFile();
+                    	boolean success = apkFile.createNewFile();
+                    	if (!success) {
+                            if (DEBUG) {
+                                Log.e(TAG, "Create file failed");
+                                postUI(new Runnable() {
+									@Override
+									public void run() {
+										apkUpdaterListener.downloadError(null, "Create file failed");
+									}
+								});
+                            }
+                        }
                     }
 
-                    FileOutputStream fos = new FileOutputStream(apkFile);
-
                     // 从输入流中读取字节数据，写到文件中
+                    FileOutputStream fos = new FileOutputStream(apkFile);
                     int count = 0;
                     byte buf[] = new byte[BUFFER_SIZE];
-                    int progress = 0;
                     do {
                         int numread = inputStream.read(buf);
                         count += numread;
-                        progress = (int) (((float) count / length) * 100);
+                        final int progress = (int) (((float) count / length) * 100);
                         if (null != apkUpdaterListener) {
-                            apkUpdaterListener.downloadProgress(progress, StateEnum.DOWNLOAD_ING);
+                        	postUI(new Runnable() {
+								@Override
+								public void run() {
+									apkUpdaterListener.downloadProgress(progress);
+								}
+							});
                         }
 
                         if (numread <= 0) {
                             // 下载完成
-                            apkUpdaterListener.downloadProgress(progress, StateEnum.DOWNLOAD_FINISH);
+                        	postUI(new Runnable() {
+								@Override
+								public void run() {
+									apkUpdaterListener.downloadFinish(saveFilename);
+								}
+							});
                             break;
                         }
 
@@ -121,7 +149,12 @@ public class ApkUpdaterHelper {
 
                     // 取消下载
                     if (stopFlag) {
-                        apkUpdaterListener.downloadProgress(progress, StateEnum.DOWNLOAD_STOP);
+                    	postUI(new Runnable() {
+							@Override
+							public void run() {
+								apkUpdaterListener.downloadStop(saveFilename);
+							}
+						});
                         stopFlag = false;
                     }
 
@@ -130,10 +163,63 @@ public class ApkUpdaterHelper {
                 }
                 catch (Exception e) {
                     Log.e(TAG, e.getMessage(), e);
-                    apkUpdaterListener.downloadProgress(-1, StateEnum.DOWNLOAD_ERROR);
+                    apkUpdaterListener.downloadError(e, e.getMessage());
                 }
             }
         }).start();
+    }
+    
+    /**
+     * 下载APK
+     * 
+     * @param context
+     *            上下文
+     * @param apkUrl
+     *            apk网络地址
+     * @param saveFileName
+     *            apk本地保存地址
+     * @param apkUpdaterListener
+     *            下载监听
+     * @param config
+     *            配置参数
+     */
+    public void downloadWithProgressDialog(Context context, String apkUrl, String saveFileName, final ApkUpdaterListener apkUpdaterListener, ApkUpdateConfig config) {
+        final ProgressDialog pd = config.cusTomProgressDialog;
+        
+    	ApkUpdaterHelper apkUpdaterHelper = new ApkUpdaterHelper();
+        apkUpdaterHelper.downloadApk(apkUrl, saveFileName, new ApkUpdaterListener() {
+			@Override
+			public void downloadStop(String saveFilename) {
+				if(null != apkUpdaterListener){
+					apkUpdaterListener.downloadStop(saveFilename);
+				}
+				pd.dismiss();
+			}
+			
+			@Override
+			public void downloadProgress(int progress) {
+				if(null != apkUpdaterListener){
+					apkUpdaterListener.downloadProgress(progress);
+				}
+				pd.setProgress(progress);
+			}
+			
+			@Override
+			public void downloadFinish(String saveFilename) {
+				if(null != apkUpdaterListener){
+					apkUpdaterListener.downloadFinish(saveFilename);
+				}
+				pd.dismiss();
+			}
+			
+			@Override
+			public void downloadError(Throwable e, String message) {
+				if(null != apkUpdaterListener){
+					apkUpdaterListener.downloadError(e, message);
+				}
+				pd.dismiss();
+			}
+		});
     }
 
     /**
@@ -142,19 +228,10 @@ public class ApkUpdaterHelper {
     public void stopDownload() {
         this.stopFlag = true;
     }
-
-    /**
-     * 暂停下载
-     */
-    public void pauseDownload() {
-        this.pauseFlag = true;
-    }
-
-    /**
-     * 重新开始开在
-     */
-    public void restartDownload() {
-        this.pauseFlag = false;
+    
+    /**提交任务到主线程*/
+    private void postUI(Runnable runnable){
+    	handler.post(runnable);
     }
 
 }
