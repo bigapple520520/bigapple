@@ -6,24 +6,13 @@
 package com.winupon.andframe.bigapple.utils.updater;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import com.winupon.andframe.bigapple.utils.Validators;
-
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 
 /**
  * 下载更新APK工具类
@@ -32,13 +21,13 @@ import android.util.Log;
  * @version $Revision: 1.0 $, $Date: 2015-3-6 下午5:17:06 $
  */
 public class ApkUpdaterHelper {
-    public static final boolean DEBUG = true;
-    private static final String TAG = "ApkUpdaterUtils";
-    private static final int BUFFER_SIZE = 1024;
+    /** 下载器 */
+    private DownloadHelper mDownloadHelper;
 
-    private volatile boolean stopFlag = false;// 停止下载标记
-    private Handler handler = new Handler(Looper.getMainLooper());
-    
+    public ApkUpdaterHelper(DownloadHelper downloadHelper) {
+        this.mDownloadHelper = downloadHelper;
+    }
+
     /**
      * 安装Apk
      * 
@@ -47,7 +36,7 @@ public class ApkUpdaterHelper {
      *            本地APK地址
      * @return
      */
-    public boolean installApk(Context context, String fileName) {
+    public static boolean installApk(Context context, String fileName) {
         File apkfile = new File(fileName);
         if (!apkfile.exists()) {
             return false;
@@ -60,117 +49,98 @@ public class ApkUpdaterHelper {
     }
 
     /**
-     * 下载APK
+     * 下载APK，或显示进度，或自动安装，根据config设定
      * 
+     * @param context
      * @param apkUrl
-     *            网络下载地址
-     * @param apkFilename
-     *            本地存储地址
-     * @param apkUpdaterListener
-     *            下载监听
+     * @param saveFileName
+     * @param downloadListener
+     * @param config
      */
-    public void downloadApk(final String apkUrl, final String saveFilename, final ApkUpdaterListener apkUpdaterListener) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    HttpGet getMethod = new HttpGet(apkUrl);
-                    HttpClient httpClient = new DefaultHttpClient();
-                    HttpResponse response = httpClient.execute(getMethod);
-                    HttpEntity httpEntity = response.getEntity();
-                    InputStream inputStream = httpEntity.getContent();
-                    long length = httpEntity.getContentLength();
-
-                    // 创建件文件夹
-                    File apkFile = new File(saveFilename);
-                    File parentFile = apkFile.getParentFile();
-                    if (!parentFile.exists()) {
-                        boolean success = parentFile.mkdirs();
-                        if (!success) {
-                            if (DEBUG) {
-                                Log.e(TAG, "Mkdirs failed");
-                                postUI(new Runnable() {
-									@Override
-									public void run() {
-										apkUpdaterListener.downloadError(null, "Mkdirs failed");
-									}
-								});
-                            }
-                        }
+    public void download(final Context context, final String apkUrl, final String saveFileName,
+            final DownloadListener downloadListener, final ApkUpdateConfig config) {
+        ProgressDialog temp = null;
+        if (config.canShowProgress) {
+            // 如果需要显示进度条，就初始化进度条
+            temp = new ProgressDialog(context);
+            temp.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            temp.setTitle(config.progressTitle);
+            temp.setCancelable(config.progressCancelable);
+            temp.setCanceledOnTouchOutside(false);
+            temp.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialogInterface) {
+                    boolean isUserDone = false;
+                    if (null != config.getProgressListener()) {
+                        isUserDone = config.getProgressListener().cancel(dialogInterface);
                     }
-
-                    // 创建文件
-                    if (!apkFile.exists()) {
-                    	boolean success = apkFile.createNewFile();
-                    	if (!success) {
-                            if (DEBUG) {
-                                Log.e(TAG, "Create file failed");
-                                postUI(new Runnable() {
-									@Override
-									public void run() {
-										apkUpdaterListener.downloadError(null, "Create file failed");
-									}
-								});
-                            }
-                        }
+                    if (!isUserDone) {
+                        mDownloadHelper.stopDownload();// 默认取消进度条就是终止下载
                     }
-
-                    // 从输入流中读取字节数据，写到文件中
-                    FileOutputStream fos = new FileOutputStream(apkFile);
-                    int count = 0;
-                    byte buf[] = new byte[BUFFER_SIZE];
-                    do {
-                        int numread = inputStream.read(buf);
-                        count += numread;
-                        final int progress = (int) (((float) count / length) * 100);
-                        if (null != apkUpdaterListener) {
-                        	postUI(new Runnable() {
-								@Override
-								public void run() {
-									apkUpdaterListener.downloadProgress(progress);
-								}
-							});
-                        }
-
-                        if (numread <= 0) {
-                            // 下载完成
-                        	postUI(new Runnable() {
-								@Override
-								public void run() {
-									apkUpdaterListener.downloadFinish(saveFilename);
-								}
-							});
-                            break;
-                        }
-
-                        fos.write(buf, 0, numread);
-                    }
-                    while (!stopFlag);
-
-                    // 取消下载
-                    if (stopFlag) {
-                    	postUI(new Runnable() {
-							@Override
-							public void run() {
-								apkUpdaterListener.downloadStop(saveFilename);
-							}
-						});
-                        stopFlag = false;
-                    }
-
-                    fos.close();
-                    inputStream.close();
                 }
-                catch (Exception e) {
-                    Log.e(TAG, e.getMessage(), e);
-                    apkUpdaterListener.downloadError(e, e.getMessage());
+            });
+        }
+
+        final ProgressDialog pd = temp;
+        mDownloadHelper.downloadApk(apkUrl, saveFileName, new DownloadListener() {
+            @Override
+            public void downloadStart() {
+                if (null != downloadListener) {
+                    downloadListener.downloadStart();
+                }
+                if (null != pd) {
+                    pd.show();
                 }
             }
-        }).start();
+
+            @Override
+            public void downloadStop(String saveFilename) {
+                if (null != downloadListener) {
+                    downloadListener.downloadStop(saveFileName);
+                }
+                if (null != pd) {
+                    pd.dismiss();
+                }
+            }
+
+            @Override
+            public void downloadProgress(int progress) {
+                if (null != downloadListener) {
+                    downloadListener.downloadProgress(progress);
+                }
+                if (null != pd) {
+                    pd.setProgress(progress);
+                }
+            }
+
+            @Override
+            public void downloadFinish(String saveFilename) {
+                if (null != downloadListener) {
+                    downloadListener.downloadFinish(saveFileName);
+                }
+                if (null != pd) {
+                    pd.dismiss();
+                }
+                if (config.isAutoInstall) {
+                    // 自动安装
+                    installApk(context, saveFileName);
+                }
+            }
+
+            @Override
+            public void downloadError(Throwable e, String message) {
+                if (null != downloadListener) {
+                    downloadListener.downloadError(e, message);
+                }
+                if (null != pd) {
+                    pd.dismiss();
+                }
+            }
+        });
     }
-    
+
     /**
-     * 下载APK
+     * 下载APK，或显示确认框
      * 
      * @param context
      *            上下文
@@ -183,55 +153,48 @@ public class ApkUpdaterHelper {
      * @param config
      *            配置参数
      */
-    public void downloadWithProgressDialog(Context context, String apkUrl, String saveFileName, final ApkUpdaterListener apkUpdaterListener, ApkUpdateConfig config) {
-        final ProgressDialog pd = config.cusTomProgressDialog;
-        
-    	ApkUpdaterHelper apkUpdaterHelper = new ApkUpdaterHelper();
-        apkUpdaterHelper.downloadApk(apkUrl, saveFileName, new ApkUpdaterListener() {
-			@Override
-			public void downloadStop(String saveFilename) {
-				if(null != apkUpdaterListener){
-					apkUpdaterListener.downloadStop(saveFilename);
-				}
-				pd.dismiss();
-			}
-			
-			@Override
-			public void downloadProgress(int progress) {
-				if(null != apkUpdaterListener){
-					apkUpdaterListener.downloadProgress(progress);
-				}
-				pd.setProgress(progress);
-			}
-			
-			@Override
-			public void downloadFinish(String saveFilename) {
-				if(null != apkUpdaterListener){
-					apkUpdaterListener.downloadFinish(saveFilename);
-				}
-				pd.dismiss();
-			}
-			
-			@Override
-			public void downloadError(Throwable e, String message) {
-				if(null != apkUpdaterListener){
-					apkUpdaterListener.downloadError(e, message);
-				}
-				pd.dismiss();
-			}
-		});
+    public void downloadWithConfirm(final Context context, final String apkUrl, final String saveFileName,
+            final DownloadListener apkUpdaterListener, final ApkUpdateConfig config) {
+
+        if (config.canShowAlertDialog) {
+            // 是否需要下载安装提示
+            AlertDialog alertDialog = new AlertDialog.Builder(context)
+                    .setPositiveButton(config.alertDialogOkBtnText, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            boolean isUserDone = false;
+                            if (null != config.getAlertDialogListener()) {
+                                isUserDone = config.getAlertDialogListener().onChoiceOk();
+                            }
+
+                            if (!isUserDone) {
+                                download(context, apkUrl, saveFileName, apkUpdaterListener, config);
+                            }
+                        }
+                    }).setNegativeButton(config.alertDialogCancelBtnText, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            if (null != config.getAlertDialogListener()) {
+                                config.getAlertDialogListener().onChoiceCancel();
+                            }
+                        }
+                    }).create();
+            alertDialog.setTitle(config.alertDialogTitle);
+            alertDialog.setMessage(config.alertDialogMessage);
+            alertDialog.setCancelable(config.alertDialogCancelable);
+            alertDialog.setCanceledOnTouchOutside(false);
+            alertDialog.show();
+        }
+        else {
+            download(context, apkUrl, saveFileName, apkUpdaterListener, config);
+        }
     }
 
     /**
-     * 停止下载，他停止后不允许再恢复
+     * 停止任务
      */
     public void stopDownload() {
-        this.stopFlag = true;
-    }
-    
-    /**提交任务到主线程*/
-    private void postUI(Runnable runnable){
-    	handler.post(runnable);
+        mDownloadHelper.stopDownload();
     }
 
 }

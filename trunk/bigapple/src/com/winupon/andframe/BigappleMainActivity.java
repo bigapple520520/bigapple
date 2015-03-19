@@ -2,6 +2,7 @@ package com.winupon.andframe;
 
 import java.io.File;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,10 +16,8 @@ import com.winupon.andframe.bigapple.ioc.app.AnActivity;
 import com.winupon.andframe.bigapple.utils.ContextUtils;
 import com.winupon.andframe.bigapple.utils.ShareUtils;
 import com.winupon.andframe.bigapple.utils.ToastUtils;
-import com.winupon.andframe.bigapple.utils.update.CancelEvent;
-import com.winupon.andframe.bigapple.utils.update.DownloadFinishListener;
-import com.winupon.andframe.bigapple.utils.update.UpdateCancelListener;
-import com.winupon.andframe.bigapple.utils.update.UpdateManager;
+import com.winupon.andframe.bigapple.utils.updater.ApkUpdateConfig;
+import com.winupon.andframe.bigapple.utils.updater.ApkUpdater;
 import com.winupon.andframe.zzdemo.bitmap.BitmapDemoActivity;
 import com.winupon.andframe.zzdemo.db.DbDemoActivity;
 import com.winupon.andframe.zzdemo.http2.UrlHttpClientDemoActivity;
@@ -52,23 +51,34 @@ public class BigappleMainActivity extends AnActivity {
         addButton("utils之update模块测试", new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UpdateManager updateManager = new UpdateManager(BigappleMainActivity.this);
-                updateManager.setDownloadFinishListener(new DownloadFinishListener() {
+                // UpdateManager updateManager = new UpdateManager(BigappleMainActivity.this);
+                // updateManager.setDownloadFinishListener(new DownloadFinishListener() {
+                // @Override
+                // public void downloadFinish(String filePath) {
+                // ToastUtils.displayTextShort(BigappleMainActivity.this, filePath);
+                // }
+                // });
+                // updateManager.setUpdateCancelListener(new UpdateCancelListener() {
+                // @Override
+                // public void updateCancel(CancelEvent cancelEvent) {
+                // ToastUtils.displayTextShort(BigappleMainActivity.this, "我被取消喽：" + cancelEvent.getEvent());
+                // }
+                // });
+                // // updateManager.doDownload("http://res.wpstatic.cn/m/weike-test.apk", Environment
+                // // .getExternalStorageDirectory().getPath() + "/xuan1/bigapple-default.apk");
+                // updateManager.doDownload("http://gdown.baidu.com/data/wisegame/a279c52cd4acedb7/xiangji360_606.apk",
+                // Environment.getExternalStorageDirectory().getPath() + "/xuan1/bigapple-default.apk");
+                ApkUpdateConfig config = new ApkUpdateConfig();
+                config.setProgressListener(new ApkUpdateConfig.ProgressListener() {
                     @Override
-                    public void downloadFinish(String filePath) {
-                        ToastUtils.displayTextShort(BigappleMainActivity.this, filePath);
+                    public boolean cancel(DialogInterface dialogInterface) {
+                        ToastUtils.displayTextShort(BigappleMainActivity.this, "您已取消下载");
+                        return false;
                     }
                 });
-                updateManager.setUpdateCancelListener(new UpdateCancelListener() {
-                    @Override
-                    public void updateCancel(CancelEvent cancelEvent) {
-                        ToastUtils.displayTextShort(BigappleMainActivity.this, "我被取消喽：" + cancelEvent.getEvent());
-                    }
-                });
-                // updateManager.doDownload("http://res.wpstatic.cn/m/weike-test.apk", Environment
-                // .getExternalStorageDirectory().getPath() + "/xuan1/bigapple-default.apk");
-                updateManager.doDownload("http://gdown.baidu.com/data/wisegame/a279c52cd4acedb7/xiangji360_606.apk",
-                        Environment.getExternalStorageDirectory().getPath() + "/xuan1/bigapple-default.apk");
+                ApkUpdater.update(BigappleMainActivity.this,
+                        "http://gdown.baidu.com/data/wisegame/a279c52cd4acedb7/xiangji360_606.apk", Environment
+                                .getExternalStorageDirectory().getPath() + "/xuan1/bigapple-default.apk", null, config);
             }
         });
         addButton("utils之htmlviewhtml模块测试", TextViewHtmlDemoActivity.class);

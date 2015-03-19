@@ -1,58 +1,88 @@
 package com.winupon.andframe.bigapple.utils.updater;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
+import android.content.DialogInterface;
 
 /**
  * 下载提示框配置
  * 
  * @author xuan
- *
+ * 
  */
 public class ApkUpdateConfig {
-	/**
-	 * 自定义弹出框
-	 */
-	public AlertDialog cusTomAlertDialog;
-	
-	/**
-	 * 自定义进度条
-	 */
-	public ProgressDialog cusTomProgressDialog;
-	
-	/**
-	 * 以下是使用默认选择框的文字提示，如果progressDialog不是空，那么以下文字无效
-	 */
-	public String title = "提示";
-	public String message = "软件版本更新";
-	public String okBtnText = "确定";
-	public String cancelBtnText = "取消";
-	public boolean cancelable = true;
-	
-	/**
-	 * 选择事件
-	 */
-	public OnChoiceListener onChoiceListener;
-	
-	/**
-	 * 提示选择事件
-	 * 
-	 * @author xuan
-	 */
-	public interface OnChoiceListener{
-		/**
-		 * 选择确定
-		 * 
-		 * @return true：事件已处理，无须框架进行下一步操作，false：事件未处理，按正常框架流程往下走
-		 */
-		public boolean onChoiceOk();
-		
-		/**
-		 * 选择取消
-		 * 
-		 * @return
-		 */
-		public boolean onChoiceCancel();
-	}
-	
+    /**
+     * 以下是PregressDialog参数
+     */
+    public String progressTitle;
+    public boolean progressCancelable = true;
+    private ProgressListener progressListener;
+    public boolean canShowProgress = true;
+
+    public ProgressListener getProgressListener() {
+        return progressListener;
+    }
+
+    public void setProgressListener(ProgressListener progressListener) {
+        this.progressListener = progressListener;
+    }
+
+    /**
+     * 进度条监听事件
+     * 
+     * @author xuan
+     * @version $Revision: 1.0 $, $Date: 2015-3-18 上午9:43:00 $
+     */
+    public static abstract class ProgressListener {
+        /**
+         * 下载中，进度条被取消监听
+         * 
+         * @return 返回true表示事件处理，不进一步框架流程
+         */
+        public abstract boolean cancel(DialogInterface dialogInterface);
+    }
+
+    /**
+     * 以下是AlertDialog参数
+     */
+    public String alertDialogTitle = "提示";
+    public String alertDialogMessage = "软件版本更新";
+    public String alertDialogOkBtnText = "确定";
+    public String alertDialogCancelBtnText = "取消";
+    public boolean alertDialogCancelable = true;
+    private AlertDialogListener alertDialogListener;
+    public boolean canShowAlertDialog = true;
+
+    public AlertDialogListener getAlertDialogListener() {
+        return alertDialogListener;
+    }
+
+    public void setAlertDialogListener(AlertDialogListener alertDialogListener) {
+        this.alertDialogListener = alertDialogListener;
+    }
+
+    /**
+     * 提示选择事件
+     * 
+     * @author xuan
+     */
+    public static abstract class AlertDialogListener {
+        /**
+         * 选择确定
+         * 
+         * @return 返回true表示事件处理，不进一步框架流程
+         */
+        public abstract boolean onChoiceOk();
+
+        /**
+         * 选择取消
+         * 
+         * @return 返回true表示事件处理，不进一步框架流程
+         */
+        public abstract boolean onChoiceCancel();
+    }
+
+    /**
+     * 下载完成后是否自动更新
+     */
+    public boolean isAutoInstall = true;
+
 }

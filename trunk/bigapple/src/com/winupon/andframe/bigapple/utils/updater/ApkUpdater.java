@@ -5,10 +5,7 @@
  */
 package com.winupon.andframe.bigapple.utils.updater;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Environment;
 import android.util.Log;
 
@@ -22,262 +19,120 @@ import com.winupon.andframe.bigapple.utils.Validators;
  */
 public class ApkUpdater {
     private static final String TAG = "ApkUpdater";
-    private ApkUpdaterHelper apkUpdaterHelper;
-    
-    /**默认保存的apk路径*/
+    private ApkUpdaterHelper mApkUpdaterHelper;
+
+    /** 默认保存的apk路径 */
     public static String DEFUALT_SAVE_FILENAME = Environment.getExternalStorageDirectory().getPath()
             + "/bigapple/bigapple-default.apk";
-    
-    private ApkUpdater(ApkUpdaterHelper apkUpdaterHelper){
-    	this.apkUpdaterHelper = apkUpdaterHelper;
+
+    private ApkUpdater(ApkUpdaterHelper apkUpdaterHelper) {
+        this.mApkUpdaterHelper = apkUpdaterHelper;
     }
 
-    ////////////////////////downloadWithProgressDialog///////////////////////////////
     /**
-     * 下载APK
+     * 更新APK
      * 
      * @param context
-     *            上下文
      * @param apkUrl
-     *            apk网络地址
+     *            下载地址
      * @param saveFileName
-     *            apk本地保存地址
-     * @param apkUpdaterListener
+     *            本地保存地址
+     * @param downloadListener
      *            下载监听
      * @param config
      *            配置参数
+     * @return
      */
-    public static ApkUpdater downloadWithProgressDialog(Context context, String apkUrl, String saveFileName, final ApkUpdaterListener apkUpdaterListener, ApkUpdateConfig config) {
-    	if(null == context){
-    		Log.e(TAG, "Context Can not be null.");
+    public static ApkUpdater update(Context context, String apkUrl, String saveFileName,
+            DownloadListener downloadListener, ApkUpdateConfig config) {
+        if (null == context) {
+            Log.e(TAG, "Context Can not be null.");
             return null;
-    	}
-    	
-    	if(Validators.isEmpty(apkUrl)){
-    		Log.e(TAG, "ApkUrl Can not be empty.");
-            return null;
-    	}
-    	
-        if (Validators.isEmpty(saveFileName)) {
+        }
+
+        if (Validators.isEmpty(apkUrl)) {
             Log.e(TAG, "SaveFileName Can not be empty.");
             return null;
         }
-    	
-        if(null == config){
-        	config = new ApkUpdateConfig();
-        }
-        
-        //查看是否有自定义的progressDialog，没有就用系统自带的那个
-        if(null == config.cusTomProgressDialog){
-        	config.cusTomProgressDialog = new ProgressDialog(context);
-        }
-        
-    	ApkUpdater apkUpdater = new ApkUpdater(new ApkUpdaterHelper());
-    	apkUpdater.apkUpdaterHelper.downloadWithProgressDialog(context, apkUrl, saveFileName, apkUpdaterListener, config);
-    	return apkUpdater;
-    }
-    
-    /**
-     * 下载APK
-     * 
-     * @param context
-     *            上下文
-     * @param apkUrl
-     *            apk网络地址
-     * @param saveFileName
-     *            apk本地保存地址
-     * @param apkUpdaterListener
-     *            下载监听
-     */
-    public static ApkUpdater downloadWithProgressDialog(Context context, String apkUrl, String saveFileName, final ApkUpdaterListener apkUpdaterListener) {
-    	return ApkUpdater.downloadWithProgressDialog(context, apkUrl, saveFileName, apkUpdaterListener, null);
-    }
-    
-    /**
-     * 下载APK
-     * 
-     * @param apkUrl
-     *            apk网络地址
-     * @param saveFileName
-     *            apk本地保存地址
-     * @param apkUpdaterListener
-     *            下载监听
-     */
-    public static void download(String apkUrl, String saveFileName, ApkUpdaterListener apkUpdaterListener) {
-    	if(Validators.isEmpty(apkUrl)){
-    		Log.e(TAG, "ApkUrl Can not be empty.");
-            return;
-    	}
-    	
+
         if (Validators.isEmpty(saveFileName)) {
-            Log.e(TAG, "SaveFileName Can not be empty.");
-            return;
-        }
-    	
-    	ApkUpdaterHelper apkUpdaterHelper = new ApkUpdaterHelper();
-        apkUpdaterHelper.downloadApk(apkUrl, saveFileName, apkUpdaterListener);
-    }
-
-    /**
-     * 下载APK
-     * 
-     * @param apkUrl
-     *            apk网络地址
-     * @param saveFileName
-     *            apk本地保存地址
-     */
-    public static void download(String apkUrl, String saveFileName) {
-    	ApkUpdater.download(apkUrl, saveFileName, null);
-    }
-    
-    /**
-     * 下载APK
-     * 
-     * @param apkUrl
-     *            apk网络地址
-     * @param saveFileName
-     *            apk本地保存地址
-     */
-    public static void download(String apkUrl) {
-    	ApkUpdater.download(apkUrl, DEFUALT_SAVE_FILENAME, null);
-    }
-
-    /**
-     * 安装Apk
-     * 
-     * @param context
-     *            上下文
-     * @param fileName
-     *            本地apk地址
-     */
-    public static boolean install(Context context, String fileName) {
-    	if(null == context){
-    		Log.e(TAG, "Context Can not be null.");
-            return false;
-    	}
-    	
-        if (Validators.isEmpty(fileName)) {
-            Log.e(TAG, "FileName Can not be empty.");
-            return false;
+            saveFileName = DEFUALT_SAVE_FILENAME;
         }
 
-        ApkUpdaterHelper apkUpdaterHelper = new ApkUpdaterHelper();
-        return apkUpdaterHelper.installApk(context, fileName);
+        if (null == config) {
+            config = new ApkUpdateConfig();
+        }
+
+        ApkUpdater apkUpdater = new ApkUpdater(new ApkUpdaterHelper(new DownloadHelper()));
+        apkUpdater.mApkUpdaterHelper.downloadWithConfirm(context, apkUrl, saveFileName, downloadListener, config);
+        return apkUpdater;
     }
-    
+
     /**
-     * 下载后自动安装
+     * 更新APK
      * 
      * @param context
      * @param apkUrl
+     *            下载地址
      * @param saveFileName
+     *            本地保存地址
      * @param apkUpdaterListener
+     *            下载监听
+     * @return
      */
-    public static void downloadAndInstall(final Context context, final String apkUrl, final String saveFileName, final ApkUpdaterListener apkUpdaterListener){
-    	ApkUpdater.download(apkUrl, saveFileName, new ApkUpdaterListener() {
-			@Override
-			public void downloadStop(String saveFilename) {
-				if(null != apkUpdaterListener){
-					apkUpdaterListener.downloadStop(saveFileName);
-				}
-			}
-			
-			@Override
-			public void downloadProgress(int progress) {
-				if(null != apkUpdaterListener){
-					apkUpdaterListener.downloadProgress(progress);
-				}
-			}
-			
-			@Override
-			public void downloadFinish(String saveFilename) {
-				if(null != apkUpdaterListener){
-					apkUpdaterListener.downloadFinish(saveFileName);
-				}
-				//下载成功进行安装操作
-				ApkUpdater.install(context, saveFileName);
-			}
-			
-			@Override
-			public void downloadError(Throwable e, String message) {
-				if(null != apkUpdaterListener){
-					apkUpdaterListener.downloadError(e, message);
-				}
-			}
-		});
+    public ApkUpdater update(Context context, String apkUrl, String saveFileName, DownloadListener downloadListener) {
+        return ApkUpdater.update(context, apkUrl, saveFileName, downloadListener, null);
     }
-    
+
     /**
-     * 下载后自动安装
+     * 更新APK
      * 
      * @param context
      * @param apkUrl
+     *            下载地址
      * @param saveFileName
+     *            本地保存地址
+     * @param config
+     *            配置参数
+     * @return
      */
-    public static void downloadAndInstall(final Context context, final String apkUrl, final String saveFileName){
-    	ApkUpdater.downloadAndInstall(context, apkUrl, saveFileName, null);
+    public ApkUpdater update(Context context, String apkUrl, String saveFileName, ApkUpdateConfig config) {
+        return ApkUpdater.update(context, apkUrl, saveFileName, null, config);
     }
-    
+
     /**
-     * 下载后自动安装
+     * 更新APK
      * 
      * @param context
      * @param apkUrl
+     *            下载地址
+     * @param saveFileName
+     *            本地保存地址
+     * @return
      */
-    public static void downloadAndInstall(final Context context, final String apkUrl){
-    	ApkUpdater.downloadAndInstall(context, apkUrl, DEFUALT_SAVE_FILENAME, null);
+    public ApkUpdater update(Context context, String apkUrl, String saveFileName) {
+        return ApkUpdater.update(context, apkUrl, saveFileName, null, null);
     }
-    
-    public static void choiceIfDownloadAndInstall(final Context context, final String apkUrl, final String saveFileName, final ApkUpdaterListener apkUpdaterListener, ApkUpdateConfig 
-    		choiceConfig){
-    	//没有就创建一个默认配置
-    	if(null == choiceConfig){
-    		choiceConfig = new ApkUpdateConfig();
-    	}
-    	
-    	//如果没有自定义alertDialog，就默认使用系统自带的
-    	final ApkUpdateConfig cc = choiceConfig;
-    	if(null == choiceConfig.cusTomAlertDialog){
-    		choiceConfig.cusTomAlertDialog = new AlertDialog.Builder(context)
-    		.setTitle(cc.title)
-    		.setMessage(cc.message)
-    		.setCancelable(cc.cancelable)
-    		.create();
-    	}
-    	
-    	//设置确定事件
-    	choiceConfig.cusTomAlertDialog.setButton(0, cc.okBtnText, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface arg0, int arg1) {
-				boolean isContinue = true;
-				if(null != cc.onChoiceListener){
-					isContinue = cc.onChoiceListener.onChoiceOk();
-				}
-				
-				if(isContinue){
-				}
-			}
-		});
-    	
-    	//设置取消时间
-    	choiceConfig.cusTomAlertDialog.setButton(1, cc.cancelBtnText, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface arg0, int arg1) {
-				if(null != cc.onChoiceListener){
-					cc.onChoiceListener.onChoiceOk();
-				}
-			}
-		});
-    	//点击外部不允许取消
-    	choiceConfig.cusTomAlertDialog.setCanceledOnTouchOutside(false);
-    	choiceConfig.cusTomAlertDialog.show();
+
+    /**
+     * 更新APK
+     * 
+     * @param context
+     * @param apkUrl
+     *            下载地址
+     * @param saveFileName
+     *            本地保存地址
+     * @return
+     */
+    public ApkUpdater update(Context context, String apkUrl) {
+        return ApkUpdater.update(context, apkUrl, null, null, null);
     }
-    
+
     /**
      * 停止下载，他停止后不允许再恢复
      */
     public void stopDownload() {
-    	apkUpdaterHelper.stopDownload();
-    } 
-    
+        mApkUpdaterHelper.stopDownload();
+    }
+
 }
