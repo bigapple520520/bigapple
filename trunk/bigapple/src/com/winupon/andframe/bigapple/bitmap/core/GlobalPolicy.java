@@ -23,4 +23,14 @@ public class GlobalPolicy {
         return new SoftReferenceCacheBean();
     }
 
+    /**
+     * 获取缓存的key，如果想要自己特有的key，例如不想把url后面的参数带入当做key，可以复写他自己定制一个规则
+     * 
+     * @param url
+     * @return
+     */
+    public String makeCacheKey(String url) {
+        return url;
+    }
+
 }

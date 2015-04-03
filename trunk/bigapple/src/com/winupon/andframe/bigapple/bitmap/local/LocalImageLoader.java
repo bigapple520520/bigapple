@@ -36,6 +36,9 @@ public class LocalImageLoader {
     private LocalImageLoaderConfig localImageLoaderConfig;// 全局配置
     private BitmapDisplayConfig defaultConfig;// 显示配置
 
+    private boolean pauseTask = false;// 用来暂停任务的，特别是ListView快速滑动时需要暂定，不然会卡顿
+    private final Object pauseTaskLock = new Object();// 暂停锁，暂时时，线程就用这个锁锁住
+
     public LocalImageLoader(Context application) {
         this.application = application;
         localImageLoaderConfig = new LocalImageLoaderConfig(application);
@@ -150,6 +153,20 @@ public class LocalImageLoader {
             filePath = (String) params[0];
             config = (BitmapDisplayConfig) params[1];
 
+            // 判断是否需要暂停
+            synchronized (pauseTaskLock) {
+                while (pauseTask && !this.isCancelled()) {
+                    try {
+                        // 这里是如果调用者设置了暂定，并这个任务没有被取消，那么就停留在这里等待
+                        // 这里设置10S超时，防止线程一直被锁死
+                        pauseTaskLock.wait(10000);
+                    }
+                    catch (InterruptedException e) {
+                        // Ignore
+                    }
+                }
+            }
+
             // 从磁盘中读取图片
             if (!isCancelled() && null != getTargetImageView()) {
                 Bitmap bitmap = null;
@@ -187,6 +204,15 @@ public class LocalImageLoader {
             if (null != imageView && null != bitmap) {
                 imageView.setImageBitmap(bitmap);
                 config.getImageLoadCallBack().loadCompleted(imageView, bitmap, config);
+            }
+        }
+
+        @Override
+        protected void onCancelled(Bitmap bitmap) {
+            super.onCancelled(bitmap);
+            // 如果这个任务类被取消，那么解锁这个线程
+            synchronized (pauseTaskLock) {
+                pauseTaskLock.notifyAll();
             }
         }
 
@@ -304,6 +330,24 @@ public class LocalImageLoader {
             LogUtils.d("no!!!cache is miss,i need get bitmap from disk!!!");
         }
         return null;// 缓存中取不到
+    }
+
+    // //////////////////////////////////任务暂定开始操作///////////////////////////////////////////////////////////////
+    /**
+     * 重启加载任务
+     */
+    public void resumeTasks() {
+        pauseTask = false;
+        synchronized (pauseTaskLock) {
+            pauseTaskLock.notifyAll();
+        }
+    }
+
+    /**
+     * 暂停加载任务
+     */
+    public void pauseTasks() {
+        pauseTask = true;
     }
 
 }

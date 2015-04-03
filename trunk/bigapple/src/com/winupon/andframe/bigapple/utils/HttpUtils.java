@@ -25,6 +25,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.util.EntityUtils;
 
 import android.text.TextUtils;
@@ -38,8 +39,8 @@ import com.winupon.andframe.bigapple.utils.log.LogUtils;
  * @version $Revision: 1.0 $, $Date: 2013-3-25 上午9:24:40 $
  */
 public abstract class HttpUtils {
-    private static final int DEFAULT_CONNECTION_TIMEOUT = 1000 * 12;
-    private static final int DEFAULT_READ_TIMEOUT = 1000 * 12;
+    private static int DEFAULT_CONNECTION_TIMEOUT = 1000 * 12;
+    private static int DEFAULT_READ_TIMEOUT = 1000 * 12;
     private static final int DEFAULT_DOWNLOAD_READ_TIMEOUT = 1000 * 60 * 10;// 下载超时
     private static final String DEFAULT_ENCODE = "utf-8";
 
@@ -130,7 +131,6 @@ public abstract class HttpUtils {
                 }
             }
         }
-
         return result;
     }
 
@@ -143,6 +143,23 @@ public abstract class HttpUtils {
      * @return
      */
     public static String post(String url, Map<String, String> paramsMap) throws Exception {
+        return post(url, paramsMap, DEFAULT_CONNECTION_TIMEOUT, DEFAULT_READ_TIMEOUT);
+    }
+
+    /**
+     * POST请求，异常有外部自己处理
+     * 
+     * @param url
+     * @param paramsMap
+     * @param connectionTimeout
+     *            链接超时
+     * @param soTime
+     *            响应超时
+     * @return
+     * @throws Exception
+     */
+    public static String post(String url, Map<String, String> paramsMap, int connectionTimeout, int soTime)
+            throws Exception {
         LogUtils.d("Post url is：" + url + paramsMap.toString());
 
         String result = "";
@@ -153,6 +170,8 @@ public abstract class HttpUtils {
             }
 
             HttpClient client = new DefaultHttpClient();
+            client.getParams().setParameter(HttpConnectionParams.CONNECTION_TIMEOUT, connectionTimeout);
+            client.getParams().setParameter(HttpConnectionParams.SO_TIMEOUT, soTime);
             HttpPost httpPost = new HttpPost(url);
             httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODE));
             HttpResponse response = client.execute(httpPost);
@@ -266,6 +285,14 @@ public abstract class HttpUtils {
                 }
             }
         }
+    }
+
+    public static void setDEFAULT_CONNECTION_TIMEOUT(int dEFAULT_CONNECTION_TIMEOUT) {
+        DEFAULT_CONNECTION_TIMEOUT = dEFAULT_CONNECTION_TIMEOUT;
+    }
+
+    public static void setDEFAULT_READ_TIMEOUT(int dEFAULT_READ_TIMEOUT) {
+        DEFAULT_READ_TIMEOUT = dEFAULT_READ_TIMEOUT;
     }
 
 }

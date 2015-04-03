@@ -121,7 +121,8 @@ public class AnBitmapUtils {
         }
 
         // 内存缓存中取
-        Bitmap bitmap = globalConfig.getBitmapCache().getBitmapFromMemCache(uri, displayConfig);
+        String cacheKey = globalConfig.getGlobalPolicy().makeCacheKey(uri);
+        Bitmap bitmap = globalConfig.getBitmapCache().getBitmapFromMemCache(cacheKey, displayConfig);
         if (null != bitmap) {
             if (DUBEG) {
                 LogUtils.d("-----------------yes!!! memory cache shot!!!");
@@ -420,13 +421,15 @@ public class AnBitmapUtils {
                         pauseTaskLock.wait();
                     }
                     catch (InterruptedException e) {
+                        // Ignore
                     }
                 }
             }
 
             /* 先试图从磁盘缓存中读取图片 */
             if (!pauseTask && !this.isCancelled() && null != this.getTargetImageView()) {
-                bitmap = globalConfig.getBitmapCache().getBitmapFromDiskCache(uri, displayConfig);
+                String cacheKey = globalConfig.getGlobalPolicy().makeCacheKey(uri);
+                bitmap = globalConfig.getBitmapCache().getBitmapFromDiskCache(cacheKey, displayConfig);
                 if (null != bitmap && DUBEG) {
                     LogUtils.d("-----------------yes!!! disk cache shot!!!");
                 }

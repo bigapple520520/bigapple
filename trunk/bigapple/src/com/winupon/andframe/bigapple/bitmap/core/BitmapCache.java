@@ -155,9 +155,10 @@ public class BitmapCache {
                     }
 
                     if (null != mDiskLruCache) {
-                        snapshot = mDiskLruCache.get(uri);
+                        String cacheKey = globalConfig.getGlobalPolicy().makeCacheKey(uri);
+                        snapshot = mDiskLruCache.get(cacheKey);
                         if (null == snapshot) {
-                            LruDiskCache.Editor editor = mDiskLruCache.edit(uri);
+                            LruDiskCache.Editor editor = mDiskLruCache.edit(cacheKey);
                             if (null != editor) {
                                 outputStream = editor.newOutputStream(DISK_CACHE_INDEX);
                                 bitmapMeta.expiryTimestamp = globalConfig.getDownloader().downloadToStream(uri,
@@ -170,7 +171,7 @@ public class BitmapCache {
                                     editor.setEntryExpiryTimestamp(bitmapMeta.expiryTimestamp);
                                     editor.commit();
                                 }
-                                snapshot = mDiskLruCache.get(uri);
+                                snapshot = mDiskLruCache.get(cacheKey);
                             }
                         }
 
@@ -194,7 +195,8 @@ public class BitmapCache {
                 }
             }
 
-            return addBitmapToMemoryCache(uri, config, bitmapMeta);
+            String cacheKey = globalConfig.getGlobalPolicy().makeCacheKey(uri);
+            return addBitmapToMemoryCache(cacheKey, config, bitmapMeta);
         }
         catch (Exception e) {
             LogUtils.e(e.getMessage(), e);
@@ -210,7 +212,7 @@ public class BitmapCache {
     /**
      * 把图片缓存到内存缓存里
      * 
-     * @param uri
+     * @param cacheKey
      *            缓存图片地址
      * @param config
      *            显示图片规格配置
@@ -219,9 +221,9 @@ public class BitmapCache {
      * @return
      * @throws IOException
      */
-    private Bitmap addBitmapToMemoryCache(String uri, BitmapDisplayConfig config, BitmapMeta bitmapMeta)
+    private Bitmap addBitmapToMemoryCache(String cacheKey, BitmapDisplayConfig config, BitmapMeta bitmapMeta)
             throws IOException {
-        if (uri == null || bitmapMeta == null) {
+        if (cacheKey == null || bitmapMeta == null) {
             return null;
         }
 
@@ -269,13 +271,13 @@ public class BitmapCache {
         // }
 
         /* 把图片添加到内存缓存中去 */
-        String key = uri + config.toString();
+        String key = cacheKey + config.toString();
         if (globalConfig.isMemoryCacheEnabled() && null != mMemoryCache) {
             // 保存同一下载地址的不同内存缓存key，供刷新缓存使用
-            ArrayList<String> keyList = uri2keyListMap.get(uri);
+            ArrayList<String> keyList = uri2keyListMap.get(cacheKey);
             if (null == keyList) {
                 keyList = new ArrayList<String>();
-                uri2keyListMap.put(uri, keyList);
+                uri2keyListMap.put(cacheKey, keyList);
             }
             keyList.add(key);
 
