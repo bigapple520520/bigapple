@@ -68,7 +68,7 @@ public class BigappleMainActivity extends AnActivity {
                 // // .getExternalStorageDirectory().getPath() + "/xuan1/bigapple-default.apk");
                 // updateManager.doDownload("http://gdown.baidu.com/data/wisegame/a279c52cd4acedb7/xiangji360_606.apk",
                 // Environment.getExternalStorageDirectory().getPath() + "/xuan1/bigapple-default.apk");
-                ApkUpdateConfig config = new ApkUpdateConfig();
+                final ApkUpdateConfig config = new ApkUpdateConfig();
                 config.setProgressListener(new ApkUpdateConfig.ProgressListener() {
                     @Override
                     public boolean cancel(DialogInterface dialogInterface) {
@@ -76,9 +76,16 @@ public class BigappleMainActivity extends AnActivity {
                         return false;
                     }
                 });
-                ApkUpdater.update(BigappleMainActivity.this,
-                        "http://gdown.baidu.com/data/wisegame/a279c52cd4acedb7/xiangji360_606.apk", Environment
-                                .getExternalStorageDirectory().getPath() + "/xuan1/bigapple-default.apk", null, config);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ApkUpdater.update(BigappleMainActivity.this,
+                                "http://gdown.baidu.com/data/wisegame/a279c52cd4acedb7/xiangji360_606.apk", Environment
+                                        .getExternalStorageDirectory().getPath() + "/xuan1/bigapple-default.apk", null,
+                                config);
+                    }
+                }).start();
             }
         });
         addButton("utils之htmlviewhtml模块测试", TextViewHtmlDemoActivity.class);

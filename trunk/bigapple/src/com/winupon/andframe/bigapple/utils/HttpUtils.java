@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -23,9 +24,17 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.params.ConnManagerParams;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 
 import android.text.TextUtils;
@@ -39,6 +48,12 @@ import com.winupon.andframe.bigapple.utils.log.LogUtils;
  * @version $Revision: 1.0 $, $Date: 2013-3-25 上午9:24:40 $
  */
 public abstract class HttpUtils {
+
+    /**
+     * 单例httpclient,大数据传输请勿用
+     */
+    private static HttpClient httpClient = null;
+
     private static int DEFAULT_CONNECTION_TIMEOUT = 1000 * 12;
     private static int DEFAULT_READ_TIMEOUT = 1000 * 12;
     private static final int DEFAULT_DOWNLOAD_READ_TIMEOUT = 1000 * 60 * 10;// 下载超时
@@ -134,6 +149,24 @@ public abstract class HttpUtils {
         return result;
     }
 
+    public static HttpClient getHttpClient() {
+        if (httpClient == null) {
+            final HttpParams httpParams = new BasicHttpParams();
+            // timeout: get connections from connection pool
+            ConnManagerParams.setTimeout(httpParams, 1000);
+            // timeout: connect to the server
+            HttpConnectionParams.setConnectionTimeout(httpParams, DEFAULT_CONNECTION_TIMEOUT);
+            // timeout: transfer data from server
+            HttpConnectionParams.setSoTimeout(httpParams, DEFAULT_READ_TIMEOUT);
+            SchemeRegistry schemeRegistry = new SchemeRegistry();
+            schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+            schemeRegistry.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
+            ThreadSafeClientConnManager connManager = new ThreadSafeClientConnManager(httpParams, schemeRegistry);
+            httpClient = new DefaultHttpClient(connManager, httpParams);
+        }
+        return httpClient;
+    }
+
     /**
      * POST请求，异常有外部自己处理
      * 
@@ -163,16 +196,16 @@ public abstract class HttpUtils {
         LogUtils.d("Post url is：" + url + paramsMap.toString());
 
         String result = "";
+        HttpClient client = getHttpClient();
+        HttpPost httpPost = new HttpPost(url);
         try {
             LinkedList<BasicNameValuePair> params = new LinkedList<BasicNameValuePair>();
             for (Map.Entry<String, String> entry : paramsMap.entrySet()) {
                 params.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
             }
 
-            HttpClient client = new DefaultHttpClient();
             client.getParams().setParameter(HttpConnectionParams.CONNECTION_TIMEOUT, connectionTimeout);
             client.getParams().setParameter(HttpConnectionParams.SO_TIMEOUT, soTime);
-            HttpPost httpPost = new HttpPost(url);
             httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODE));
             HttpResponse response = client.execute(httpPost);
 
@@ -187,8 +220,31 @@ public abstract class HttpUtils {
         catch (Exception e) {
             throw new Exception(e);
         }
+        finally {
+            if (client != null && httpPost != null) {
+                // 释放连接资源
+                httpPost.abort();
+                // 关闭Socket连接
+                // client.getConnectionManager().shutdown();
+            }
+        }
 
         return result;
+    }
+
+    public static String postByURLConnection(String url, Map<String, String> params, int connectionTimeout, int soTime)
+            throws Exception {
+        LogUtils.d("Post url is：" + url + params.toString());
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, String> e : params.entrySet()) {
+            sb.append(e.getKey()).append("=").append(URLEncoder.encode(e.getValue(), "utf-8")).append("&");
+        }
+
+        if (!params.isEmpty()) {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+
+        return requestURL(url + "?" + sb.toString(), DEFAULT_ENCODE, connectionTimeout, soTime);
     }
 
     /**
