@@ -130,6 +130,7 @@ public class BasicNetwork implements Network {
                 }
 
                 // if the request is slow, log it.
+                // 请求过慢，记录他
                 long requestLifetime = SystemClock.elapsedRealtime() - requestStart;
                 logSlowRequests(requestLifetime, request, responseContents, statusLine);
 
@@ -232,6 +233,7 @@ public class BasicNetwork implements Network {
     }
 
     /** Reads the contents of HttpEntity into a byte[]. */
+    /** 从HttpEntity中读取出byte[] */
     private byte[] entityToBytes(HttpEntity entity) throws IOException, ServerError {
         PoolingByteArrayOutputStream bytes = new PoolingByteArrayOutputStream(mPool, (int) entity.getContentLength());
         byte[] buffer = null;

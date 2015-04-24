@@ -183,8 +183,9 @@ public class HurlStack implements HttpStack {
     }
 
     @SuppressWarnings("deprecation")
-    /* package */static void setConnectionParametersForRequest(HttpURLConnection connection, Request<?> request)
-            throws IOException, AuthFailureError {
+    /* package */
+    static void setConnectionParametersForRequest(HttpURLConnection connection, Request<?> request) throws IOException,
+            AuthFailureError {
         switch (request.getMethod()) {
         case Method.DEPRECATED_GET_OR_POST:
             // This is the deprecated way that needs to be handled for backwards compatibility.
@@ -237,6 +238,7 @@ public class HurlStack implements HttpStack {
         }
     }
 
+    // 如果request的body中有数据，就添加到HttpURLConnection流中去
     private static void addBodyIfExists(HttpURLConnection connection, Request<?> request) throws IOException,
             AuthFailureError {
         byte[] body = request.getBody();
@@ -248,4 +250,5 @@ public class HurlStack implements HttpStack {
             out.close();
         }
     }
+
 }

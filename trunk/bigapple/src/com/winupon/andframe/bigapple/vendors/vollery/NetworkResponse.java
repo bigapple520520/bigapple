@@ -22,9 +22,25 @@ import java.util.Map;
 import org.apache.http.HttpStatus;
 
 /**
+ * 响应数据和头部封装<br>
  * Data and headers returned from {@link Network#performRequest(Request)}.
  */
 public class NetworkResponse {
+    /** The HTTP status code. 请求返回状态码 */
+    public final int statusCode;
+
+    /** Raw data from this response. 请求体原始数据 */
+    public final byte[] data;
+
+    /** Response headers. 响应的头部 */
+    public final Map<String, String> headers;
+
+    /** True if the server returned a 304 (Not Modified). 如果服务器返回304，这里会设置true */
+    public final boolean notModified;
+
+    /** Network roundtrip time in milliseconds. 网络往返时间以毫秒为单位 */
+    public final long networkTimeMs;
+
     /**
      * Creates a new network response.
      * 
@@ -59,20 +75,5 @@ public class NetworkResponse {
     public NetworkResponse(byte[] data, Map<String, String> headers) {
         this(HttpStatus.SC_OK, data, headers, false, 0);
     }
-
-    /** The HTTP status code. 请求返回状态码 */
-    public final int statusCode;
-
-    /** Raw data from this response. 请求体原始数据 */
-    public final byte[] data;
-
-    /** Response headers. 请求头部 */
-    public final Map<String, String> headers;
-
-    /** True if the server returned a 304 (Not Modified). 如果服务器返回304，这里会设置true */
-    public final boolean notModified;
-
-    /** Network roundtrip time in milliseconds. 网络往返时间以毫秒为单位 */
-    public final long networkTimeMs;
 
 }

@@ -17,6 +17,8 @@
 package com.winupon.andframe.bigapple.vendors.vollery;
 
 /**
+ * 默认实现的重连机制
+ * 
  * Default retry policy for requests.
  */
 public class DefaultRetryPolicy implements RetryPolicy {

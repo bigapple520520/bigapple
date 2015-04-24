@@ -37,6 +37,8 @@ import com.winupon.andframe.bigapple.vendors.vollery.Cache;
 import com.winupon.andframe.bigapple.vendors.vollery.VolleyLog;
 
 /**
+ * 磁盘缓存实现，默认5MB，可以配置
+ * 
  * Cache implementation that caches files directly onto the hard disk in the specified directory. The default disk usage
  * size is 5MB, but is configurable.
  */
@@ -140,6 +142,8 @@ public class DiskBasedCache implements Cache {
     }
 
     /**
+     * 初始化磁盘缓存。如果不存在目录创建之。如果存在，把缓存中的文件信息读取到内存。
+     * 
      * Initializes the DiskBasedCache by scanning for all files currently in the specified root directory. Creates the
      * root directory if necessary.
      */

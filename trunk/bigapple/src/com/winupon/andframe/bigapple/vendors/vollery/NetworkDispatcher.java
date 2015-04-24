@@ -25,6 +25,8 @@ import android.os.Process;
 import android.os.SystemClock;
 
 /**
+ * 网络请求线程，专门用来处理网络请求<br>
+ * 
  * Provides a thread for performing network dispatch from a queue of requests.
  * 
  * Requests added to the specified queue are processed from the network via a specified {@link Network} interface.
@@ -32,15 +34,15 @@ import android.os.SystemClock;
  * are posted back to the caller via a {@link ResponseDelivery}.
  */
 public class NetworkDispatcher extends Thread {
-    /** The queue of requests to service. */
+    /** The queue of requests to service. 存放Request队列 */
     private final BlockingQueue<Request<?>> mQueue;
-    /** The network interface for processing requests. */
+    /** The network interface for processing requests. 处理Request请求 */
     private final Network mNetwork;
-    /** The cache to write to. */
+    /** The cache to write to. 处理请求过后存放缓存 */
     private final Cache mCache;
     /** For posting responses and errors. */
     private final ResponseDelivery mDelivery;
-    /** Used for telling us to die. */
+    /** Used for telling us to die. 标识线程是否已退出 */
     private volatile boolean mQuit = false;
 
     /**
@@ -152,4 +154,5 @@ public class NetworkDispatcher extends Thread {
         error = request.parseNetworkError(error);
         mDelivery.postError(request, error);
     }
+
 }

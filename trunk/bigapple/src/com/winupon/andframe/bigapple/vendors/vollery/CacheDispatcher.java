@@ -100,15 +100,18 @@ public class CacheDispatcher extends Thread {
                 }
 
                 // Attempt to retrieve this item from cache.
+                // 尝试获取缓存
                 Cache.Entry entry = mCache.get(request.getCacheKey());
                 if (entry == null) {
                     request.addMarker("cache-miss");
                     // Cache miss; send off to the network dispatcher.
+                    // 缓存miss，把请求丢到网络任务队列中
                     mNetworkQueue.put(request);
                     continue;
                 }
 
                 // If it is completely expired, just send it to the network.
+                // 判断缓存是否过期，如果过期就丢到网络任务队列中
                 if (entry.isExpired()) {
                     request.addMarker("cache-hit-expired");
                     request.setCacheEntry(entry);
@@ -117,6 +120,7 @@ public class CacheDispatcher extends Thread {
                 }
 
                 // We have a cache hit; parse its data for delivery back to the request.
+                // 命中缓存喽，从缓存中解析出响应Response对象
                 request.addMarker("cache-hit");
                 Response<?> response = request.parseNetworkResponse(new NetworkResponse(entry.data,
                         entry.responseHeaders));
@@ -124,16 +128,19 @@ public class CacheDispatcher extends Thread {
 
                 if (!entry.refreshNeeded()) {
                     // Completely unexpired cache hit. Just deliver the response.
+                    // 缓存没有过期，直接投递响应对象
                     mDelivery.postResponse(request, response);
                 }
                 else {
                     // Soft-expired cache hit. We can deliver the cached response,
                     // but we need to also send the request to the network for
                     // refreshing.
+                    // 缓存过期了，除了要投递响应对象，还需要把任务再放到网络任务队列中
                     request.addMarker("cache-hit-refresh-needed");
                     request.setCacheEntry(entry);
 
                     // Mark the response as intermediate.
+                    // 表示整个响应是中间过渡的
                     response.intermediate = true;
 
                     // Post the intermediate response back to the user and have
