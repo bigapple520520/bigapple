@@ -537,4 +537,5 @@ public class ImageLoader {
         return new StringBuilder(url.length() + 12).append("#W").append(maxWidth).append("#H").append(maxHeight)
                 .append("#S").append(scaleType.ordinal()).append(url).toString();
     }
+
 }

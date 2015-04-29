@@ -26,20 +26,16 @@ import com.winupon.andframe.bigapple.vendors.vollery.toolbox.ImageLoader.ImageCo
 import com.winupon.andframe.bigapple.vendors.vollery.toolbox.ImageLoader.ImageListener;
 
 /**
- * Handles fetching an image from a URL as well as the life-cycle of the associated request.
+ * 继承ImageView，可以用来设置加载网络图片
  */
 public class NetworkImageView extends ImageView {
-    /** The URL of the network image to load */
+    /** 图片的网络地址 */
     private String mUrl;
 
-    /**
-     * Resource ID of the image to be used as a placeholder until the network image is loaded.
-     */
+    /** 网络图片还在加载中的默认图片 */
     private int mDefaultImageId;
 
-    /**
-     * Resource ID of the image to be used if the network response fails.
-     */
+    /** 加载网路图片失败后的图片 */
     private int mErrorImageId;
 
     /** Local copy of the ImageLoader. */
@@ -81,14 +77,18 @@ public class NetworkImageView extends ImageView {
     }
 
     /**
-     * Sets the default image resource ID to be used for this view until the attempt to load it completes.
+     * 设置加载中的默认图片
+     * 
+     * @param defaultImage
      */
     public void setDefaultImageResId(int defaultImage) {
         mDefaultImageId = defaultImage;
     }
 
     /**
-     * Sets the error image resource ID to be used for this view in the event that the image requested fails to load.
+     * 设置加载失败后的图片
+     * 
+     * @param errorImage
      */
     public void setErrorImageResId(int errorImage) {
         mErrorImageId = errorImage;

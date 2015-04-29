@@ -18,8 +18,6 @@ package com.winupon.andframe.bigapple.vendors.vollery;
 
 import java.util.concurrent.BlockingQueue;
 
-import android.annotation.TargetApi;
-import android.net.TrafficStats;
 import android.os.Build;
 import android.os.Process;
 import android.os.SystemClock;
@@ -73,11 +71,13 @@ public class NetworkDispatcher extends Thread {
         interrupt();
     }
 
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    // @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void addTrafficStatsTag(Request<?> request) {
         // Tag the request (if API >= 14)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            TrafficStats.setThreadStatsTag(request.getTrafficStatsTag());
+        // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+        if (Build.VERSION.SDK_INT >= 14) {
+            // TODO:xuan
+            // TrafficStats.setThreadStatsTag(request.getTrafficStatsTag());
         }
     }
 
