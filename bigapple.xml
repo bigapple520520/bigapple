@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="bigapple" default="all">
+  
+  
+  <property file="bigapple.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.bundle/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/.tox/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/RCS/**"/>
+    <exclude name="**/SCCS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/rcs/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.war"/>
+    <include name="*.ear"/>
+    <include name="*.apk"/>
+    <include name="*.zip"/>
+    <include name="*.swc"/>
+    <include name="*.ane"/>
+    <include name="*.egg"/>
+    <include name="*.jar"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+    <exclude name="**/?*.aj"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.android_api_20_platform" value="${jdk.home.android_api_20_platform}/../../../../../../Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/bin"/>
+  <path id="jdk.classpath.android_api_20_platform">
+    <fileset dir="${jdk.home.android_api_20_platform}">
+      <include name="platforms/android-20/android.jar"/>
+      <include name="platforms/android-20/data/res"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.1.7}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.1.7}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.1.7"/>
+  
+  
+  <!-- Project Libraries -->
+  
+  
+  <!-- Global Libraries -->
+  <!-- Register Custom Compiler Taskdefs -->
+  <property name="javac2.home" value="${idea.home}/lib"/>
+  <path id="javac2.classpath">
+    <pathelement location="${javac2.home}/javac2.jar"/>
+    <pathelement location="${javac2.home}/jdom.jar"/>
+    <pathelement location="${javac2.home}/asm-all.jar"/>
+    <pathelement location="${javac2.home}/jgoodies-forms.jar"/>
+  </path>
+  <target name="register.custom.compilers">
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
+  </target>
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module Bigapple -->
+  
+  <dirname property="module.bigapple.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.bigapple" value="${jdk.home.android_api_20_platform}"/>
+  <property name="module.jdk.bin.bigapple" value="${jdk.bin.android_api_20_platform}"/>
+  <property name="module.jdk.classpath.bigapple" value="jdk.classpath.android_api_20_platform"/>
+  
+  <property name="compiler.args.bigapple" value="-encoding UTF-8 -source 1.7 ${compiler.args}"/>
+  
+  <property name="bigapple.output.dir" value="${module.bigapple.basedir}/out/production/Bigapple"/>
+  <property name="bigapple.testoutput.dir" value="${module.bigapple.basedir}/out/test/Bigapple"/>
+  
+  <path id="bigapple.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="bigapple.module.production.classpath">
+    <path refid="${module.jdk.classpath.bigapple}"/>
+    <pathelement location="${basedir}/Bigapple/libs/android-support-v4.jar"/>
+  </path>
+  
+  <path id="bigapple.runtime.production.module.classpath">
+    <pathelement location="${bigapple.output.dir}"/>
+    <pathelement location="${basedir}/Bigapple/libs/android-support-v4.jar"/>
+  </path>
+  
+  <path id="bigapple.module.classpath">
+    <path refid="${module.jdk.classpath.bigapple}"/>
+    <pathelement location="${bigapple.output.dir}"/>
+    <pathelement location="${basedir}/Bigapple/libs/android-support-v4.jar"/>
+  </path>
+  
+  <path id="bigapple.runtime.module.classpath">
+    <pathelement location="${bigapple.testoutput.dir}"/>
+    <pathelement location="${bigapple.output.dir}"/>
+    <pathelement location="${basedir}/Bigapple/libs/android-support-v4.jar"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.bigapple">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.bigapple">
+    <patternset refid="excluded.from.module.bigapple"/>
+  </patternset>
+  
+  <path id="bigapple.module.sourcepath">
+    <dirset dir="${module.bigapple.basedir}/Bigapple">
+      <include name="gen"/>
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.bigapple" depends="compile.module.bigapple.production,compile.module.bigapple.tests" description="Compile module Bigapple"/>
+  
+  <target name="compile.module.bigapple.production" depends="register.custom.compilers" description="Compile module Bigapple; production classes">
+    <mkdir dir="${bigapple.output.dir}"/>
+    <javac2 destdir="${bigapple.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.bigapple}/javac">
+      <compilerarg line="${compiler.args.bigapple}"/>
+      <bootclasspath refid="bigapple.module.bootclasspath"/>
+      <classpath refid="bigapple.module.production.classpath"/>
+      <src refid="bigapple.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.bigapple"/>
+    </javac2>
+    
+    <copy todir="${bigapple.output.dir}">
+      <fileset dir="${module.bigapple.basedir}/Bigapple/gen">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.bigapple.basedir}/Bigapple/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.bigapple.tests" depends="register.custom.compilers,compile.module.bigapple.production" description="compile module Bigapple; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.bigapple" description="cleanup module">
+    <delete dir="${bigapple.output.dir}"/>
+    <delete dir="${bigapple.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.bigapple" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.bigapple" description="build all modules"/>
+  
+  <target name="all" depends="build.modules" description="build all"/>
+</project>

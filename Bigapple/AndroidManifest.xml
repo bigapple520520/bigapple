@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.xuan.bigapple"
+    android:versionCode="1"
+    android:versionName="1.0" >
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RESTART_PACKAGES" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-sdk
+        android:minSdkVersion="10"
+        android:targetSdkVersion="15" />
+    <application
+        android:name="com.xuan.bigapple.App"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity android:name=".BigappleMainActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.xuan.bigapple.demo.http.HttpDemoActivity" />
+        <activity android:name=".demo.ioc.IocDemoActivity" />
+        <activity android:name=".demo.db.DbDemoActivity" />
+        <activity android:name=".demo.bitmap.NetBitmapDemoActivity" />
+        <activity android:name=".demo.bitmap.LocalBitmapDemoActivity" />
+        <activity android:name=".demo.utils.PinyinDemoActivity" />
+        <activity android:name=".demo.utils.TextViewHtmlDemoActivity" />
+        <activity android:name=".demo.utils.IntentDemoActivity" />
+        <activity android:name=".demo.utils.DialogUtilsDemoActivity" />
+    </application>
+</manifest>
